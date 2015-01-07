@@ -14,7 +14,7 @@ INSTALL
     cabal install yesod-angular-ui-0.1.0.0.tar.gz aeson-0.8.0.2.tar.gz .
     
 * the aeson is a modified version... till patches be accepted
-* yesod-angular-ui is a copy from github: tolysz/yesod-angular-ui
+* yesod-angular-ui is a copy from github: [tolysz/yesod-angular-ui](https://github.com/tolysz/yesod-angular-ui)
 
 Not in the repo stuff still in development
 =========================
