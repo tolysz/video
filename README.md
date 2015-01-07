@@ -25,13 +25,12 @@ Not in the repo stuff still in development
 
 It will generate the whole `static/` folder
 
-sudo:
+this one will be replaced by y-bower
 
-   this one will be replaced by y-bower
     npm install grunt-bower-concat --save-dev
-
     bower install angular-material#master
     sudo npm install -g vulcanize
+
 still looking for a clean way to include it into the project
 
 
