@@ -1,0 +1,14 @@
+function($scope, maid) {
+    $scope.user = {
+       title:     "Technical Program Manager",
+       email:     maid,
+       firstName: "Naomi",
+       lastName:  "" ,
+       company:   "Google" ,
+       address:   "1600 Amphitheatre Pkwy" ,
+       city:      "Mountain View" ,
+       state:     "CA" ,
+       country:   "USA" ,
+       postalCode : "94043"
+    };
+  }

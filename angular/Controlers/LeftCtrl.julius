@@ -1,0 +1,23 @@
+function($scope, $timeout, $mdSidenav, $log, maid) {
+      $scope.menu = { sections : [{ state : "demos"
+                                  , name: "Demos"
+                                  , visible: true
+                                  , pages: [ { state: "demos.panel",     name: "Pannel",     icon: "fa columns" }
+                                           , { state: "demos.button",    name: "Button",     icon: "fa barcode" }
+                                           , { state: "demos.checkbox",  name: "Checkbox",   icon: "fa barcode" }
+                                           , { state: "demos.content",   name: "Content",    icon: "fa barcode" }
+                                           , { state: "demos.dialog",    name: "Dialog",     icon: "fa barcode" }
+                                           , { state: "demos.slider",    name: "Slider",     icon: "fa barcode" }
+                                           , { state: "demos.textfield", name: "Text Field", icon: "fa barcode" }
+                                           , { state: "demos.youtube",   name: "Youtube",    icon: "fa youtube" }
+                                           , { state: "demos.empty",     name: "Empty",      icon: "fa frown-o" }
+                                           , { state: "demos.about",     name: "About",      icon: "fa info" }
+                                           ]
+                                  }] };
+      $scope.maid = maid;
+      var tst = function () {$log.debug("we have LeftCtrl in scope" + $mdSidenav('left').isOpen ())};
+      $scope.toggleLeft = function() { $mdSidenav('left').toggle().then(function(){tst(); $log.debug("toggle LEFT is done"); });}
+      $scope.openLeft   = function() { $mdSidenav('left').open().then(function(){ tst(); $log.debug("open LEFT is done"); });}
+      $scope.closeLeft  = function() { $mdSidenav('left').close().then(function(){ tst(); $log.debug("close LEFT is done"); });}
+      $scope.goHome  = function () {$log.debug("Yupi we are here")};
+    }

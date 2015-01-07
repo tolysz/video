@@ -1,0 +1,43 @@
+$newline never
+$doctype 5
+\<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+\<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+\<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+\<!--[if gt IE 8]><!-->
+<html class="no-js"  data-ng-app=#{ngApp} data-fa-app lang="en"> <!--<![endif]-->
+    <head>
+
+        <meta charset="UTF-8">
+        ^{scripts_import}
+        <title>#{pageTitle pc}
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        ^{pageHead pc}
+        <script>
+          document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
+    <body>
+        <div>
+            <header>
+            <div id="main" role="main">
+              ^{pageBody pc}
+            <footer style="clear: both; float: left; display: block; position: relative;">
+                #{extraCopyright $ appExtra $ settings master}
+        $maybe browserKey <- extraGoogleBrowserAPI $ appExtra $ settings master
+            <script src="//maps.google.com/maps/api/js?key=#{browserKey}&sensor=false&v=3.15" type="text/javascript">
+        $nothing
+            <script src="//maps.google.com/maps/api/js?sensor=false" type="text/javascript">
+        $maybe analytics <- extraAnalytics $ appExtra $ settings master
+            <script>
+              if(!window.location.href.match(/localhost/)){
+                window._gaq = [['_setAccount','#{analytics}'],['_trackPageview'],['_trackPageLoadTime']];
+                (function() {
+                \  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                \  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                \  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                })();
+              }
+        \<!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.  chromium.org/developers/how-tos/chrome-frame-getting-started -->
+        \<!--[if lt IE 7 ]>
+            <script src="https://ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js">
+            <script>
+                window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})
+        \<![endif]-->

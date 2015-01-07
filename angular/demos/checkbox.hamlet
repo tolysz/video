@@ -1,0 +1,14 @@
+<md-toolbar .md-accent>
+ <div .md-toolbar-tools>
+   <span .md-flex>Check it out
+<md-content .checkboxdemoBasicUsage>
+  <md-checkbox ng-model="data.cb1" aria-label="Checkbox 1">
+    Checkbox 1: {{ data.cb1 }}
+  <md-checkbox ng-model="data.cb2" aria-label="Checkbox 2" ng-true-value="'yup'" ng-false-value="'nope'" .md-warn>
+    Checkbox 2 (md-warn): {{ data.cb2 }}
+  <md-checkbox ng-disabled="true" aria-label="Disabled checkbox" ng-model="data.cb3">
+    Checkbox: Disabled
+  <md-checkbox ng-disabled="true" aria-label="Disabled checked checkbox" ng-model="data.cb4" ng-init="data.cb4=true">
+    Checkbox: Disabled, Checked
+  <md-checkbox md-no-ink aria-label="Checkbox No Ink" ng-model="data.cb5" .md-primary>
+    Checkbox (md-primary): No Ink

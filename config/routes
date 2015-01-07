@@ -1,0 +1,11 @@
+/static StaticR Static appStatic
+/auth   AuthR   Auth   getAuth
+
+/favicon.ico FaviconR GET
+/robots.txt RobotsR GET
+
+/ HomeR
+-- GET POST
+
+-- make it a subsite, which has access to manager :)
+/oauth2 OAuthSiteR OAuth2App appOAuth2

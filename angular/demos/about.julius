@@ -1,0 +1,6 @@
+function($scope) {
+     $scope.ngVersion = angular.version.full;
+//     $scope.d3Version = d3.version;
+//     $scope.jQVersion = jQuery.fn.jquery;
+//     $scope.bsVersion = jQuery.fn.affix.Constructor.VERSION;
+}

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+OUT=$1
+shift
+
+closure \
+  --summary_detail_level 3 \
+  --language_in ECMASCRIPT5 \
+  --manage_closure_dependencies \
+  --accept_const_keyword \
+  --generate_exports \
+  --angular_pass \
+  --compilation_level SIMPLE_OPTIMIZATIONS  \
+  --create_source_map ${OUT}.map \
+  --js_output_file ${OUT}.js \
+  --js $@
+
+echo -e "\n//@ sourceMappingURL=${OUT}.map" >>  ${OUT}.js

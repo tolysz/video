@@ -1,0 +1,12 @@
+<section >
+  <div layout="row"  hide-gt-md ng-controller="LeftCtrl"  layout-align="space-between start">
+    <md-button ng-click="toggleLeft()" class="md-primary" >
+        <span .fa .indent >
+        Menu
+    <md-button  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
+        <span .glyphicon .log-out>
+        Logout({{maid | splitChars2:10 }})
+  <div layout="row" layout-fill>
+   ^{angMenu}
+   <div ui-view layout-fill tabindex="-1" role=main>
+     select demos: {{ maid }}

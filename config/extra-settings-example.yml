@@ -1,0 +1,12 @@
+database:
+  database: video_test
+
+
+google-api-server:  "XXX-XXX"
+google-api-browser: "XXX_XXX"
+
+google-oauth:
+  client_id: "123--xxx.apps.googleusercontent.com"
+  client_secret: "xxx-xx"
+  client_email: "123-xxx@developer.gserviceaccount.com"
+  client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/123-xxx@developer.gserviceaccount.com"

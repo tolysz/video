@@ -1,0 +1,58 @@
+  <md-toolbar .md-accent>
+    <div .md-toolbar-tools>
+      <span .md-flex>
+         About: how are we here...
+         <small>Some OpenSource technologies used.
+    <div flex>
+  <md-content .md-padding>
+    <dl .dl-horizontal>
+      <dt>AngularJS
+      <dd>
+         Client side
+         <a target="_blank" href=https://angularjs.org/ > application
+         we use {{ngVersion}}.
+      <dt> Material Design
+      <dd>
+         A a specification for a unified system of visual, motion, and interaction design that adapts across different devices and different screen sizes.
+         <a target="_blank" href=https://material.angularjs.org/ > reusable components
+
+      <dt>Yesod
+      <dd>
+         A nice
+         <a target="_blank" href=http://www.yesodweb.com/book> web framework#
+         \, from which all except server-side templating[for the most of the time] is used... we use the testing current version.
+
+      <dt>
+          Haskell
+      <dd>
+          We use the
+          <a target="_blank" href=https://ghc.haskell.org/trac/ghc> 7.8.4 version#
+
+      <dt> Google API
+      <dd>
+         <a target="_blank" href="https://developers.google.com/youtube/v3/docs/" > YouTube v3
+         http://developers.google.com/apis-explorer/#p/youtube/v3/
+      <dt>
+          Some reading:
+      <dd>
+          <a target="_blank" href="http://book.realworldhaskell.org/read/" > Real World Haskell
+          <br>
+          <a target="_blank" href="http://chimera.labs.oreilly.com/books/1230000000929/index.html" > Parallel and Concurrent Programming in Haskell
+          <br>
+          <a target="_blank" href="http://learnyouahaskell.com/chapters" > Learn You a Haskell for Great Good!
+      <dt>
+          Some general info:
+      <dd>
+          <a target="_blank" href=http://bit.ly/hintro> Aaron Contorer from fpcomplete
+          <br>
+          <a target="_blank" href=https://www.fpcomplete.com/school> Interactive school of haskell.
+          <br>
+          <a target="_blank" href=http://www.seas.upenn.edu/~cis194/ > Academic Lectures
+          <br>
+          <a target="_blank" href=https://ocharles.org.uk/blog/pages/2014-12-01-24-days-of-ghc-extensions.html > Fairly good guide to extensons
+          <br>
+          <a target="_blank" href=http://www.stephendiehl.com/what/ > What I Wish I Knew When Learning Haskell
+          <br>
+          <a target="_blank" href=http://www.reddit.com/r/haskell >
+             <span .fa .reddit>
+             Reddit

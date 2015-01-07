@@ -1,0 +1,21 @@
+<md-toolbar .md-accent>
+    <div .md-toolbar-tools>
+      <span .md-flex>Sample Form
+<md-content layout=column >
+  <section>
+    <form layout=column layout-gt-sm=row layout-padding layout-margin layout-fill>
+        <md-text-float .pad20 label="Title" ng-model=user.title>
+        <md-text-float .pad20 label="eMail" ng-model=user.email type=email>
+
+  <section>
+    <form >
+      <md-text-float .pad20 label="Company"   ng-model=user.company disabled>
+      <div layout=column layout-gt-sm=row layout-padding layout-margin layout-fill>
+          <md-text-float .pad20 label="FirstName" ng-model=user.firstName>
+          <md-text-float .pad20 label="LastName"  ng-model=user.lastName .long>
+      <md-text-float .pad20 label="Address"   ng-model=user.address>
+      <div layout=column layout-gt-sm=row layout-padding layout-margin layout-fill>
+          <md-text-float .pad20 label="City"      ng-model=user.city>
+          <md-text-float .pad20 label="State"     ng-model=user.state>
+          <md-text-float .pad20 label="Postal Code" ng-model=user.postalCode>
+      <md-text-float .pad20 label="Country"   ng-model=user.country disabled>

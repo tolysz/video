@@ -1,0 +1,21 @@
+<md-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$media('gt-md')" md-component-id="left" tabindex="-1"  >
+    <md-content style="overflow: auto;" .md-default-theme ng-controller="LeftCtrl">
+        <md-toolbar style="min-height: 64px; max-height:64px;"  .md-default-theme>
+          <h1 .md-toolbar-tools flex layout=row>
+            <a href="" ng-click="goHome()" tabindex=0>
+                  Video Selector
+        <div ng-repeat="section in sections">
+          <a .menu-item .md-menu-item .menu-title  ng-click="section.visible=!section.visible" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >
+            {{section.name}}
+          <a .menu-item .md-menu-item .menu-sub-item
+             ng-show=section.visible
+             ng-repeat="page in section.pages"
+             ui-sref-active=active
+             ui-sref={{page.state}}
+             md-ink-ripple="#bbb"
+             >
+           <span ng-class=page.icon>
+           {{page.name}}
+        <a .menu-item .md-menu-item .menu-title  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
+           <span .glyphicon .log-out>
+           Logout
