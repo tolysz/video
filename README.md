@@ -2,7 +2,7 @@ Sample Webap
 ============
 
 Sample website using Haskell/Yesod/Angular/Polymer/WebComponents...
-  Google APIs and so on... [demo](https://video.kio.sx/) uses persona for auth
+  Google APIs and so on... [Demo website running this code!](https://video.kio.sx/) uses persona for auth
      This is still in development... all OAath2 might be insecure at times (might use secure session, to not to store anything)
 
 Currently it only stores email, all other stuff will be per user.
@@ -10,12 +10,13 @@ Currently it only stores email, all other stuff will be per user.
 INSTALL
 =======
 
-cabal sandbox init
-cabal install yesod-angular-ui-0.1.0.0.tar.gz aeson-0.8.0.2.tar.gz .
+    cabal sandbox init
+    cabal install yesod-angular-ui-0.1.0.0.tar.gz aeson-0.8.0.2.tar.gz .
 
 
 Not in the repo stuff still in development
 =========================
+
     bower init
     bower install bootstrap --save
     bower install angular   --save
