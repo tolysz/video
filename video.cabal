@@ -102,6 +102,7 @@ library
                  , rawstring-qm
                  , blaze-html
                  , possible
+                 , haxl
                -- deps for oauth
                  , case-insensitive
                  , http-types

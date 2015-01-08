@@ -9,7 +9,6 @@
 module SubSite.OAuth2 where
 
 import SubSite.Import
--- import Network.HTTP.Client.Conduit (Manager, HasHttpManager (getHttpManager))
 import Network.HTTP.OAuth2.Types
 import Types
 import Text.Hamlet (hamlet)
@@ -23,12 +22,15 @@ import qualified Data.Text as T
 import qualified Data.List as DL
 import Google.Api.Types.GoogleUser
 
--- import qualified Network.HTTP.Types as H
-
 import Network.HTTP.OAuth2
 
 instance YesodSubDispatch OAuth2App (HandlerT App IO) where
     yesodSubDispatch = $(mkYesodSubDispatch resourcesOAuth2App )
+
+-- This simplyfies requesting data to suplying url with the appriopirate types
+type ApiReq a = SubApp OAuth2App (TC a)
+instance FromJSON a => IsString (SubApp OAuth2App (TC a)) where
+  fromString = getQueryOA'
 
 getHttpManager' :: SubApp OAuth2App Manager
 getHttpManager' = lift $ appHttpManager <$> getYesod
@@ -122,31 +124,32 @@ getQueryOA url = do
    token <- getToken
    liftIO $ getOAuth2 mgr token url
 
-getQueryOA' :: (FromJSON a)=> String -> SubApp OAuth2App (TC a)
+getQueryOA' :: (FromJSON a)=> String -> ApiReq a
 getQueryOA' url = getQueryOA url >>= \case
         Left e  -> lift $ sendResponseStatus (toEnum (fromMaybe 500 $ aeStatus e) ) (aeError e)
         Right v -> return $ TC v
-
-getGoogleUserR :: SubApp OAuth2App (TC GoogleUser)
-getGoogleUserR = getQueryOA' [qm|https://www.googleapis.com/oauth2/v2/userinfo|]
 --                              do
                           --                maybe (return ()) (setSession "refreshToken") (atRefreshToken token)
                           --                setSession "ExpiresAt" (T.pack . show $ addUTCTime (realToFrac (fromMaybe 3600 $ atExpiresIn token)) now)
                           --                setSession "token" (atAccessToken token)
                           --                setSession "tokenType" (atTokenType token)
 
-getListVideosR :: SubApp OAuth2App (TC Value)
-getListVideosR = getQueryOA' [qm|https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,status,statistics,recordingDetails,fileDetails&id=ACft-tpu47g|]
+
+getGoogleUserR     :: ApiReq GoogleUser
+getGoogleUserR     =  "https://www.googleapis.com/oauth2/v2/userinfo"
+
+getListVideosR     :: ApiReq Value
+getListVideosR     = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,status,statistics,recordingDetails,fileDetails&id=ACft-tpu47g"
 
 -- id: "UCSkMt4A9QMBnuFVrmPHQ1iw"
-getListMyChannels :: SubApp OAuth2App (TC Value)
-getListMyChannels = getQueryOA' [qm|https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true|]
+getListMyChannels  :: ApiReq Value
+getListMyChannels  = "https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true"
 
-getListMyPlaylists :: SubApp OAuth2App (TC Value)
-getListMyPlaylists = getQueryOA' [qm|https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCSkMt4A9QMBnuFVrmPHQ1iw&maxResults=50|]
+getListMyPlaylists :: ApiReq Value
+getListMyPlaylists = "https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCSkMt4A9QMBnuFVrmPHQ1iw&maxResults=50"
 
-getAllVideos :: SubApp OAuth2App (TC Value)
-getAllVideos = getQueryOA' [qm|https://www.googleapis.com/youtube/v3/search?part=snippet&forMine=true&type=video&maxResults=50|]
+getAllVideos       :: ApiReq Value
+getAllVideos       = "https://www.googleapis.com/youtube/v3/search?part=snippet&forMine=true&type=video&maxResults=50"
 
 -- ACft-tpu47g
 
