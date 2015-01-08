@@ -8,8 +8,8 @@ Sample website using Haskell/Yesod/Angular/Polymer/WebComponents...
 Currently it only stores email, all other stuff will be per user.
 
 OR just look at the code:
- Main is Handler/Main.hs
- Tempaltes are in angular/
+ Main is [Handler/Main.hs](https://github.com/tolysz/video/blob/master/Handler/Home.hs)
+ Tempaltes are in [angular/](https://github.com/tolysz/video/blob/master/angular/)
 
 INSTALL
 =======
