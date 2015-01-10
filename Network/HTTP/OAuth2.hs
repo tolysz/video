@@ -84,9 +84,9 @@ fetchAccessToken mgr OAuth2{..} code = do
           let zz = z{atExpiresAt = (`addUTCTime` now ) . fromIntegral <$> atExpiresIn z}
           return $ Right $ traceS zz
 
-refreshToken:: Manager -> OAuth2 -> AuthToken ->  IO (OAuth2Result AuthToken)
+refreshToken :: Manager -> OAuth2 -> AuthToken ->  IO (OAuth2Result AuthToken)
 refreshToken mgr OAuth2{..} o =
-      methodJSONOAuth mgr "POST" Nothing oauthAuthUri def def ( UrlEncode def $ QueryE [("refresh_token", atRefreshToken o),("client_id", Just oauthClientId),("client_secret", Just oauthClientSecret),("grant_type", Just "refresh_token")]) >>=
+      methodJSONOAuth mgr "POST" Nothing oauthTokenUri def def ( UrlEncode def $ QueryE [("refresh_token", atRefreshToken o),("client_id", Just oauthClientId),("client_secret", Just oauthClientSecret),("grant_type", Just "refresh_token")]) >>=
        \case
          Left a -> return $ Left a
          Right z -> do

@@ -49,7 +49,10 @@ makeFoundation appSettings = do
 
     -- Create the database connection pool
     appConnPool <- createPoolConfig $ appDatabaseConf appSettings
+    
+    -- My Specific ones
     let appOAuth2 = OAuth2App
+
     -- Return the foundation
     return App {..}
 

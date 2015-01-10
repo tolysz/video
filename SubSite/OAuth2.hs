@@ -16,6 +16,7 @@ import Text.Blaze.Html.Renderer.String (renderHtml)
 import Data.Maybe
 import Data.String.QM
 
+import Data.Time.Clock ( diffUTCTime )
 
 import qualified Data.Aeson.Types as DA
 import qualified Data.Text as T
@@ -29,59 +30,27 @@ instance YesodSubDispatch OAuth2App (HandlerT App IO) where
 
 -- This simplyfies requesting data to suplying url with the appriopirate types
 type ApiReq a = SubApp OAuth2App (TC a)
+-- example how monad is an onion and changing boundaries changes meaning
 instance FromJSON a => IsString (SubApp OAuth2App (TC a)) where
   fromString = getQueryOA'
 
-getHttpManager' :: SubApp OAuth2App Manager
-getHttpManager' = lift $ appHttpManager <$> getYesod
-
--- And we'll spell out the handler type signature.
-handleRootOAuth2R :: SubApp OAuth2App ()
-handleRootOAuth2R = return ()
-handleMo404R _ = lift $ defaultLayout [whamlet|Welcome to the subsite! 404|]
-
-
-getUserIdent :: SubApp OAuth2App (Key User)
-getUserIdent = lift $ do
-  -- Just aid <- userIdent <$> requireAuthId
-  aid <- fmap (userIdent . fromJust) . runDB . get =<< requireAuthId
-  runDB $ do
-     Just (Entity k _) <- getBy $ UniqueUser aid
-     return k
-
-
 handleGoogleCallbackR :: SubApp OAuth2App Html
 handleGoogleCallbackR = do
-       uid <- getUserIdent
-       gc <- googleKey
-       mgr <- getHttpManager'
-
-       lift $ do
-         codeMaybe <- lookupGetParam "code"
-         errorMaybe <- lookupGetParam "error"
-         case (codeMaybe, errorMaybe) of
-           (Just c, _) -> liftIO (fetchAccessToken mgr gc c) >>= \case
-                              Left b -> sendResponse (aeError b) -- traceHTML  b --  >> redirectUltDest HomeR
-                              Right AuthToken{..} -> do
-                                 runDB $ do
-                                   deleteBy $ OnePerRealm uid
-                                   insert $ OAuthAccess
-                                                  uid
-                                                  "google"
-                                                  Nothing
-                                                  (Just atAccessToken)
-                                                  atExpiresAt
-                                                  atRefreshToken
-                                                  (Just atTokenType)
-                                                  ["https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtubepartner"]
-                                 redirect (OAuthSiteR GoogleDebugR)
-           (_, Just e) -> traceHTML e
-           _ -> redirect HomeR
-
-traceHTML (show -> e) = defaultLayout [whamlet|We hit authError <br> #{e}|]
+  codeMaybe <- lookupGetParam "code"
+  errorMaybe <- lookupGetParam "error"
+  case (codeMaybe, errorMaybe) of
+    (Just c, _)       -> processTokenOU (\mgr gc -> fetchAccessToken mgr gc c)
+                          >> lift (redirect (OAuthSiteR GoogleDebugR))
+    (_, Just e)       -> traceHTML e
+    (Nothing,Nothing) -> lift (redirect HomeR)
 
 handleGoogleManageR :: SubApp OAuth2App ()
 handleGoogleManageR = lift $ redirect ("https://security.google.com/settings/security/permissions?pli=1" :: String)
+
+
+handleGoogleOAuthLogoutR :: SubApp OAuth2App ()
+handleGoogleOAuthLogoutR =
+   lift . runDB . deleteBy . OnePerRealm =<< getUserIdent
 
 handleGoogleOAuthLoginR :: SubApp OAuth2App ()
 handleGoogleOAuthLoginR = do
@@ -92,9 +61,15 @@ handleGoogleOAuthLoginR = do
              (Scope ["https://www.googleapis.com/auth/youtubepartner", "https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtube"])
              False
 
--- handleGoogleDebugR :: SubApp OAuth2App String
-handleGoogleDebugR = getListVideosR
--- handleGoogleDebugR = getGoogleUserR
+
+getHttpManager' :: SubApp OAuth2App Manager
+getHttpManager' = lift $ appHttpManager <$> getYesod
+
+-- And we'll spell out the handler type signature.
+handleRootOAuth2R :: SubApp OAuth2App ()
+handleRootOAuth2R = return ()
+
+handleMo404R _ = lift $ defaultLayout [whamlet|Welcome to the subsite! 404|]
 
 googleKey :: SubApp OAuth2App OAuth2
 googleKey = lift $ do
@@ -108,18 +83,28 @@ googleKey = lift $ do
                    , oauthRevokeUri    = "https://accounts.google.com/o/oauth2/revoke" -- maybe a function?
                    }
 
-
 getToken :: SubApp OAuth2App AuthToken
-getToken =
+getToken = do
+  now <- liftIO getCurrentTime
   (lift . runDB . getBy . OnePerRealm =<< getUserIdent) >>=
-    \case
-      Just (Entity _ (OAuthAccess{..})) -> case oAuthAccessAccessToken of
-         Just v -> return def{atAccessToken=v}
-   -- Nothing -> refreshTokenOU >> lift (redirectUltDest HomeR)
+    f now
+   where
+      f now x
+        | Just (Entity _ (OAuthAccess{..}))  <- x  -- we have the entry inside DB
+        , Just ex  <- oAuthAccessExpires           -- it has expires field
+        , diffUTCTime ex now > 10                  -- it still has at least 10s on the clock
+        , Just at <- oAuthAccessAccessToken        -- and we have the access token
+          = return def{atAccessToken=at}           -- thus we use it
+
+        | Just (Entity _ (OAuthAccess{..}))  <- x -- we have the entry inside DB
+        , Just _ <- oAuthAccessRefreshToken       -- we have the refresh tocken there
+          = refreshTokenOU def{atRefreshToken=oAuthAccessRefreshToken} >> getToken         -- this need to fail and show errors
+
+        | otherwise -- we failed on all of the above redirect home
+          = lift (redirect $ OAuthSiteR GoogleOAuthLoginR)   -- have no credentials and need to get some
 
 getQueryOA :: (FromJSON a)=> String -> SubApp OAuth2App (OAuth2Result a)
 getQueryOA url = do
---    timeRefreshToken
    mgr   <- getHttpManager'
    token <- getToken
    liftIO $ getOAuth2 mgr token url
@@ -128,13 +113,55 @@ getQueryOA' :: (FromJSON a)=> String -> ApiReq a
 getQueryOA' url = getQueryOA url >>= \case
         Left e  -> lift $ sendResponseStatus (toEnum (fromMaybe 500 $ aeStatus e) ) (aeError e)
         Right v -> return $ TC v
---                              do
-                          --                maybe (return ()) (setSession "refreshToken") (atRefreshToken token)
-                          --                setSession "ExpiresAt" (T.pack . show $ addUTCTime (realToFrac (fromMaybe 3600 $ atExpiresIn token)) now)
-                          --                setSession "token" (atAccessToken token)
-                          --                setSession "tokenType" (atTokenType token)
 
 
+-- get user identity from the DB, meybe this is already cached?
+getUserIdent :: SubApp OAuth2App (Key User)
+getUserIdent = lift $ do
+  aid <- fmap (userIdent . fromJust) . runDB . get =<< requireAuthId
+  runDB $ do
+     Just (Entity k _) <- getBy $ UniqueUser aid
+     return k
+
+-- put a new tocken away, we loose the old one...
+updateDBToken :: AuthToken -> SubApp OAuth2App ()
+updateDBToken AuthToken{..} = do
+       uid <- getUserIdent
+       lift $ runDB $ do
+         deleteBy $ OnePerRealm uid
+         void $ insert $ OAuthAccess
+                        uid
+                        "google"
+                        Nothing
+                        (Just atAccessToken)
+                        atExpiresAt
+                        atRefreshToken
+                        (Just atTokenType)
+                        ["https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtubepartner"]
+
+refreshTokenOU :: AuthToken -> SubApp OAuth2App ()
+refreshTokenOU t = processTokenOU (\mgr gc -> refreshToken mgr gc t)
+
+processTokenOU :: (Manager -> OAuth2 -> IO (OAuth2Result AuthToken))
+               -> SubApp OAuth2App ()
+processTokenOU action = do
+  gc <- googleKey
+  mgr <- getHttpManager'
+  liftIO (action mgr gc) >>=
+     \case
+        Left e -> lift $ sendResponseStatus (toEnum (fromMaybe 500 $ aeStatus e) ) (aeError e)
+        Right t -> updateDBToken t
+
+
+traceHTML (show -> e) = lift $ defaultLayout [whamlet|We hit authError <br> #{e}|]
+
+
+-- handleGoogleDebugR :: SubApp OAuth2App String
+handleGoogleDebugR = getListVideosR
+-- handleGoogleDebugR = getGoogleUserR
+
+
+-- Move sample requests out once it is finished.
 getGoogleUserR     :: ApiReq GoogleUser
 getGoogleUserR     =  "https://www.googleapis.com/oauth2/v2/userinfo"
 
@@ -153,8 +180,13 @@ getAllVideos       = "https://www.googleapis.com/youtube/v3/search?part=snippet&
 
 -- ACft-tpu47g
 
-refreshTokenOU :: SubApp OAuth2App ()
-refreshTokenOU = return ()
+
+
+--    \case
+--       -> case of
+--        Just v --
+
+-- return ()
 
 -- instance Default Value where
 --   def = DA.emptyObject

@@ -22,5 +22,6 @@ mkYesodSubData "OAuth2App" [parseRoutes|
 /google/callback GoogleCallbackR
 /google/manage   GoogleManageR
 /google/login    GoogleOAuthLoginR
+/google/logout   GoogleOAuthLogoutR
 !/*Texts  Mo404R
 |]
