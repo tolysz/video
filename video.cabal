@@ -103,6 +103,7 @@ library
                  , blaze-html
                  , possible
                  , haxl
+                 , auto-update
                -- deps for oauth
                  , case-insensitive
                  , http-types
