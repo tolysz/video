@@ -21,7 +21,7 @@ before_install:
 install:
  - cabal update
  - cabal install alex happy
- - cabal install yesod-angular-ui-0.1.0.0.tar.gz aeson-0.8.0.2.tar.gz .
+ - cabal install yesod-angular-ui-0.1.0.0.tar.gz aeson-0.8.0.2.tar.gz . --allow-newer
 
 
 script:
