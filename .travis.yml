@@ -24,6 +24,7 @@ install:
  - cabal install --only-dependencies aeson-0.8.0.2.tar.gz
  - cabal install aeson-0.8.0.2.tar.gz
  - cabal install yesod-angular-ui-0.1.0.0.tar.gz
+ - cabal install HUnit
  - cabal install haxl --allow-newer
  - cabal install --only-dependencies --enable-tests
 
