@@ -7,5 +7,17 @@
 / HomeR
 -- GET POST
 
--- make it a subsite, which has access to manager :)
-/oauth2 OAuthSiteR OAuth2App appOAuth2
+-- /oauth/ require additional authorization via @GoogleOAuthLoginR
+/oauth2/ RootOAuth2R
+/oauth2/google/callback GoogleCallbackR
+/oauth2/google/manage   GoogleManageR
+/oauth2/google/login    GoogleOAuthLoginR
+/oauth2/google/logout   GoogleOAuthLogoutR
+/oauth2/google/debug/*Texts   GoogleDebugR
+
+-- youtube
+/oauth2/youtube/channels  YTChannelsR
+/oauth2/youtube/playlists YTPlaylistsR
+/oauth2/youtube/allvideos YTAllVideosR
+
+/user/channels UserChannelsR GET

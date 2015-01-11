@@ -10,7 +10,8 @@ import Yesod.Auth.BrowserId     (authBrowserId)
 import Yesod.Core.Types         (Logger)
 import Yesod.Default.Util       (addStaticContentExternal)
 import Yesod.AngularUI
-import SubSite.Data
+-- import SubSite.Data
+import Data.Maybe (fromJust)
 
 
 -- | The foundation datatype for your application. This can be a good place to
@@ -23,7 +24,7 @@ data App = App
     , appConnPool    :: ConnectionPool -- ^ Database connection pool.
     , appHttpManager :: Manager
     , appLogger      :: Logger
-    , appOAuth2      :: OAuth2App
+--     , appOAuth2      :: OAuth2App
     }
 
 instance HasHttpManager App where
@@ -136,6 +137,8 @@ instance YesodAuth App where
                 fmap Just $ insert User
                     { userIdent = credsIdent creds
                     , userPassword = Nothing
+                    , userName     = Nothing
+                    , userFriendly = Nothing
                     }
 
     -- You can add other plugins like BrowserID, email or OAuth here
@@ -172,3 +175,11 @@ angularUILayout ngApp widget = do
 
 -- instance IsString ((Route App -> [(Text, Text)] -> Text) -> Javascript) where
 --  fromString a = [js|^{rawJS a}|]
+
+-- get user identity from the DB, meybe this is already cached?
+getUserIdent :: Handler (Key User)
+getUserIdent = do
+  aid <- fmap (userIdent . fromJust) . runDB . get =<< requireAuthId
+  runDB $ do
+     Just (Entity k _) <- getBy $ UniqueUser aid
+     return k

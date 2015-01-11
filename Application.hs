@@ -24,9 +24,9 @@ import System.Log.FastLogger                (defaultBufSize, newStdoutLoggerSet,
 -- Don't forget to add new modules to your cabal file!
 import Handler.Common
 import Handler.Home
-import SubSite.OAuth2
+import Handler.OAuth2
+import Handler.User
 
-import SubSite.Data
 
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
@@ -51,9 +51,7 @@ makeFoundation appSettings = do
     appConnPool <- createPoolConfig $ appDatabaseConf appSettings
     
     -- My Specific ones
-    let appOAuth2 = OAuth2App
 
-    -- Return the foundation
     return App {..}
 
 -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and

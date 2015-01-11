@@ -26,9 +26,8 @@ library
                      Settings.StaticFiles
                      Handler.Common
                      Handler.Home
-                     SubSite.Data
-                     SubSite.OAuth2
-                     SubSite.Import
+                     Handler.User
+                     Handler.OAuth2
 
                 --  move to a separate module after testing or merge with http-client?
                      Network.HTTP.OAuth2.Types

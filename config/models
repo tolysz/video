@@ -1,13 +1,16 @@
 User
-    ident Text
-    password Text Maybe
-    UniqueUser ident
+    ident         Text
+    name          Text Maybe
+    friendly      Text Maybe
+    password      Text Maybe
+    UniqueUser    ident
     deriving Typeable Show
+
 Email
-    email Text
-    user UserId Maybe
-    verkey Text Maybe
-    UniqueEmail email
+    email         Text
+    user          UserId Maybe
+    verkey        Text Maybe
+    UniqueEmail   email
 
 OAuthAccess
     owner         UserId
@@ -21,7 +24,42 @@ OAuthAccess
     OnePerRealm   owner
     deriving Show Typeable Generic
 
- -- By default this file is used in Model.hs (which is imported by Foundation.hs)
--- sd
+YTChannel
+    status        ViewChan
+    ref           Text
+    etag          Text
+    UniqueYTPChannel ref
+    deriving Show Typeable Generic
 
---
+YTPlaylist 
+    ref           Text
+    etag          Text
+    UniqueYTPlaylist ref
+    deriving Show Typeable Generic
+
+YTVideoPlaylist
+     playlist     YTPlaylistId
+     video        YTVideoId
+     UniqueYTVideoPlaylist playlist video
+     deriving Show Typeable Generic
+
+YTVideo
+    ref           Text
+    etag          Text
+    UniqueYTVideo ref
+    deriving Show Typeable Generic
+
+YTVideoUser
+    video         YTVideoId
+    user          UserId
+    UniqueYTVideoUser video user
+--    status        ViewPerm
+    deriving Show Typeable Generic
+
+ChannelMember
+    owner         Bool
+    ref           YTChannelId
+    user          UserId
+    UniqueChannelMember ref user
+    deriving Show Typeable Generic
+

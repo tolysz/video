@@ -17,6 +17,7 @@ import Data.Aeson.TH
 import Data.Aeson
 import Yesod.Core.Content
 import Data.String
+import Database.Persist.TH
 
 data OAuth2Google = OAuth2Google
   { gaClientId            :: Text
@@ -36,11 +37,12 @@ fromCamel n = worker True . drop n
   where
    worker _     []     = []
    worker lastUp (c:cs) =
-        (bool
-           (bool [c] (['_' , (toLower c)]) (isUpper c))
+        bool
+           (bool [c] ['_' , toLower c] (isUpper c))
            [toLower c]
            lastUp
-           ) ++ (worker (isUpper c) cs)
+         ++ worker (isUpper c) cs
+
 
 data TC a = TC a
 
@@ -50,3 +52,21 @@ instance (ToJSON a) => ToContent (TC a) where
 instance (ToJSON a) => ToTypedContent (TC a) where
   toTypedContent a = TypedContent typeJson (toContent a )
 
+
+
+-- data ViewPerm = Owner
+--               | Granted
+--               | Channel
+--               | World
+--     deriving (Show, Read, Eq, Typeable, Generic)
+-- derivePersistField "ViewPerm"
+
+data ViewChan = Owner    -- Puts Channel offline
+              | Invites  -- Owner needs to explicitly add members
+              | Requests -- People can request join / which owner needs to approve
+                         --  channel is listed
+              | World    -- everyone lgged can see and enter channel
+    deriving (Show, Read, Eq, Typeable, Generic)
+derivePersistField "ViewChan"
+
+instance ToJSON ViewChan
