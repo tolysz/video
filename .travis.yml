@@ -21,9 +21,9 @@ before_install:
 install:
  - cabal sandbox init
  - travis_retry cabal update
- - cabal install --only-dependencies --enable-tests --allow-newer aeson-0.8.0.2.tar.gz -v2
+ - cabal install --only-dependencies --enable-tests aeson-0.8.0.2.tar.gz -v2
  - cabal install --enable-tests aeson-0.8.0.2.tar.gz
- - cabal install --enable-tests --allow-newer yesod-angular-ui-0.1.0.0.tar.gz
+ - cabal install --enable-tests yesod-angular-ui-0.1.0.0.tar.gz
  - cabal install --only-dependencies --enable-tests --allow-newer
 
 script:
