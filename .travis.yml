@@ -21,8 +21,7 @@ before_install:
 install:
  - cabal sandbox init
  - travis_retry cabal update
- - cabal install aeson-0.8.0.2.tar.gz haxl-0.1.0.0.tar.gz
- - cabal install yesod-angular-ui-0.1.0.0.tar.gz
+ - cabal install aeson-0.8.0.2.tar.gz yesod-angular-ui-0.1.0.0.tar.gz haxl-0.1.0.0.tar.gz
  - cabal install --only-dependencies --enable-tests
 
 script:
