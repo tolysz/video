@@ -45,10 +45,20 @@ data YoutubeVideo = YoutubeVideo
   , _yvLiveStreamingDetails :: Possible YVLiveStreamingDetails
  } deriving  (Show, Typeable, Generic)
 
-type YVSnippet        = Value
-type YVContentDetails = Value
---   , _yvContentRating       :: Possible (HashMap Text Text)
+data YVSnippet = YVSnippet
+  { _yvsnPublishedAt  :: UTCTime
+  , _yvsnChannelId    :: Text
+  , _yvsnTitle        :: Text  -- * always include
+  , _yvsnDescription  :: Text
+  , _yvsnThumbnails   :: HashMap Text YThumbnail
+  , _yvsnChannelTitle :: Text
+  , _yvsnLocalized    :: Value -- todo: fix
+  , _yvsnTags         :: [Text]
+  , _yvsnCategoryId   :: Text
+  , _yvsnLiveBroadcastContent :: Text
+  } deriving  (Show, Typeable, Generic)
 
+type YVContentDetails = Value
 type YVStatus               = Value
 type YVStatistics           = Value
 type YVPlayer               = Value
@@ -62,11 +72,5 @@ type YVLiveStreamingDetails = Value
 deriveJSON optsL3 ''YoutubeVideo
 makeLenses        ''YoutubeVideo
 
-
-
-
-
-
-
-
-
+deriveJSON optsL5 ''YVSnippet
+makeLenses        ''YVSnippet
