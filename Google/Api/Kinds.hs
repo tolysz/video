@@ -1,5 +1,5 @@
 {-# LANGUAGE DataKinds, ViewPatterns, ScopedTypeVariables, DeriveGeneric, TypeOperators #-}
-module Google.Api.Kinds (ApiKind (..),ListResponse (..)) where
+module Google.Api.Kinds (ApiKind (..),ListResponse (..), AsStr(..)) where
 
 import Data.Text (Text)
 import Data.Text as T
@@ -8,7 +8,7 @@ import GHC.TypeLits
 import Prelude
 import Data.Aeson
 import Control.Monad
-import Prelude     hiding (id)
+import Control.Applicative
 import Data.Aeson.Types
 import Google.Api.Utils
 import Data.Possible
@@ -20,13 +20,14 @@ import GHC.Generics
 data ApiKind (sym :: Symbol) = ApiKind
 data ApiKindR (sym :: Symbol) = ApiKindR
 
+newtype AsStr a = AsStr a
 -- type family ApiTag a :: *
 -- type family ApiTagR a :: *
 -- instance Show a => Show (ApiTagR a)
 -- type instance ApiTagR (ApiKind (sym :: Symbol)) = (ApiKindR sym)
 
 instance KnownSymbol sym => Show (ApiKind sym ) where
-  show a = symbolVal a
+  show = symbolVal
 
 instance KnownSymbol sym => Show (ApiKindR sym ) where
   show a = symbolVal a ++ "ListResponse"
@@ -47,6 +48,14 @@ instance KnownSymbol sym => FromJSON (ApiKindR sym ) where
      | show (ApiKindR :: ApiKindR sym) == a = return ApiKindR
   parseJSON  _ = mzero
 
+instance (Show a) => Show (AsStr a) where
+  show (AsStr a) = show a
+
+instance (Show a) => ToJSON (AsStr a) where
+  toJSON = toJSON . show
+
+instance (Read a) => FromJSON (AsStr a) where
+  parseJSON (String ( read . T.unpack -> a)) = pure (AsStr a)
 
 data PageInfo = PageInfo
  { _piTotalResults   :: Int
@@ -60,7 +69,7 @@ instance ToJSON   PageInfo where toJSON    = genericToJSON    optsPI
 makeLenses ''PageInfo
 
 data  ListResponse a sym = ListResponse
- { _lrKind          :: ApiKindR sym   -- kind of content ++ ListResponse.
+ { _lrKind          :: ApiKindR sym   -- kind of content ++ ListResponse. -- we need typelevel string concatenation
  , _lrEtag          :: Text           --
  , _lrNextPageToken :: Possible Text  --
  , _lrPrevPageToken :: Possible Text

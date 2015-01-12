@@ -27,75 +27,80 @@ import Data.Time.Clock (UTCTime (..))
 
 import Data.HashMap.Strict (HashMap(..))
 
+data YCThumbnail = YCThumbnail
+  { _yctUrl    :: Text
+  , _yctWidth  :: Possible (AsStr Int)
+  , _yctHeight :: Possible (AsStr Int)
+  } deriving (Show, Typeable, Generic)
+
 data YCSnippet = YCSnippet
  { _ycsnTitle       :: Text
  , _ycsnDescription :: Text
  , _ycsnPublishedAt :: UTCTime
---  , _ycsnthumbnails  :: YCSNThumb
+ , _ycsnThumbnails  :: HashMap Text YCThumbnail
  } deriving  (Show, Typeable, Generic)
-deriveJSON optsL5 ''YCSnippet
-makeLenses        ''YCSnippet
 
 data YCContentDetails = YCContentDetails
  { _yccdGooglePlusUserId :: Text
  , _yccdRelatedPlaylists :: HashMap Text Text
    -- likes,favorites,uploads,watchHistory,watchLater -> playlistId
  } deriving  (Show, Typeable, Generic)
-deriveJSON optsL5 ''YCContentDetails
-makeLenses        ''YCContentDetails
 
-data YTStatistic = YTStatistics
-  { _ycstViewCount             :: Integer
-  , _ycstCommentCount          :: Integer
-  , _ycstSubscriberCount       :: Integer
+data YCStatistics = YCStatistics
+  { _ycstViewCount             :: AsStr Integer
+  , _ycstCommentCount          :: AsStr Integer
+  , _ycstSubscriberCount       :: AsStr Integer
   , _ycstHiddenSubscriberCount :: Bool
-  , _ycstVideoCount            :: Integer
+  , _ycstVideoCount            :: AsStr Integer
   } deriving  (Show, Typeable, Generic)
-deriveJSON optsL5 ''YTStatistic
-makeLenses        ''YTStatistic
+
+data YCTopicDetails = YCTopicDetails
+  { _yctdTopicIds :: [ Text ]
+  } deriving  (Show, Typeable, Generic)
+
+data YCStatus = YCStatus
+  { _ycsPrivacyStatus     :: Text
+  , _ycsIsLinked          :: Bool
+  , _ycsLongUploadsStatus :: Text
+  } deriving  (Show, Typeable, Generic)
+
+data YCAuditDetails = YCAuditDetails
+  { _ycaOverallGoodStanding             :: Bool
+  , _ycaCommunityGuidelinesGoodStanding :: Bool
+  , _ycaCopyrightStrikesGoodStanding    :: Bool
+  , _ycaContentIdClaimsGoodStanding     :: Bool
+  } deriving  (Show, Typeable, Generic)
+
+data YCContentOwnerDetails = YCContentOwnerDetails
+  { _ycodContentOwner :: Text
+  , _ycodTimeLinked   :: UTCTime
+  } deriving  (Show, Typeable, Generic)
 
 type YoutubeChannels = ListResponse YoutubeChannel "youtube#channel"
 data YoutubeChannel = YoutubeChannel
- { _ycKind :: ApiKind "youtube#channel"
- , _ycEtag :: Text
- , _ycId   :: Text
- , _ycSnippet         :: Possible YCSnippet
- , _ycContentDetails  :: Possible YCContentDetails
- , _ycStatistics      :: Possible YTStatistic
---  , _ycTopicDetails        :: Possible TopicDetails
---  , _ycStatus              :: Possible Status
---  , _ycBrandingSettings    :: Possible BrandingSettings
---  , _ycContentOwnerDetails :: Possible ContentOwnerDetails
---  , _ycInvideoPromotion    :: Possible InvideoPromotion
---  , _ycAuditDetails        :: Possible AuditDetails
+  { _ycKind                :: ApiKind "youtube#channel"     -- present
+  , _ycEtag                :: Text                          -- present
+  , _ycId                  :: Text                          -- present
+  , _ycSnippet             :: Possible YCSnippet            -- present
+  , _ycContentDetails      :: Possible YCContentDetails     -- present
+  , _ycStatistics          :: Possible YCStatistics         -- present
+  , _ycTopicDetails        :: Possible YCTopicDetails       -- missing
+  , _ycStatus              :: Possible YCStatus             -- present
+  , _ycContentOwnerDetails :: Possible YCContentOwnerDetails -- missing
+  , _ycBrandingSettings    :: Possible YCBrandingSettings   -- todo: implement
+  , _ycInvideoPromotion    :: Possible YCInvideoPromotion   -- todo: implement
  } deriving  (Show, Typeable, Generic)
-deriveJSON optsL3 ''YoutubeChannel
-makeLenses        ''YoutubeChannel
-instance Default YoutubeChannel where
-  def = YoutubeChannel ApiKind "" ""  MissingData MissingData MissingData -- MissingData MissingData MissingData MissingData MissingData MissingData MissingData
 
+
+type YCBrandingSettings = Value
+type YCInvideoPromotion = Value
+
+--instance Default YoutubeChannel where
+--  def = YoutubeChannel ApiKind "" ""  MissingData MissingData MissingData MissingData MissingData MissingData MissingData -- MissingData MissingData MissingData
 
 {--
 {
-  "snippet": {
-    "thumbnails": {
-      (key): {
-        "url": string,
-        "width": unsigned integer,
-        "height": unsigned integer
-      }
-    }
-  },
-  "topicDetails": {
-    "topicIds": [
-      string
-    ]
-  },
-  "status": {
-    "privacyStatus": string,
-    "isLinked": boolean,
-    "longUploadsStatus": string
-  },
+
   "brandingSettings": {
     "channel": {
       "title": string,
@@ -218,16 +223,34 @@ instance Default YoutubeChannel where
     ],
     "useSmartTiming": boolean
   },
-  "auditDetails": {
-    "overallGoodStanding": boolean,
-    "communityGuidelinesGoodStanding": boolean,
-    "copyrightStrikesGoodStanding": boolean,
-    "contentIdClaimsGoodStanding": boolean
-  },
-  "contentOwnerDetails": {
-    "contentOwner": string,
-    "timeLinked": datetime
-  }
 }
 
 --}
+
+-- Borring TH stuff
+deriveJSON optsL4 ''YCStatus
+makeLenses        ''YCStatus
+
+deriveJSON optsL4 ''YCThumbnail
+makeLenses        ''YCThumbnail
+
+deriveJSON optsL5 ''YCTopicDetails
+makeLenses        ''YCTopicDetails
+
+deriveJSON optsL5 ''YCStatistics
+makeLenses        ''YCStatistics
+
+deriveJSON optsL5 ''YCSnippet
+makeLenses        ''YCSnippet
+
+deriveJSON optsL5 ''YCContentDetails
+makeLenses        ''YCContentDetails
+
+deriveJSON optsL4 ''YCAuditDetails
+makeLenses        ''YCAuditDetails
+
+deriveJSON optsL5 ''YCContentOwnerDetails
+makeLenses        ''YCContentOwnerDetails
+
+deriveJSON optsL3 ''YoutubeChannel
+makeLenses        ''YoutubeChannel
