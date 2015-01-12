@@ -6,6 +6,7 @@ import Types
 
 import Data.String.QM
 import Google.Api.Types.GoogleUser
+import Google.Api.Youtube.Channels
 
 -- Module dedicated to accessing Data?
 
@@ -22,8 +23,9 @@ getGoogleUserR     =  "https://www.googleapis.com/oauth2/v2/userinfo"
 getListVideosR     :: ApiReq Value
 getListVideosR     = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,status,statistics,recordingDetails,fileDetails&id=ACft-tpu47g"
 
-handleYTChannelsR  :: ApiReq Value
-handleYTChannelsR  = "https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true"
+handleYTChannelsR  :: ApiReq YoutubeChannels
+--handleYTChannelsR  = "https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true"
+handleYTChannelsR  = "https://www.googleapis.com/youtube/v3/channels?part=brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails&mine=true"
 -- UCSkMt4A9QMBnuFVrmPHQ1iw
 handleYTPlaylistsR :: String -> String -> ApiReq Value
 handleYTPlaylistsR cid part = [qm|https://www.googleapis.com/youtube/v3/playlists?part=$part&channelId=$cid&maxResults=50|]
@@ -33,6 +35,16 @@ handleYTPlaylistsR cid part = [qm|https://www.googleapis.com/youtube/v3/playlist
 
 handleYTAllVideosR :: ApiReq Value
 handleYTAllVideosR = "https://www.googleapis.com/youtube/v3/search?part=snippet&forMine=true&type=video&maxResults=50"
+
+
+-- vvv ^.. ggrResults . traverse . ggrtGeometry . to ( \v -> ( v ^. gggLocation, v ^. gggLocationType  ))
+-- Prelude.and $ Prelude.map isJust (Prelude.map decode dir :: [Maybe GGResponse])
+-- Prelude.map decode dir :: [Maybe GGResponse]
+-- dir <- (getDirectoryContents "data/geoCache/"  >>= mapM ( B.readFile . ("data/geoCache/" ++ ))  . Prelude.filter (\a -> Prelude.length a > 2 ))
+-- let dd = Prelude.map (fromJust . decode) dir :: [GGResponse]
+
+-- dd ^.. traverse .  ggrResults . traverse . ggrtGeometry . to ( \v -> ( v ^. gggLocation, v ^. gggLocationType  ))
+-- dd ^.. traverse .  ggrResults . traverse . ggrtGeometry . gggLocationType . to Prelude.show ^. to Data.List.sort
 
 
 {--

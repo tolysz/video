@@ -55,7 +55,12 @@ handleGoogleOAuthLoginR = do
          redirect $
            generateAuthUrl
              gc
-             (Scope ["https://www.googleapis.com/auth/youtubepartner", "https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtube"])
+             (Scope [ "profile"
+                    , "https://www.googleapis.com/auth/youtubepartner"
+                    , "https://www.googleapis.com/auth/youtube.upload"
+                    , "https://www.googleapis.com/auth/youtube"
+                    ]
+              )
              False
 
 getHttpManager' :: Handler Manager
@@ -119,7 +124,7 @@ updateDBToken AuthToken{..} = do
                         atExpiresAt
                         atRefreshToken
                         (Just atTokenType)
-                        ["https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtubepartner"]
+                        ["profile", "https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtubepartner"]
 
 refreshTokenOU :: AuthToken -> Handler ()
 refreshTokenOU t = processTokenOU (\mgr gc -> refreshToken mgr gc t)

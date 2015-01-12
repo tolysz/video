@@ -6,14 +6,14 @@
            , DeriveGeneric
            , TemplateHaskell
            #-}
-module Google.Api.Youtube.Channels (YoutubeChannel (..)) where
+module Google.Api.Youtube.Channels (YoutubeChannel (..), YoutubeChannels) where
 
  -- https://developers.google.com/youtube/v3/docs/#Channels
-
 
 import Data.Aeson
 import Prelude     hiding (id)
 import Data.Aeson.Types
+import Data.Aeson.TH
 import Data.Text          (Text)
 
 import Data.Possible
@@ -23,32 +23,61 @@ import Data.Typeable
 import GHC.Generics
 import Google.Api.Utils
 import Google.Api.Kinds
+import Data.Time.Clock (UTCTime (..))
 
+import Data.HashMap.Strict (HashMap(..))
 
-data YoutubeChannel = YoutubeChannel
- { _youtubeChannelKind :: ApiKind "youtube#channel"
+data YCSnippet = YCSnippet
+ { _ycsnTitle       :: Text
+ , _ycsnDescription :: Text
+ , _ycsnPublishedAt :: UTCTime
+--  , _ycsnthumbnails  :: YCSNThumb
  } deriving  (Show, Typeable, Generic)
+deriveJSON optsL5 ''YCSnippet
+makeLenses        ''YCSnippet
 
-opts = defaultOptions { fieldLabelModifier = fromCamel 15 }
+data YCContentDetails = YCContentDetails
+ { _yccdGooglePlusUserId :: Text
+ , _yccdRelatedPlaylists :: HashMap Text Text
+   -- likes,favorites,uploads,watchHistory,watchLater -> playlistId
+ } deriving  (Show, Typeable, Generic)
+deriveJSON optsL5 ''YCContentDetails
+makeLenses        ''YCContentDetails
 
-instance FromJSON YoutubeChannel where parseJSON = genericParseJSON opts
-instance ToJSON   YoutubeChannel where toJSON    = genericToJSON    opts
+data YTStatistic = YTStatistics
+  { _ycstViewCount             :: Integer
+  , _ycstCommentCount          :: Integer
+  , _ycstSubscriberCount       :: Integer
+  , _ycstHiddenSubscriberCount :: Bool
+  , _ycstVideoCount            :: Integer
+  } deriving  (Show, Typeable, Generic)
+deriveJSON optsL5 ''YTStatistic
+makeLenses        ''YTStatistic
 
+type YoutubeChannels = ListResponse YoutubeChannel "youtube#channel"
+data YoutubeChannel = YoutubeChannel
+ { _ycKind :: ApiKind "youtube#channel"
+ , _ycEtag :: Text
+ , _ycId   :: Text
+ , _ycSnippet         :: Possible YCSnippet
+ , _ycContentDetails  :: Possible YCContentDetails
+ , _ycStatistics      :: Possible YTStatistic
+--  , _ycTopicDetails        :: Possible TopicDetails
+--  , _ycStatus              :: Possible Status
+--  , _ycBrandingSettings    :: Possible BrandingSettings
+--  , _ycContentOwnerDetails :: Possible ContentOwnerDetails
+--  , _ycInvideoPromotion    :: Possible InvideoPromotion
+--  , _ycAuditDetails        :: Possible AuditDetails
+ } deriving  (Show, Typeable, Generic)
+deriveJSON optsL3 ''YoutubeChannel
+makeLenses        ''YoutubeChannel
 instance Default YoutubeChannel where
-  def = YoutubeChannel ApiKind -- MissingData MissingData MissingData MissingData MissingData MissingData MissingData MissingData MissingData MissingData
-
-makeLenses ''YoutubeChannel
+  def = YoutubeChannel ApiKind "" ""  MissingData MissingData MissingData -- MissingData MissingData MissingData MissingData MissingData MissingData MissingData
 
 
 {--
 {
-  "kind": "youtube#channel",
-  "etag": etag,
-  "id": string,
   "snippet": {
-    "title": string,
-    "description": string,
-    "publishedAt": datetime,
     "thumbnails": {
       (key): {
         "url": string,
@@ -56,23 +85,6 @@ makeLenses ''YoutubeChannel
         "height": unsigned integer
       }
     }
-  },
-  "contentDetails": {
-    "relatedPlaylists": {
-      "likes": string,
-      "favorites": string,
-      "uploads": string,
-      "watchHistory": string,
-      "watchLater": string
-    },
-    "googlePlusUserId": string
-  },
-  "statistics": {
-    "viewCount": unsigned long,
-    "commentCount": unsigned long,
-    "subscriberCount": unsigned long,
-    "hiddenSubscriberCount": boolean,
-    "videoCount": unsigned long
   },
   "topicDetails": {
     "topicIds": [

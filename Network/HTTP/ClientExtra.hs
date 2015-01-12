@@ -69,4 +69,4 @@ methodBSL manager m j url extraQuery extraHeaders reqBody = do
           --  Status ResponseHeaders CookieJar
 
 methodJSON :: (MonadIO m, ContentEncoder m b, MonadThrow m, Functor m) => (DA.FromJSON a) => Manager -> Method -> Maybe CookieJar -> String -> QueryE -> RequestHeadersE -> b -> m (Either (BSL.ByteString, Int) (Maybe a, CookieJar, HH.ResponseHeaders))
-methodJSON a b c d e f g = either Left (Right . (\(a,b,c) -> (DA.decode a,b,c)) ) <$> methodBSL a b c d e f g
+methodJSON a b c d e f g = fmap (\(a,b,c) -> (DA.decode (trace (show a) a),b,c)) <$> methodBSL a b c d e f g
