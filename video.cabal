@@ -39,6 +39,7 @@ library
                  -- google api module
                      Google.Api.Kinds
                      Google.Api.Utils
+                     Google.Api.Youtube.Common
                      Google.Api.Youtube.Thumbnails
                      Google.Api.Youtube.Search
                      Google.Api.Youtube.Videos

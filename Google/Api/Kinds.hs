@@ -4,38 +4,25 @@ module Google.Api.Kinds (ApiKind (..),ListResponse (..), AsStr(..)) where
 import Data.Text (Text)
 import Data.Text as T
 
-import GHC.TypeLits
 import Prelude
 import Data.Aeson
-import Control.Monad
-import Control.Applicative
 import Data.Aeson.Types
-import Google.Api.Utils
+import Data.Coerce
 import Data.Possible
-import Control.Lens       (makeLenses)
 import Data.Typeable
+import Control.Applicative
+import Control.Lens       (makeLenses)
+import Control.Monad
+import Google.Api.Utils
+import GHC.TypeLits
 import GHC.Generics
 
 
 data ApiKind (sym :: Symbol) = ApiKind
-data ApiKindR (sym :: Symbol) = ApiKindR
-
-newtype AsStr a = AsStr a
--- type family ApiTag a :: *
--- type family ApiTagR a :: *
--- instance Show a => Show (ApiTagR a)
--- type instance ApiTagR (ApiKind (sym :: Symbol)) = (ApiKindR sym)
-
 instance KnownSymbol sym => Show (ApiKind sym ) where
   show = symbolVal
 
-instance KnownSymbol sym => Show (ApiKindR sym ) where
-  show a = symbolVal a ++ "ListResponse"
-
 instance KnownSymbol sym => ToJSON (ApiKind sym ) where
-  toJSON = toJSON . show
-
-instance KnownSymbol sym => ToJSON (ApiKindR sym ) where
   toJSON = toJSON . show
 
 instance KnownSymbol sym => FromJSON (ApiKind sym ) where
@@ -43,10 +30,8 @@ instance KnownSymbol sym => FromJSON (ApiKind sym ) where
      | show (ApiKind :: ApiKind sym) == a = return ApiKind
   parseJSON  _ = mzero
 
-instance KnownSymbol sym => FromJSON (ApiKindR sym ) where
-  parseJSON (String ( T.unpack -> a))
-     | show (ApiKindR :: ApiKindR sym) == a = return ApiKindR
-  parseJSON  _ = mzero
+
+newtype AsStr a = AsStr a
 
 instance (Show a) => Show (AsStr a) where
   show (AsStr a) = show a
@@ -70,7 +55,7 @@ instance ToJSON   PageInfo where toJSON    = genericToJSON    optsPI
 makeLenses ''PageInfo
 
 data  ListResponse a sym = ListResponse
- { _lrKind          :: ApiKindR sym   -- kind of content ++ ListResponse. -- we need typelevel string concatenation
+ { _lrKind          :: ApiKind sym    -- kind of content ++ ListResponse. -- we need typelevel string concatenation
  , _lrEtag          :: Text           --
  , _lrNextPageToken :: Possible Text  --
  , _lrPrevPageToken :: Possible Text
