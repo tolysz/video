@@ -1,36 +1,56 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards   #-}
+{-# LANGUAGE OverloadedStrings
+           , RecordWildCards
+           , DeriveDataTypeable
+           , GeneralizedNewtypeDeriving
+           , DeriveGeneric
+           , TemplateHaskell
+           #-}
 
 
+module Google.Api.Types.GoogleUser
+ (GoogleUser (..))
+ where
 
-module Google.Api.Types.GoogleUser where
-
-import           Data.Aeson -- .TH                 (defaultOptions, deriveJSON)
-import           Data.Text                     (Text)
-import           Prelude                       hiding (id)
-import qualified Prelude                       as P (id)
+import Data.Aeson
+import Prelude     hiding (id)
+import Data.Aeson.Types
+import Data.Text          (Text)
 
 import Data.Possible
 import Data.Default
-import Control.Applicative
+import Control.Lens       (makeLenses) -- , set)
+import Data.Typeable
+import GHC.Generics
+import Google.Api.Utils
 
 data GoogleUser = GoogleUser
-  { googleUserId         :: Possible Text
-  , googleUserName       :: Possible Text
-  , googleUserGivenName  :: Possible Text
-  , googleUserFamilyName :: Possible Text
-  , googleUserLink       :: Possible Text
-  , googleUserPicture    :: Possible Text
-  , googleUserGender     :: Possible Text
-  , googleUserBirthday   :: Possible Text
-  , googleUserLocale     :: Possible Text
-  , googleUserEmail      :: Possible Text
-  , googleUserVerifiedEmail :: Possible Bool
-  } deriving (Show)
+  { _googleUserId            :: Possible Text
+  , _googleUserName          :: Possible Text
+  , _googleUserGivenName     :: Possible Text
+  , _googleUserFamilyName    :: Possible Text
+  , _googleUserLink          :: Possible Text
+  , _googleUserPicture       :: Possible Text
+  , _googleUserGender        :: Possible Text
+  , _googleUserBirthday      :: Possible Text
+  , _googleUserLocale        :: Possible Text
+  , _googleUserEmail         :: Possible Text
+  , _googleUserVerifiedEmail :: Possible Bool
+  } deriving  (Show, Typeable, Generic)
+
+opts = defaultOptions { fieldLabelModifier = fromCamel 11 }
+
+instance FromJSON GoogleUser where parseJSON = genericParseJSON opts
+instance ToJSON GoogleUser   where toJSON    = genericToJSON    opts
 
 instance Default GoogleUser where
   def = GoogleUser MissingData MissingData MissingData MissingData MissingData MissingData MissingData MissingData MissingData MissingData MissingData
 
+makeLenses ''GoogleUser
+
+-- instance FromJSON GoogleUser
+-- instance ToJSON GoogleUser
+
+{-
 instance FromJSON GoogleUser where
  parseJSON (Object v) =
   GoogleUser <$>  v .:?? "id"
@@ -48,15 +68,15 @@ instance FromJSON GoogleUser where
 
 instance ToJSON GoogleUser where
   toJSON GoogleUser{..} = object
-     [ "id"          .= googleUserId
-     , "name"        .= googleUserName
-     , "given_name"  .= googleUserGivenName
-     , "family_name" .= googleUserFamilyName
-     , "link"        .= googleUserLink
-     , "picture"     .= googleUserPicture
-     , "gender"      .= googleUserGender
-     , "birthday"    .= googleUserBirthday
-     , "locale"      .= googleUserLocale
+     [ "id"             .= googleUserId
+     , "name"           .= googleUserName
+     , "given_name"     .= googleUserGivenName
+     , "family_name"    .= googleUserFamilyName
+     , "link"           .= googleUserLink
+     , "picture"        .= googleUserPicture
+     , "gender"         .= googleUserGender
+     , "birthday"       .= googleUserBirthday
+     , "locale"         .= googleUserLocale
      , "email"          .= googleUserEmail
      , "verified_email" .= googleUserVerifiedEmail
      ]
@@ -75,4 +95,4 @@ instance ToJSON GoogleUser where
 , "email":"tolysz@gmail.com"
 , "verified_email":true
 
---}
+--}-}

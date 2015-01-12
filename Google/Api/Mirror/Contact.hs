@@ -66,6 +66,7 @@ data Contact = Contact
              , contactAcceptCommands  :: Possible [Command]
              , contactSpeakableName   :: Possible  Text
              , contactSharingFeatures :: Possible [Text]
+--              , contactSharingKind     ::
              } deriving (Show)
 
 

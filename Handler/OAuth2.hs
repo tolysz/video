@@ -80,22 +80,19 @@ googleKey = do
 getToken :: Handler AuthToken
 getToken = do
   now <- liftIO getCurrentTime
-  (runDB . getBy . OnePerRealm =<< getUserIdent) >>=
-    f now
-   where
-      f now x
-        | Just (Entity _ (OAuthAccess{..}))  <- x  -- we have the entry inside DB
-        , Just ex  <- oAuthAccessExpires           -- it has expires field
-        , diffUTCTime ex now > 10                  -- it still has at least 10s on the clock
-        , Just at <- oAuthAccessAccessToken        -- and we have the access token
-          = return def{atAccessToken=at}           -- thus we use it
+  (runDB . getBy . OnePerRealm =<< getUserIdent) >>= \case
+      Just (Entity _ (OAuthAccess{..}))      -- we have the entry inside DB
+        | Just ex  <- oAuthAccessExpires     -- it has expires field
+        , diffUTCTime ex now > 10            -- it still has at least 10s on the clock
+        , Just at <- oAuthAccessAccessToken  -- and we have the access token
+          -> return def{atAccessToken=at}    -- thus we use it
 
-        | Just (Entity _ (OAuthAccess{..}))  <- x -- we have the entry inside DB
-        , Just _ <- oAuthAccessRefreshToken       -- we have the refresh tocken there
-          = refreshTokenOU def{atRefreshToken=oAuthAccessRefreshToken} >> getToken         -- this need to fail and show errors
+      Just (Entity _ (OAuthAccess{..}))      -- we have the entry inside DB
+        | Just _ <- oAuthAccessRefreshToken  -- we have the refresh tocken there
+          -> refreshTokenOU def{atRefreshToken=oAuthAccessRefreshToken} >> getToken         -- this need to show errors whan fails
 
-        | otherwise -- we failed on all of the above redirect home
-          = redirect GoogleOAuthLoginR   -- have no credentials and need to get some
+      _  -- we failed on all of the above redirect oauth-login
+          -> redirect GoogleOAuthLoginR   -- have no credentials and need to get some
 
 getQueryOA :: (FromJSON a)=> String -> Handler (OAuth2Result a)
 getQueryOA url = do

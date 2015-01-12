@@ -37,7 +37,25 @@ library
 --                     Network.HTTP.ClientExtra.Class
                      Network.HTTP.ClientExtra.Multipart
                  -- google api module
+                     Google.Api.Kinds
+                     Google.Api.Utils
+                     Google.Api.Youtube.Thumbnails
+                     Google.Api.Youtube.Search
+                     Google.Api.Youtube.Videos
+                     Google.Api.Youtube.Channels
+                     Google.Api.Youtube.ChannelSections
                      Google.Api.Types.GoogleUser
+                     Google.Api.Youtube.Activities
+                     Google.Api.Youtube.ChannelBanners
+                     Google.Api.Youtube.GuideCategories
+                     Google.Api.Youtube.I18nLanguages
+                     Google.Api.Youtube.I18nRegions
+                     Google.Api.Youtube.PlaylistItems
+                     Google.Api.Youtube.Playlists
+                     Google.Api.Youtube.Subscriptions
+                     Google.Api.Youtube.VideoCategories
+                     Google.Api.Youtube.Watermarks
+
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -103,6 +121,7 @@ library
                  , possible
                  , haxl
                  , auto-update
+                 , lens
                -- deps for oauth
                  , case-insensitive
                  , http-types

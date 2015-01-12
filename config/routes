@@ -17,7 +17,7 @@
 
 -- youtube
 /oauth2/youtube/channels  YTChannelsR
-/oauth2/youtube/playlists YTPlaylistsR
+/oauth2/youtube/playlists/#String/#String YTPlaylistsR
 /oauth2/youtube/allvideos YTAllVideosR
 
 /user/channels UserChannelsR GET

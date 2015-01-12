@@ -4,10 +4,12 @@ import Handler.OAuth2
 import Import
 import Types
 
+import Data.String.QM
 import Google.Api.Types.GoogleUser
 
 -- Module dedicated to accessing Data?
-getUserChannelsR :: Handler (TC [YTChannel])
+
+getUserChannelsR :: ApiReq [YTChannel]
 getUserChannelsR =
   TC . catMaybes <$> do
         uid <- getUserIdent
@@ -22,9 +24,12 @@ getListVideosR     = "https://www.googleapis.com/youtube/v3/videos?part=snippet,
 
 handleYTChannelsR  :: ApiReq Value
 handleYTChannelsR  = "https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true"
+-- UCSkMt4A9QMBnuFVrmPHQ1iw
+handleYTPlaylistsR :: String -> String -> ApiReq Value
+handleYTPlaylistsR cid part = [qm|https://www.googleapis.com/youtube/v3/playlists?part=$part&channelId=$cid&maxResults=50|]
 
-handleYTPlaylistsR :: ApiReq Value
-handleYTPlaylistsR = "https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCSkMt4A9QMBnuFVrmPHQ1iw&maxResults=50"
+-- get id, etag if etag does not match get ->
+-- auditDetails,brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails
 
 handleYTAllVideosR :: ApiReq Value
 handleYTAllVideosR = "https://www.googleapis.com/youtube/v3/search?part=snippet&forMine=true&type=video&maxResults=50"
