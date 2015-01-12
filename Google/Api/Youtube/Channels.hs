@@ -35,9 +35,10 @@ data YCContentDetails = YCContentDetails
 
 data YCSnippet = YCSnippet
   { _ycsnPublishedAt  :: UTCTime
-  , _ycsnChannelId    :: Text
   , _ycsnTitle        :: Text
   , _ycsnDescription  :: Text
+  , _ycsnLocalized    :: Value -- todo: fix
+  , _ycsnThumbnails   :: HashMap Text YThumbnail
   } deriving  (Show, Typeable, Generic)
 
 data YCStatistics = YCStatistics
