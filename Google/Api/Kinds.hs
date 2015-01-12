@@ -24,7 +24,6 @@ instance KnownSymbol sym => Show (ApiKind sym ) where
 
 instance KnownSymbol sym => ToJSON (ApiKind sym ) where
   toJSON = toJSON . show
-
 instance KnownSymbol sym => FromJSON (ApiKind sym ) where
   parseJSON (String ( T.unpack -> a))
      | show (ApiKind :: ApiKind sym) == a = return ApiKind
@@ -34,7 +33,7 @@ instance KnownSymbol sym => FromJSON (ApiKind sym ) where
 newtype AsStr a = AsStr a
 
 instance (Show a) => Show (AsStr a) where
-  show (AsStr a) = show a
+  show (AsStr a) = show (coerce a)
 
 instance (Show a) => ToJSON (AsStr a) where
   toJSON = toJSON . show
@@ -55,7 +54,7 @@ instance ToJSON   PageInfo where toJSON    = genericToJSON    optsPI
 makeLenses ''PageInfo
 
 data  ListResponse a sym = ListResponse
- { _lrKind          :: ApiKind sym    -- kind of content ++ ListResponse. -- we need typelevel string concatenation
+ { _lrKind          :: ApiKind sym   -- kind of content ++ ListResponse. -- we need typelevel string concatenation
  , _lrEtag          :: Text           --
  , _lrNextPageToken :: Possible Text  --
  , _lrPrevPageToken :: Possible Text
