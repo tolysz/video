@@ -56,6 +56,7 @@ instance (Show a) => ToJSON (AsStr a) where
 
 instance (Read a) => FromJSON (AsStr a) where
   parseJSON (String ( read . T.unpack -> a)) = pure (AsStr a)
+  parseJSON  _ = mzero
 
 data PageInfo = PageInfo
  { _piTotalResults   :: Int

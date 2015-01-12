@@ -6,7 +6,7 @@ module Network.HTTP.ClientExtra
    QueryE (..)
  , ToQueryE (..)
  , RequestHeadersE (..)
- , HH.RequestHeaders (..)
+ , HH.RequestHeaders
  --, Part (..)
  , methodBSL
  , methodJSON
@@ -57,7 +57,7 @@ methodBSL manager m j url extraQuery extraHeaders reqBody = do
               , queryString = fromQueryE . (<> extraQuery) . toQueryE . queryString $ initReq
               , requestBody = bb
               , cookieJar=j
-              , checkStatus = \a b c ->  Nothing -- cc (checkStatus initReq)
+              , checkStatus = \_ _ _ ->  Nothing -- cc (checkStatus initReq)
               }
    liftIO $ withResponse req manager $ \rb' -> do
           let cj = responseCookieJar rb'
@@ -69,4 +69,4 @@ methodBSL manager m j url extraQuery extraHeaders reqBody = do
           --  Status ResponseHeaders CookieJar
 
 methodJSON :: (MonadIO m, ContentEncoder m b, MonadThrow m, Functor m) => (DA.FromJSON a) => Manager -> Method -> Maybe CookieJar -> String -> QueryE -> RequestHeadersE -> b -> m (Either (BSL.ByteString, Int) (Maybe a, CookieJar, HH.ResponseHeaders))
-methodJSON a b c d e f g = fmap (\(a,b,c) -> (DA.decode (trace (show a) a),b,c)) <$> methodBSL a b c d e f g
+methodJSON a b c d e f g = fmap (\(a1,b1,c1) -> (DA.decode (trace (show a1) a1),b1,c1)) <$> methodBSL a b c d e f g

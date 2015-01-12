@@ -6,7 +6,7 @@ module Network.HTTP.OAuth2.Types
  ( OAuth2 (..)
  , AuthToken (..)
  , AuthError (..)
- , OAuth2Result (..)
+ , OAuth2Result
  )
  where
 
@@ -15,13 +15,13 @@ import Data.Aeson.Types
 import Data.Default
 import Control.Applicative
 import Prelude
-import Data.Time.Clock (UTCTime (..), getCurrentTime, addUTCTime)
+import Data.Time.Clock (UTCTime (..))
 import Data.Text (Text)
 import qualified Data.Text as T
 
 import Data.Typeable
 import GHC.Generics
-import Data.Aeson.TH
+-- import Data.Aeson.TH
 
 import Data.Char (toLower, isUpper)
 import Data.Bool

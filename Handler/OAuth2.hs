@@ -5,23 +5,15 @@
 {-# LANGUAGE QuasiQuotes           #-}
 {-# LANGUAGE RecordWildCards       #-}
 {-# LANGUAGE LambdaCase            #-}
+{-# LANGUAGE PatternGuards         #-}
 
 module Handler.OAuth2 where
 
 import Network.HTTP.OAuth2.Types
 import Types
-import Text.Hamlet (hamlet)
-import Text.Blaze.Html.Renderer.String (renderHtml)
-import Data.Maybe (fromJust)
-import Data.String.QM
-import Control.Monad ((>=>))
 import Import
 import Data.Time.Clock ( diffUTCTime )
-
-import qualified Data.Aeson.Types as DA
 import qualified Data.Text as T
-import qualified Data.List as DL
-
 import Network.HTTP.OAuth2
 
 type ApiReq a = Handler (TC a)
@@ -139,6 +131,7 @@ processTokenOU action = do
         Left e -> sendResponseStatus (toEnum (fromMaybe 500 $ aeStatus e) ) (aeError e)
         Right t -> updateDBToken t
 
+traceHTML :: Show a => a -> Handler Html
 traceHTML (show -> e) = defaultLayout [whamlet|We hit authError <br> #{e}|]
 
 -- handleGoogleDebugR :: SubApp OAuth2App String

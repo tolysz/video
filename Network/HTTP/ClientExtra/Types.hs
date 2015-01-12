@@ -59,7 +59,10 @@ instance Monoid QueryE where
 instance ToQueryE BS.ByteString where
   toQueryE    =  QueryE . HU.parseQueryText
 
+fromQueryE :: QueryE -> BS.ByteString
 fromQueryE  = toByteString . HU.renderQueryText True  . unQueryE
+
+fromQueryE' :: QueryE -> BS.ByteString
 fromQueryE' = toByteString . HU.renderQueryText False . unQueryE
 
 class (MonadIO m) => ContentEncoder m a where
