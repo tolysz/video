@@ -71,6 +71,7 @@ genAngularBind maid  {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "demos.textfield" "/textfield" )
     $(addStateJ     "demos.youtube"   "/youtube"   )
     $(addStateJ     "demos.about"     "/about"     )
+    $(addStateJ     "OAuth2"          "/oauth2"    )
 
     setDefaultRoute "/demos/about"
 

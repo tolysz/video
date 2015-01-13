@@ -6,17 +6,51 @@
 {-# LANGUAGE RecordWildCards       #-}
 {-# LANGUAGE LambdaCase            #-}
 {-# LANGUAGE PatternGuards         #-}
+{-# LANGUAGE ScopedTypeVariables   #-}
 
 module Handler.OAuth2 where
 
-import Network.HTTP.OAuth2.Types
 import Types
 import Import
+
 import Data.Time.Clock ( diffUTCTime )
+import Data.Possible
 import qualified Data.Text as T
+import Control.Lens
+{--
+import Data (Time.Clock ( diffUTCTime ), Possible, Text qualified as T)
+
+-}
+
 import Network.HTTP.OAuth2
+import Network.HTTP.OAuth2.Types
+import Google.Api.Kinds
 
 type ApiReq a = Handler (TC a)
+-- type ApiReq2 lt [YoutubeChannel]
+-- ListResponse a sym => Handler (TC [a])
+
+fetchNext :: ListResponse a sym -> Possible String
+fetchNext lr = lr ^. lrNextPageToken . to (fmap T.unpack) -- . to (possible Nothing Nothing (Just . T.unpack))
+
+fetchItems :: ListResponse a sym -> [a]
+fetchItems lr = lr ^. lrItems
+
+-- (ListResponse a sym)
+
+-- fetchAll  :: (FromJSON a, FromJSON b)  => String -> b -> a
+-- --handleYTChannelsR  = "https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true"
+-- fetchAll base zz = do
+--  TC one <-  fromString base :: ApiReq b
+--  TC <$> next (fetchNext one) (one ^. lrItems)
+--   where
+-- --     base = "https://www.googleapis.com/youtube/v3/channels?part=brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails&mine=true"
+--     next :: Maybe String -> [a] -> Handler [a]
+--     next Nothing a = return a
+--     next (Just n) a = do
+--            TC one <- fromString (base <> "&nextToken=" <> n) :: ApiReq a
+--            next (fetchNext one) (a ++ (one ^. lrItems))
+
 
 instance FromJSON a => IsString (Handler (TC a)) where
   fromString = getQueryOA'

@@ -1,23 +1,25 @@
 /static StaticR Static appStatic
 /auth   AuthR   Auth   getAuth
 
-/favicon.ico FaviconR GET
-/robots.txt RobotsR GET
+/favicon.ico                      FaviconR GET
+/robots.txt                       RobotsR GET
 
 / HomeR
 -- GET POST
 
 -- /oauth/ require additional authorization via @GoogleOAuthLoginR
-/oauth2/ RootOAuth2R
-/oauth2/google/callback GoogleCallbackR
-/oauth2/google/manage   GoogleManageR
-/oauth2/google/login    GoogleOAuthLoginR
-/oauth2/google/logout   GoogleOAuthLogoutR
-/oauth2/google/debug/*Texts   GoogleDebugR
+/oauth2/                          RootOAuth2R
+/oauth2/google/callback           GoogleCallbackR
+/oauth2/google/manage             GoogleManageR
+/oauth2/google/login              GoogleOAuthLoginR
+/oauth2/google/logout             GoogleOAuthLogoutR
+/oauth2/google/debug/*Texts       GoogleDebugR
 
 -- youtube
-/oauth2/youtube/channels  YTChannelsR
-/oauth2/youtube/playlists/#String/#String YTPlaylistsR
-/oauth2/youtube/allvideos YTAllVideosR
+/oauth2/youtube/channels          YTChannelsR   -- user channels
+/oauth2/youtube/playlists/#String YTPlaylistsR  -- playlists for a channel
+/oauth2/youtube/allvideos         YTAllVideosR  -- all videos for user
+/oauth2/youtube/video/*Texts      YTVideoR      GET  -- video details by id
 
-/user/channels UserChannelsR GET
+-- normal authentication level
+/user/channels                    UserChannelsR GET

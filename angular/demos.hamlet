@@ -9,4 +9,8 @@
   <div layout="row" layout-fill>
    ^{angMenu}
    <div ui-view layout-fill tabindex="-1" role=main>
-     select demos: {{ maid }}
+     <md-toolbar .md-accent>
+      <div .md-toolbar-tools>
+        <span .md-flex> Demos for {{ maid }}
+      <div flex>
+     <md-content .buttondemoBasicUsage>

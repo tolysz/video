@@ -52,7 +52,7 @@ data YVSnippet = YVSnippet
   , _yvsnDescription  :: Text
   , _yvsnThumbnails   :: HashMap Text YThumbnail
   , _yvsnChannelTitle :: Text
-  , _yvsnLocalized    :: Value -- todo: fix
+  , _yvsnLocalized    :: Possible Value -- todo: fix
   , _yvsnTags         :: [Text]
   , _yvsnCategoryId   :: Text
   , _yvsnLiveBroadcastContent :: Text

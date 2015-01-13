@@ -33,13 +33,14 @@ data YPSnippet = YPSnippet
   , _ypsnTitle        :: Text
   , _ypsnDescription  :: Text
   , _ypsnThumbnails   :: HashMap Text YThumbnail
-  , _ypsnChannelTitle :: Text
-  , _ypsnTags         :: [Text]
+  , _ypsnTags         :: Possible [Text]
+  , _ypsnChannelTitle   :: Text
   } deriving  (Show, Typeable, Generic)
 
 data YoutubePlaylist = YoutubePlaylist
   { _ypKind           :: ApiKind "youtube#playlist"     -- present
   , _ypEtag           :: Text                           -- present
+  , _ypId             :: Text
   , _ypSnippet        :: Possible YPSnippet             -- present
   , _ypStatus         :: Possible YPStatus
   , _ypContentDetails :: Possible YPContentDetails
@@ -50,37 +51,8 @@ type YPStatus         = Value
 type YPContentDetails = Value
 type YPPlayer         = Value
 
-deriveJSON optsL4 ''YPSnippet
+deriveJSON optsL5 ''YPSnippet
 makeLenses        ''YPSnippet
 
-deriveJSON optsL4 ''YoutubePlaylist
+deriveJSON optsL3 ''YoutubePlaylist
 makeLenses        ''YoutubePlaylist
-
-{--
-  "snippet": {
-    "publishedAt": datetime,
-    "channelId": string,
-    "title": string,
-    "description": string,
-    "thumbnails": {
-      (key): {
-        "url": string,
-        "width": unsigned integer,
-        "height": unsigned integer
-      }
-    },
-    "channelTitle": string,
-    "tags": [
-      string
-    ]
-  },
-  "status": {
-    "privacyStatus": string
-  },
-  "contentDetails": {
-    "itemCount": unsigned integer
-  },
-  "player": {
-    "embedHtml": string
-  }
---}

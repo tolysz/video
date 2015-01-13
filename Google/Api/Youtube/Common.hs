@@ -33,8 +33,8 @@ import Google.Api.Kinds    (AsStr, ListResponse, ApiKind)
 
 data YThumbnail = YThumbnail
   { _ytUrl    :: Text
-  , _ytWidth  :: Possible (AsStr Int)
-  , _ytHeight :: Possible (AsStr Int)
+  , _ytWidth  :: Possible Int
+  , _ytHeight :: Possible Int
   } deriving (Show, Typeable, Generic)
 
 -- data YCSnippet = YCSnippet

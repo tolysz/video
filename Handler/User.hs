@@ -1,15 +1,26 @@
+{-# LANGUAGE  DataKinds, ViewPatterns, OverloadedStrings #-}
 module Handler.User where
 
 import Handler.OAuth2
 import Import
 import Types
 
+import Data.Possible
 import Data.String.QM
+import Control.Lens
+
+import Google.Api.Kinds
 import Google.Api.Types.GoogleUser
 import Google.Api.Youtube.Channels
+import Google.Api.Youtube.Playlists
+import Google.Api.Youtube.Videos
+import Data.Text as T
+import qualified Data.List as DL (intercalate)
+{-
+import Google.Api{Kinds, Types.GoogleUser, Youtube{Channels, Playlists, Videos}}
+-}
 
 -- Module dedicated to accessing Data?
-
 getUserChannelsR :: ApiReq [YTChannel]
 getUserChannelsR =
   TC . catMaybes <$> do
@@ -17,24 +28,61 @@ getUserChannelsR =
         runDB $ selectList [ChannelMemberUser ==. uid] []
           >>= mapM (\(Entity _ q) -> get $ channelMemberRef q )
 
+
+-- Requires OAuth2
 getGoogleUserR     :: ApiReq GoogleUser
 getGoogleUserR     =  "https://www.googleapis.com/oauth2/v2/userinfo"
 
-getListVideosR     :: ApiReq Value
-getListVideosR     = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,status,statistics,recordingDetails,fileDetails&id=ACft-tpu47g"
+getYTVideoR :: [Text] -> ApiReq [YoutubeVideo]
+getYTVideoR (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
+ -- ACft-tpu47g
+     where
+      req = "snippet,contentDetails,status,statistics,recordingDetails,fileDetails"
+      base = [qm|https://www.googleapis.com/youtube/v3/videos?part=$req&id=$vid|]
+      next MissingData a   = return a
+      next (HaveData "") a = return a
+      next n a = do -- HaveNull is our start
+         TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq YoutubeVideos
+         next (fetchNext one) (a ++ (one ^. lrItems))
 
-handleYTChannelsR  :: ApiReq YoutubeChannels
---handleYTChannelsR  = "https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true"
-handleYTChannelsR  = "https://www.googleapis.com/youtube/v3/channels?part=brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails&mine=true"
+
+handleYTChannelsR  :: ApiReq [YoutubeChannel]
+handleYTChannelsR  = TC <$> next HaveNull []
+  where
+    req = "brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails"
+    base = [qm|https://www.googleapis.com/youtube/v3/channels?part=$req&mine=true|]
+    next :: Possible String -> [YoutubeChannel] -> Handler [YoutubeChannel]
+    next MissingData a = return a
+    next n a = do
+           TC one <- fromString (base <> (possible "" "" ("&nextToken=" <>) n)) :: ApiReq YoutubeChannels
+           next (fetchNext one) (a ++ (one ^. lrItems))
+
+
 -- UCSkMt4A9QMBnuFVrmPHQ1iw
-handleYTPlaylistsR :: String -> String -> ApiReq Value
-handleYTPlaylistsR cid part = [qm|https://www.googleapis.com/youtube/v3/playlists?part=$part&channelId=$cid&maxResults=50|]
+handleYTPlaylistsR :: String -> ApiReq [YoutubePlaylist]
+handleYTPlaylistsR cid = TC <$> next HaveNull []
+  where
+    req = "id,snippet,contentDetails,player,status"
+    base = [qm|https://www.googleapis.com/youtube/v3/playlists?part=$req&channelId=$cid&maxResults=50|]
+    next MissingData a   = return a
+    next (HaveData "") a = return a
+    next n a = do
+       TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq YoutubePlaylists
+       next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- get id, etag if etag does not match get ->
 -- auditDetails,brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails
 
-handleYTAllVideosR :: ApiReq Value
-handleYTAllVideosR = "https://www.googleapis.com/youtube/v3/search?part=snippet&forMine=true&type=video&maxResults=50"
+handleYTAllVideosR   :: ApiReq [Value]
+handleYTAllVideosR = TC <$> next HaveNull []
+  where
+    req = "id,snippet"
+    base = "https://www.googleapis.com/youtube/v3/search?part=" <> req <> "&forMine=true&type=video&maxResults=50"
+    next MissingData a   = return a
+    next (HaveData "") a = return a
+    next n a = do
+       TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq (ListResponse Value "youtube#searchListResponse")
+       next (fetchNext one) (a ++ (one ^. lrItems))
 
 
 -- vvv ^.. ggrResults . traverse . ggrtGeometry . to ( \v -> ( v ^. gggLocation, v ^. gggLocationType  ))

@@ -68,7 +68,8 @@ data YCContentOwnerDetails = YCContentOwnerDetails
   , _ycodTimeLinked   :: UTCTime
   } deriving  (Show, Typeable, Generic)
 
-type YoutubeChannels = ListResponse YoutubeChannel "youtube#channelListResponse"
+type YoutubeChannels = (ListResponse YoutubeChannel "youtube#channelListResponse")
+
 
 data YoutubeChannel = YoutubeChannel
   { _ycKind                :: ApiKind "youtube#channel"     -- present
@@ -84,6 +85,7 @@ data YoutubeChannel = YoutubeChannel
   , _ycInvideoPromotion    :: Possible YCInvideoPromotion   -- todo: implement
   } deriving  (Show, Typeable, Generic)
 
+-- type instance ListBase YoutubeChannel = (ListResponse YoutubeChannel "youtube#channelListResponse")
 
 type PlaylistId         = Text
 type YCBrandingSettings = Value

@@ -9,7 +9,6 @@
     "web components",
     "web-components"
   ],
-  "main": ["polymer.js"]
   "author": "Polymer Authors <polymer-dev@googlegroups.com>",
   "private": true,
   "dependencies": {

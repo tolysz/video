@@ -5,7 +5,7 @@
             <a href="" ng-click="goHome()" tabindex=0>
                   Video Selector
         <div ng-repeat="section in sections">
-          <a .menu-item .md-menu-item .menu-title  ng-click="section.visible=!section.visible" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >
+          <a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >
             {{section.name}}
           <a .menu-item .md-menu-item .menu-sub-item
              ng-show=section.visible
