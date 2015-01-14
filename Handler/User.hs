@@ -45,7 +45,7 @@ getYTVideoR (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
          TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq YoutubeVideos
          next (fetchNext one) (a ++ (one ^. lrItems))
 
-
+-- how to merge this and the nent function ?? any help welcome! type class with an internal type/data family perhaps?
 handleYTChannelsR  :: ApiReq [YoutubeChannel]
 handleYTChannelsR  = TC <$> next HaveNull []
   where
@@ -56,7 +56,6 @@ handleYTChannelsR  = TC <$> next HaveNull []
     next n a = do
            TC one <- fromString (base <> (possible "" "" ("&nextToken=" <>) n)) :: ApiReq YoutubeChannels
            next (fetchNext one) (a ++ (one ^. lrItems))
-
 
 -- UCSkMt4A9QMBnuFVrmPHQ1iw
 handleYTPlaylistsR :: String -> ApiReq [YoutubePlaylist]
@@ -74,7 +73,7 @@ handleYTPlaylistsR cid = TC <$> next HaveNull []
 -- auditDetails,brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails
 
 handleYTAllVideosR   :: ApiReq [Value]
-handleYTAllVideosR = TC <$> next HaveNull []
+handleYTAllVideosR = TC <$> next HaveNull [] -- if there be 'null' in the result add extra field init 
   where
     req = "id,snippet"
     base = "https://www.googleapis.com/youtube/v3/search?part=" <> req <> "&forMine=true&type=video&maxResults=50"
@@ -84,7 +83,7 @@ handleYTAllVideosR = TC <$> next HaveNull []
        TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq (ListResponse Value "youtube#searchListResponse")
        next (fetchNext one) (a ++ (one ^. lrItems))
 
-
+-- example how rto use lenses, kill soon
 -- vvv ^.. ggrResults . traverse . ggrtGeometry . to ( \v -> ( v ^. gggLocation, v ^. gggLocationType  ))
 -- Prelude.and $ Prelude.map isJust (Prelude.map decode dir :: [Maybe GGResponse])
 -- Prelude.map decode dir :: [Maybe GGResponse]
