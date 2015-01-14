@@ -28,7 +28,7 @@ getUserChannelsR =
         runDB $ selectList [ChannelMemberUser ==. uid] []
           >>= mapM (\(Entity _ q) -> get $ channelMemberRef q )
 
-
+handleYTPlaylistsBaseR = defaultLayout [whamlet||]
 -- Requires OAuth2
 getGoogleUserR     :: ApiReq GoogleUser
 getGoogleUserR     =  "https://www.googleapis.com/oauth2/v2/userinfo"

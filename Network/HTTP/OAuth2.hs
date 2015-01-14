@@ -1,3 +1,4 @@
+{-#LANGUAGE  LambdaCase #-}
 module Network.HTTP.OAuth2 where
 
 import Prelude
@@ -28,7 +29,6 @@ import Control.Monad.Catch (MonadThrow (..))
 
 import Debug.Trace
 
--- import Data.Possible
 newtype Scope = Scope [Text]
    deriving (Eq, Show, Read)
 

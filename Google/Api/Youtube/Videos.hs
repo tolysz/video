@@ -9,7 +9,7 @@
            
 module Google.Api.Youtube.Videos where
 
- -- https://developers.google.com/youtube/v3/docs/#Channels
+ -- https://developers.google.com/youtube/v3/docs/#Videos
 
 import Prelude             (Bool, Integer, Int, Show(..))
 import Data.Aeson          (Value)
@@ -25,7 +25,6 @@ import Google.Api.Utils    (optsL3, optsL4, optsL5)
 import Google.Api.Kinds    (AsStr, ListResponse, ApiKind)
 import Google.Api.Youtube.Common
 
- -- https://developers.google.com/youtube/v3/docs/#Videos
 type YoutubeVideos = ListResponse YoutubeVideo "youtube#videoListResponse"
 
 data YoutubeVideo = YoutubeVideo

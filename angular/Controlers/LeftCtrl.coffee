@@ -16,10 +16,10 @@
              , { state: "demos.about",     name: "About",      icon: "fa info" }
              ]
     ,
-      state: "OAuth2"
-      name:  "OAuth2"
+      state: "oauth2"
+      name:  "oauth2"
       visible : false
-      pages: []
+      pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt" }]
     ]
   $scope.maid = maid;
 

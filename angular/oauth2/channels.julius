@@ -1,0 +1,13 @@
+function($scope,$http,$log){
+
+  $scope.getList = function(){
+      $http.get("@{YTChannelsR}")
+          .success( function(data){
+              $log.debug(data);
+              $scope.channels = data;
+          }
+      )
+  }
+
+    $scope.getList()
+}

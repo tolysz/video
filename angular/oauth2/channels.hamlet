@@ -1,0 +1,20 @@
+<md-toolbar .md-accent>
+    <div .md-toolbar-tools>
+      <span .md-flex>
+         About: how are we here...
+         <small>Some OpenSource technologies used.
+    <div flex>
+    
+<md-content>
+    <md-list>
+      <md-item ng-repeat="chan in channels">
+        <md-item-content>
+          <div class="md-tile-left">
+              <img ng-src={{chan.snippet.thumbnails.default.url}} class="cover" alt="{{chan.snippet.title}}">
+          <div class="md-tile-content">
+            <h3>
+               <a ui-sref=oauth2.playlists({cid:chan.id})>
+                      {{chan.snippet.title}}
+            <h4>{{chan.kind}}
+            <p>
+              {{chan.snippet.description}}

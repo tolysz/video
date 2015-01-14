@@ -60,18 +60,20 @@ genAngularBind maid  {- (AuthPerms{..}) something -} = -- do
                , "ngMaterial"
                ]
 
-    $(addStateJ     "demos"           "/demos"     )
-    $(addStateJ     "demos.empty"     "/empty"     )
-    $(addStateJ     "demos.panel"     "/panel"     )
-    $(addStateJ     "demos.button"    "/button"    )
-    $(addStateJ     "demos.checkbox"  "/checkbox"  )
-    $(addStateJ     "demos.content"   "/content"   )
-    $(addStateJ     "demos.dialog"    "/dialog"    )
-    $(addStateJ     "demos.slider"    "/slider"    )
-    $(addStateJ     "demos.textfield" "/textfield" )
-    $(addStateJ     "demos.youtube"   "/youtube"   )
-    $(addStateJ     "demos.about"     "/about"     )
-    $(addStateJ     "OAuth2"          "/oauth2"    )
+    $(addStateJ     "demos"            "/demos"     )
+    $(addStateJ     "demos.empty"      "/empty"     )
+    $(addStateJ     "demos.panel"      "/panel"     )
+    $(addStateJ     "demos.button"     "/button"    )
+    $(addStateJ     "demos.checkbox"   "/checkbox"  )
+    $(addStateJ     "demos.content"    "/content"   )
+    $(addStateJ     "demos.dialog"     "/dialog"    )
+    $(addStateJ     "demos.slider"     "/slider"    )
+    $(addStateJ     "demos.textfield"  "/textfield" )
+    $(addStateJ     "demos.youtube"    "/youtube"   )
+    $(addStateJ     "demos.about"      "/about"     )
+    $(addStateJ     "oauth2"           "/oauth2"    )
+    $(addStateJ     "oauth2.channels"  "/channels"  )
+    $(addStateJ     "oauth2.playlists" "/playlists/:cid" )
 
     setDefaultRoute "/demos/about"
 
