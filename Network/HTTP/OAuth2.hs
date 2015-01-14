@@ -73,8 +73,9 @@ generateAuthUrl o@(OAuth2{..}) s b = oauthAuthUri <> ( BS.unpack $ fromQueryE $ 
 
 traceS a = trace (show a) a
 
-fetchAccessToken :: Manager -> OAuth2 -> Text -> IO (OAuth2Result AuthToken)
-fetchAccessToken mgr OAuth2{..} code = do
+fetchAccessToken :: Text -> Manager -> OAuth2 -> IO (OAuth2Result AuthToken)
+-- ^ take access code, manager and oauth setings
+fetchAccessToken code mgr OAuth2{..} = do
       res  <- methodJSON mgr "POST" Nothing oauthTokenUri def def (UrlEncode def $ QueryE [("code", Just code),("client_id", Just oauthClientId),("client_secret", Just oauthClientSecret),("grant_type", Just "authorization_code"),("redirect_uri", Just oauthRedirectUri)])
       case res of
         Left (s,i) -> return . Left . traceS $ AuthError (decodeUtf8 $ BSL.toStrict s) (Just i)
@@ -84,8 +85,8 @@ fetchAccessToken mgr OAuth2{..} code = do
           let zz = z{atExpiresAt = (`addUTCTime` now ) . fromIntegral <$> atExpiresIn z}
           return $ Right $ traceS zz
 
-refreshToken :: Manager -> OAuth2 -> AuthToken ->  IO (OAuth2Result AuthToken)
-refreshToken mgr OAuth2{..} o =
+refreshToken :: AuthToken -> Manager -> OAuth2 -> IO (OAuth2Result AuthToken)
+refreshToken o mgr OAuth2{..} =
       methodJSONOAuth mgr "POST" Nothing oauthTokenUri def def ( UrlEncode def $ QueryE [("refresh_token", atRefreshToken o),("client_id", Just oauthClientId),("client_secret", Just oauthClientSecret),("grant_type", Just "refresh_token")]) >>=
        \case
          Left a -> return $ Left a

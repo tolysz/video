@@ -18,8 +18,8 @@ import Data.Possible
 import qualified Data.Text as T
 import Control.Lens
 {--
+ -- see how new imports will looks like
 import Data (Time.Clock ( diffUTCTime ), Possible, Text qualified as T)
-
 -}
 
 import Network.HTTP.OAuth2
@@ -27,8 +27,6 @@ import Network.HTTP.OAuth2.Types
 import Google.Api.Kinds
 
 type ApiReq a = Handler (TC a)
--- type ApiReq2 lt [YoutubeChannel]
--- ListResponse a sym => Handler (TC [a])
 
 fetchNext :: ListResponse a sym -> Possible String
 fetchNext lr = lr ^. lrNextPageToken . to (fmap T.unpack) -- . to (possible Nothing Nothing (Just . T.unpack))
@@ -36,33 +34,17 @@ fetchNext lr = lr ^. lrNextPageToken . to (fmap T.unpack) -- . to (possible Noth
 fetchItems :: ListResponse a sym -> [a]
 fetchItems lr = lr ^. lrItems
 
--- (ListResponse a sym)
-
--- fetchAll  :: (FromJSON a, FromJSON b)  => String -> b -> a
--- --handleYTChannelsR  = "https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true"
--- fetchAll base zz = do
---  TC one <-  fromString base :: ApiReq b
---  TC <$> next (fetchNext one) (one ^. lrItems)
---   where
--- --     base = "https://www.googleapis.com/youtube/v3/channels?part=brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails&mine=true"
---     next :: Maybe String -> [a] -> Handler [a]
---     next Nothing a = return a
---     next (Just n) a = do
---            TC one <- fromString (base <> "&nextToken=" <> n) :: ApiReq a
---            next (fetchNext one) (a ++ (one ^. lrItems))
-
-
 instance FromJSON a => IsString (Handler (TC a)) where
   fromString = getQueryOA'
--- This simplyfies requesting data to suplying url with the appriopirate types
--- example how monad is an onion and changing boundaries changes meaning
+-- ^ This simplyfies requesting data to suplying url with the appriopirate types
+--   example how monad is an onion and changing boundaries changes meaning
 
 handleGoogleCallbackR :: Handler Html
 handleGoogleCallbackR = do
   codeMaybe <- lookupGetParam "code"
   errorMaybe <- lookupGetParam "error"
   case (codeMaybe, errorMaybe) of
-    (Just c, _)       -> processTokenOU (\mgr gc -> fetchAccessToken mgr gc c)
+    (Just c, _)       -> processTokenOU (fetchAccessToken c)
                           >> redirect HomeR
     (_, Just e)       -> traceHTML e
     (Nothing,Nothing) -> redirect HomeR
@@ -81,10 +63,10 @@ handleGoogleOAuthLoginR = do
          redirect $
            generateAuthUrl
              gc
-             (Scope [ "profile"
-                    , "https://www.googleapis.com/auth/youtubepartner"
-                    , "https://www.googleapis.com/auth/youtube.upload"
-                    , "https://www.googleapis.com/auth/youtube"
+             (Scope [ "profile"                                            -- try to recocer username
+                    , "https://www.googleapis.com/auth/youtubepartner"     -- whatever they do
+                    , "https://www.googleapis.com/auth/youtube.upload"     -- be able to upload new videos
+                    , "https://www.googleapis.com/auth/youtube"            -- see all data
                     ]
               )
              False
@@ -144,16 +126,21 @@ updateDBToken AuthToken{..} = do
          deleteBy $ OnePerRealm uid
          void $ insert $ OAuthAccess
                         uid
-                        "google"
+                        "google"               -- let sets oauth provider arbitrary to google
                         Nothing
-                        (Just atAccessToken)
-                        atExpiresAt
-                        atRefreshToken
-                        (Just atTokenType)
-                        ["profile", "https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtubepartner"]
+                        (Just atAccessToken)   -- store the current access tocken
+                        atExpiresAt            -- store current expiry for access tocken
+                        atRefreshToken         -- guard this one, tocken to refresh access token
+                        (Just atTokenType)     -- type methinks only Barer
+                          -- scopes to include
+                        [ "profile"                                         -- basic user info
+                        , "https://www.googleapis.com/auth/youtube"         -- basic yt info
+                        , "https://www.googleapis.com/auth/youtube.upload"  -- being able to change yt settings
+                        , "https://www.googleapis.com/auth/youtubepartner"  -- some promotions and stuff
+                        ]
 
 refreshTokenOU :: AuthToken -> Handler ()
-refreshTokenOU t = processTokenOU (\mgr gc -> refreshToken mgr gc t)
+refreshTokenOU = processTokenOU . refreshToken
 
 processTokenOU :: (Manager -> OAuth2 -> IO (OAuth2Result AuthToken))
                -> Handler ()
