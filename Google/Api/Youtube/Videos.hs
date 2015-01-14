@@ -52,7 +52,7 @@ data YVSnippet = YVSnippet
   , _yvsnThumbnails   :: HashMap Text YThumbnail
   , _yvsnChannelTitle :: Text
   , _yvsnLocalized    :: Possible Value -- todo: fix
-  , _yvsnTags         :: [Text]
+  , _yvsnTags         :: Possible [Text]
   , _yvsnCategoryId   :: Text
   , _yvsnLiveBroadcastContent :: Text
   } deriving  (Show, Typeable, Generic)

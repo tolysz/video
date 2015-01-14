@@ -71,9 +71,12 @@ genAngularBind maid  {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "demos.textfield"  "/textfield" )
     $(addStateJ     "demos.youtube"    "/youtube"   )
     $(addStateJ     "demos.about"      "/about"     )
+
     $(addStateJ     "oauth2"           "/oauth2"    )
     $(addStateJ     "oauth2.channels"  "/channels"  )
     $(addStateJ     "oauth2.playlists" "/playlists/:cid" )
+    $(addStateJ     "oauth2.playlist"  "/playlist/:pid" )
+    $(addStateJ     "oauth2.video"     "/video/:vid" )
 
     setDefaultRoute "/demos/about"
 

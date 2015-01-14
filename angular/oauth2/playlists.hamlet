@@ -6,13 +6,12 @@
     
 <md-content>
     <md-list>
-      <md-item ng-repeat="pl in playlists">
+      <md-item ng-repeat="pl in playlists | orderBy: pl.snippet.title">
         <md-item-content>
           <div class="md-tile-left">
               <img ng-src={{pl.snippet.thumbnails.default.url}} class="cover" alt="{{pl.snippet.title}}">
           <div class="md-tile-content">
-              <a ui-sref=oauth2.playlists({cid:pl.id})> {{pl.snippet.title}}
+              <a ui-sref=oauth2.playlist({pid:pl.id})> {{pl.snippet.title}}
               <div  ng-bind-html=to_trusted(pl.player.embedHtml)>
               <pre ng-show=debug>
                 {{ pl | json}}
-              

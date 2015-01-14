@@ -13,6 +13,7 @@ import Google.Api.Kinds
 import Google.Api.Types.GoogleUser
 import Google.Api.Youtube.Channels
 import Google.Api.Youtube.Playlists
+import Google.Api.Youtube.PlaylistItems
 import Google.Api.Youtube.Videos
 import Data.Text as T
 import qualified Data.List as DL (intercalate)
@@ -28,11 +29,13 @@ getUserChannelsR =
         runDB $ selectList [ChannelMemberUser ==. uid] []
           >>= mapM (\(Entity _ q) -> get $ channelMemberRef q )
 
-handleYTPlaylistsBaseR = defaultLayout [whamlet||]
 -- Requires OAuth2
+-- get information about logged user
 getGoogleUserR     :: ApiReq GoogleUser
 getGoogleUserR     =  "https://www.googleapis.com/oauth2/v2/userinfo"
 
+-- get all videos by id
+handleYTVideoBaseR = defaultLayout [whamlet||]
 getYTVideoR :: [Text] -> ApiReq [YoutubeVideo]
 getYTVideoR (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
  -- ACft-tpu47g
@@ -46,6 +49,8 @@ getYTVideoR (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
          next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- how to merge this and the nent function ?? any help welcome! type class with an internal type/data family perhaps?
+
+-- all channels for a given user
 handleYTChannelsR  :: ApiReq [YoutubeChannel]
 handleYTChannelsR  = TC <$> next HaveNull []
   where
@@ -58,6 +63,8 @@ handleYTChannelsR  = TC <$> next HaveNull []
            next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- UCSkMt4A9QMBnuFVrmPHQ1iw
+-- all playlists for a given channel
+handleYTPlaylistsBaseR = defaultLayout [whamlet||]
 handleYTPlaylistsR :: String -> ApiReq [YoutubePlaylist]
 handleYTPlaylistsR cid = TC <$> next HaveNull []
   where
@@ -69,9 +76,24 @@ handleYTPlaylistsR cid = TC <$> next HaveNull []
        TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq YoutubePlaylists
        next (fetchNext one) (a ++ (one ^. lrItems))
 
+handleYTPlaylistItemBaseR = defaultLayout [whamlet||]
+handleYTPlaylistItemR :: String -> ApiReq [YoutubePlaylistItem]
+handleYTPlaylistItemR pid = TC <$> next HaveNull []
+  where
+    req = "id,snippet,contentDetails,status"
+    base = [qm|https://www.googleapis.com/youtube/v3/playlistItems?part=$req&playlistId=$pid&maxResults=50|]
+    next MissingData a   = return a
+    next (HaveData "") a = return a
+    next n a = do
+       TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq YoutubePlaylistItems
+       next (fetchNext one) (a ++ (one ^. lrItems))
+
+
+
 -- get id, etag if etag does not match get ->
 -- auditDetails,brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails
 
+-- all videos for a given user
 handleYTAllVideosR   :: ApiReq [Value]
 handleYTAllVideosR = TC <$> next HaveNull [] -- if there be 'null' in the result add extra field init 
   where

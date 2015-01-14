@@ -1,0 +1,17 @@
+<md-toolbar .md-accent>
+    <div .md-toolbar-tools>
+      <span .md-flex>
+         Playlists for: {{playlist[0].snippet.channelTitle}} <md-switch ng-model="debug" aria-label="debug">
+    <div flex>
+
+<md-content>
+    <md-list>
+      <md-item ng-repeat="pli in playlist | orderBy: pli.snippet.title">
+        <md-item-content>
+          <div class="md-tile-left">
+              <img ng-src={{pli.snippet.thumbnails.default.url}} class="cover" alt="{{pli.snippet.title}}">
+          <div class="md-tile-content">
+              <a ui-sref=oauth2.video({vid:pli.contentDetails.videoId})> {{pli.snippet.title}}
+              <div  ng-bind-html=to_trusted(pli.player.embedHtml)>
+              <pre ng-show=debug>
+                {{ pli | json}}

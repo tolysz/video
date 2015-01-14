@@ -1,0 +1,16 @@
+function($scope,$log,$http,$sce,$stateParams){
+
+    $scope.getList = function(){
+        $log.debug($stateParams.pid)
+        $http.get('@{YTPlaylistItemBaseR}' + "/" + $stateParams.pid)
+            .success( function(data){
+                $log.debug(data);
+                $scope.playlist = data;
+            }
+        )
+    }
+    $scope.to_trusted = function(html_code) {
+        return $sce.trustAsHtml(html_code);
+    }
+    $scope.getList()
+}

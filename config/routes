@@ -19,7 +19,11 @@
 /oauth2/youtube/channels          YTChannelsR   -- user channels
 /oauth2/youtube/playlists         YTPlaylistsBaseR
 /oauth2/youtube/playlists/#String YTPlaylistsR  -- playlists for a channel
+/oauth2/youtube/playlist          YTPlaylistItemBaseR
+/oauth2/youtube/playlist/#String  YTPlaylistItemR
 /oauth2/youtube/allvideos         YTAllVideosR  -- all videos for user
+
+-- /oauth2/youtube/video             YTVideoBaseR
 /oauth2/youtube/video/*Texts      YTVideoR      GET  -- video details by id
 
 -- normal authentication level

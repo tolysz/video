@@ -31,7 +31,7 @@ type YoutubePlaylistItems = ListResponse YoutubePlaylistItem "youtube#playlistIt
 data YoutubePlaylistItem = YoutubePlaylistItem
   { _ypiKind           :: ApiKind "youtube#playlistItem" -- present
   , _ypiEtag           :: Text                           -- present
-  , _ypivId            :: Text                           -- present
+  , _ypiId             :: Text                           -- present
   , _ypiSnippet        :: Possible YPISnippet
   , _ypiStatus         :: Possible YPIStatus
   , _ypiContentDetails :: Possible YPIContentDetails
