@@ -63,13 +63,13 @@ handleGoogleOAuthLoginR = do
          redirect $
            generateAuthUrl
              gc
+             False
              (Scope [ "profile"                                            -- try to recocer username
                     , "https://www.googleapis.com/auth/youtubepartner"     -- whatever they do
                     , "https://www.googleapis.com/auth/youtube.upload"     -- be able to upload new videos
                     , "https://www.googleapis.com/auth/youtube"            -- see all data
                     ]
               )
-             False
 
 getHttpManager' :: Handler Manager
 getHttpManager' = appHttpManager <$> getYesod
@@ -155,7 +155,6 @@ processTokenOU action = do
 traceHTML :: Show a => a -> Handler Html
 traceHTML (show -> e) = defaultLayout [whamlet|We hit authError <br> #{e}|]
 
--- handleGoogleDebugR :: SubApp OAuth2App String
 handleGoogleDebugR :: Texts -> ApiReq Value
 handleGoogleDebugR v = do
   r <- T.intercalate "&" .  map (\(a,b)-> a <> "=" <> b ) . reqGetParams <$> getRequest

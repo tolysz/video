@@ -1,44 +1,36 @@
-{-# Language OverloadedStrings
-           , ViewPatterns
-           , RecordWildCards
-           , LambdaCase
-           #-}
-
 module Network.HTTP.OAuth2 where
 
+import Prelude
 import Network.HTTP.ClientExtra
 import Network.HTTP.ClientExtra.Types
 import Network.HTTP.Client
 import Network.HTTP.OAuth2.Types
 import qualified Network.HTTP.Types as H
 import Network.HTTP.Types.Method (Method)
-import Prelude
-import Data.Monoid
 
-import Data.String
+import Data.Aeson
+import Data.Aeson.Types as DA
+import Data.Bool
 import Data.Default
+import Data.Monoid
+import Data.String
 import Data.String.QM
 import Data.Text (Text)
+import Data.Time.Clock (UTCTime (..), getCurrentTime, addUTCTime)
 import qualified Data.Text as T
 import Data.Text.Encoding(decodeUtf8)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 
+import Control.Applicative
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad.Catch (MonadThrow (..))
-
-import Data.Aeson
-import Data.Aeson.Types as DA
-import Data.Time.Clock (UTCTime (..), getCurrentTime, addUTCTime)
-
-import Data.Bool
 
 import Debug.Trace
 
 -- import Data.Possible
-import Control.Applicative
-
-newtype Scope = Scope [Text] deriving (Eq, Show, Read)
+newtype Scope = Scope [Text]
+   deriving (Eq, Show, Read)
 
 instance Monoid Scope where
   mempty = Scope []
@@ -56,7 +48,6 @@ instance  ToQueryE Scope where
 
 bearer bb token = RequestHeadersE $ if T.null token then [] else [("Authorization",  bb <> " " <> token)]
 
-
 authorizeUrl OAuth2{..} = QueryE [ ("client_id"    , Just oauthClientId)
                                  , ("redirect_uri" , Just oauthRedirectUri)
                                  ]
@@ -64,12 +55,12 @@ authorizeUrl OAuth2{..} = QueryE [ ("client_id"    , Just oauthClientId)
 forceOfflineIncremental = forceOffline  <> QueryE [("include_granted_scopes", Just "true"   )]
 forceOffline = QueryE [ ("access_type"         , Just "offline")
                       , ("approval_prompt"     , Just "force"  )
-                      , ("response_type"        , Just "code"  )
+                      , ("response_type"       , Just "code"   )
                       ]
 
-generateAuthUrl :: OAuth2 -> Scope -> Bool -> String
+generateAuthUrl :: OAuth2 -> Bool -> Scope ->  String
 -- ^ Requested OA2 Scopes Incremental?
-generateAuthUrl o@(OAuth2{..}) s b = oauthAuthUri <> ( BS.unpack $ fromQueryE $ ((authorizeUrl o) <> bool forceOffline forceOfflineIncremental b <> toQueryE s))
+generateAuthUrl o@(OAuth2{..}) b s = oauthAuthUri <> BS.unpack ( fromQueryE  (authorizeUrl o <> bool forceOffline forceOfflineIncremental b <> toQueryE s))
 
 traceS a = trace (show a) a
 
