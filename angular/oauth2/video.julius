@@ -9,8 +9,14 @@ function($scope,$log,$http,$sce,$stateParams){
             }
         )
     }
+    
+    // width='640' height='360'
+    // "flex"
+
     $scope.to_trusted = function(html_code) {
-        return $sce.trustAsHtml(html_code.replace("http://", "//"));
+        if (! _.isEmpty(html_code))
+            return $sce.trustAsHtml(html_code);
+        return "";
     }
     $scope.getList()
 }

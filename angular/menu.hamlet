@@ -8,7 +8,7 @@
           <a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >
             {{section.name}}
           <a .menu-item .md-menu-item .menu-sub-item
-             ng-show=section.visible
+             ng-show="section.visible"
              ng-repeat="page in section.pages"
              ui-sref-active=active
              ui-sref={{page.state}}

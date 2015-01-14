@@ -10,7 +10,9 @@ function($scope,$log,$http,$sce,$stateParams){
         )
     }
     $scope.to_trusted = function(html_code) {
-        return $sce.trustAsHtml(html_code.replace("http://", "//"));
+        if (! _.isEmpty(html_code))
+            return $sce.trustAsHtml(html_code.replace("http://", "//"));
+        return "";
     }
     $scope.getList()
 }

@@ -9,9 +9,16 @@ function($scope,$log,$http,$sce,$stateParams){
                 }
             )
         }
-    $scope.to_trusted = function(html_code) {
 
-        return $sce.trustAsHtml(html_code.replace("http://", "//"));
+    function fixup(s){
+        return s.replace("http://", "//")
+            .replace("width='640' height='360'","width='320' height='180'"); // "flex" "width='320' height='180'"
+    }
+
+    $scope.to_trusted = function(html_code) {
+        if (! _.isEmpty(html_code))
+            return $sce.trustAsHtml( fixup(html_code));
+        return "";
     }
     $scope.getList()
 }

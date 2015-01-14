@@ -5,13 +5,12 @@
     <div flex>
     
 <md-content>
-    <md-list>
-      <md-item ng-repeat="pl in playlists | orderBy: pl.snippet.title">
-        <md-item-content>
-          <div class="md-tile-left">
-              <img ng-src={{pl.snippet.thumbnails.default.url}} class="cover" alt="{{pl.snippet.title}}">
-          <div class="md-tile-content">
-              <a ui-sref=oauth2.playlist({pid:pl.id})> {{pl.snippet.title}}
-              <div  ng-bind-html=to_trusted(pl.player.embedHtml)>
-              <pre ng-show=debug>
-                {{ pl | json}}
+    <div layout="row" ng-repeat="pl in playlists | orderBy: pl.snippet.title">
+       <div flex=20 show-gt-md layout-align="center center">
+         <a ui-sref=oauth2.playlist({pid:pl.id})>
+            <img ng-src={{pl.snippet.thumbnails.default.url}} class="cover" alt="{{pl.snippet.title}}">
+       <div flex=100 flex-gt-md=80  layout-align="center center" >
+         <a ui-sref=oauth2.playlist({pid:pl.id})> {{pl.snippet.title}}
+         <div  ng-bind-html=to_trusted(pl.player.embedHtml)>
+         <pre ng-show=debug>
+             {{ pl | json}}
