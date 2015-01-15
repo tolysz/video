@@ -16,7 +16,7 @@ import Google.Api.Youtube.Playlists
 import Google.Api.Youtube.PlaylistItems
 import Google.Api.Youtube.Videos
 import Data.Text as T
-import qualified Data.List as DL (intercalate)
+-- import qualified Data.List as DL (intercalate)
 {-
 import Google.Api{Kinds, Types.GoogleUser, Youtube{Channels, Playlists, Videos}}
 -}
@@ -35,7 +35,9 @@ getGoogleUserR     :: ApiReq GoogleUser
 getGoogleUserR     =  "https://www.googleapis.com/oauth2/v2/userinfo"
 
 -- get all videos by id
+handleYTVideoBaseR :: Handler Html
 handleYTVideoBaseR = defaultLayout [whamlet||]
+
 getYTVideoR :: [Text] -> ApiReq [YoutubeVideo]
 getYTVideoR (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
     where
@@ -62,7 +64,9 @@ handleYTChannelsR  = TC <$> next HaveNull []
            next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- all playlists for a given channel
+handleYTPlaylistsBaseR :: Handler Html
 handleYTPlaylistsBaseR = defaultLayout [whamlet||]
+
 handleYTPlaylistsR :: String -> ApiReq [YoutubePlaylist]
 handleYTPlaylistsR cid = TC <$> next HaveNull []
   where
@@ -74,7 +78,9 @@ handleYTPlaylistsR cid = TC <$> next HaveNull []
        TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq YoutubePlaylists
        next (fetchNext one) (a ++ (one ^. lrItems))
 
+handleYTPlaylistItemBaseR :: Handler Html
 handleYTPlaylistItemBaseR = defaultLayout [whamlet||]
+
 handleYTPlaylistItemR :: String -> ApiReq [YoutubePlaylistItem]
 handleYTPlaylistItemR pid = TC <$> next HaveNull []
   where

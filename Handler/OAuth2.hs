@@ -97,8 +97,8 @@ getToken = do
       Just (Entity _ (OAuthAccess{..}))      -- we have the entry inside DB
         | Just ex  <- oAuthAccessExpires     -- it has expires field
         , diffUTCTime ex now > 10            -- it still has at least 10s on the clock
-        , Just at <- oAuthAccessAccessToken  -- and we have the access token
-          -> return def{atAccessToken=at}    -- thus we use it
+        , Just atok <- oAuthAccessAccessToken  -- and we have the access token
+          -> return def{atAccessToken=atok}    -- thus we use it
 
       Just (Entity _ (OAuthAccess{..}))      -- we have the entry inside DB
         | Just _ <- oAuthAccessRefreshToken  -- we have the refresh tocken there

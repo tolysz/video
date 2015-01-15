@@ -4,7 +4,7 @@ import Import
 
 import Data.Maybe
 
-import Text.Hamlet
+-- import Text.Hamlet
 import Text.Julius
 -- import Text.Coffee
 import Text.Naked.Coffee
@@ -44,7 +44,7 @@ genAngularBind maid  {- (AuthPerms{..}) something -} = -- do
   -- canViewIt <- verifyBool permsViewSomething apSitePerms
 
   runAngularUI True {- <- maybe change it to debug? to have instant refreh -} (const $ return ()) $ do
-    let angMenu =  $(hamletFile "angular/menu.hamlet")
+--     let angMenu =  $(hamletFile "angular/menu.hamlet")
 
     addConstant "maid"    [js|#{rawJS $ show maid}|]
 
@@ -93,6 +93,11 @@ genAngularBind maid  {- (AuthPerms{..}) something -} = -- do
 () ->
   sections =
     [
+      state: "oauth2"
+      name:  "oauth2"
+      visible : false
+      pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt" }]
+    ,
       state : "demos"
       name:   "Demos"
       visible : false
@@ -107,11 +112,6 @@ genAngularBind maid  {- (AuthPerms{..}) something -} = -- do
              , { state: "demos.empty",     name: "Empty",      icon: "fa frown-o" }
              , { state: "demos.about",     name: "About",      icon: "fa info" }
              ]
-    ,
-      state: "oauth2"
-      name:  "oauth2"
-      visible : false
-      pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt" }]
     ]
   return sections
 |]

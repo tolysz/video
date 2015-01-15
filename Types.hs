@@ -6,7 +6,7 @@
 module Types where
 
 import Data.Text (Text)
-import qualified Data.Text as T
+-- import qualified Data.Text as T
 
 import Data.Char (toLower, isUpper)
 import Data.Bool
@@ -16,7 +16,7 @@ import GHC.Generics
 import Data.Aeson.TH
 import Data.Aeson
 import Yesod.Core.Content
-import Data.String
+-- import Data.String
 import Database.Persist.TH
 
 data OAuth2Google = OAuth2Google

@@ -22,7 +22,7 @@ import Data.HashMap.Strict (HashMap)
 import Control.Lens        (makeLenses)
 import GHC.Generics        (Generic)
 import Google.Api.Utils    (optsL3, optsL4, optsL5)
-import Google.Api.Kinds    (AsStr, ListResponse, ApiKind)
+import Google.Api.Kinds    (ListResponse, ApiKind)
 import Google.Api.Youtube.Common
 
 type YoutubeVideos = ListResponse YoutubeVideo "youtube#videoListResponse"

@@ -4,7 +4,7 @@ module Foundation where
 import Database.Persist.MongoDB hiding (master)
 import Import.NoFoundation
 import Text.Hamlet              (hamletFile)
-import Text.Julius              (Javascript,js)
+-- import Text.Julius              (Javascript,js)
 import Text.Jasmine             (minifym)
 import Yesod.Auth.BrowserId     (authBrowserId)
 import Yesod.Core.Types         (Logger)
@@ -162,7 +162,40 @@ instance RenderMessage App FormMessage where
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
 
 instance YesodAngular App where
-   angularUIEntry = [whamlet|<div data-ui-view layout=column layout-fill>|]
+   angularUIEntry = [whamlet|
+ <div layout=column layout-fill>
+   <section >
+     <div layout="row"  hide-gt-md ng-controller="LeftCtrl"  layout-align="space-between start">
+       <md-button ng-click="toggleLeft()" class="md-primary" >
+           <span .fa .indent >
+           Menu
+       <md-button  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
+           <span .glyphicon .log-out>
+           Logout({{maid | splitChars2:10 }})
+     <div layout="row" layout-fill>
+      <md-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$media('gt-md')" md-component-id="left" tabindex="-1" style="width:250px" >
+          <md-content style="overflow: auto;" .md-default-theme ng-controller="LeftCtrl">
+              <md-toolbar style="min-height: 64px; max-height:64px;"  .md-default-theme>
+                <h1 .md-toolbar-tools flex layout=row>
+                  <a href="" ng-click="goHome()" tabindex=0>
+                        Video Selector
+              <div ng-repeat="section in sections">
+                <a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >
+                  {{section.name}}
+                <a .menu-item .md-menu-item .menu-sub-item
+                   ng-show="section.visible"
+                   ng-repeat="page in section.pages"
+                   ui-sref-active=active
+                   ui-sref={{page.state}}
+                   md-ink-ripple="#bbb"
+                   >
+                 <span ng-class=page.icon>
+                 {{page.name}}
+              <a .menu-item .md-menu-item .menu-title  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
+                 <span .glyphicon .log-out>
+                 Logout
+      <div data-ui-view layout-fill tabindex="-1" role=main>
+   |]
 
 angularUILayout :: Text -> WidgetT App IO () ->  HandlerT App IO Html
 angularUILayout ngApp widget = do
