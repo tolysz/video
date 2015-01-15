@@ -10,31 +10,17 @@ function($scope,$log,$http,$sce,$stateParams){
             )
         }
 
-    function fixup(s){
-        return s.replace("http://", "//")
-            .replace("width='640' height='360'","width='320' height='180'"); // "flex" "width='320' height='180'"
-    }
-
-    $scope.to_trusted = function(html_code) {
-        if (! _.isEmpty(html_code))
-            return $sce.trustAsHtml( fixup(html_code));
-        return "";
-    }
-    
     $scope.setThose = function (pl){
-        
         $log.debug (pl);
         $scope.curr_pl = pl;
         $scope.curr_id = pl.id;
         $scope.curr_vars = { list: pl.id }
         $scope.curr_title = pl.snippet.title;
-        
     }
 
     $scope.flipSort = function(){
         $log.debug($scope.sort)
         $scope.sort = ! $scope.sort
-        
     }
     $scope.getList()
 }

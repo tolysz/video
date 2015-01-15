@@ -57,6 +57,7 @@ genAngularBind maid  {- (AuthPerms{..}) something -} = -- do
                , "ngSanitize"
                , "ngAnimate"
                , "ngAria"
+               , "ngCookies"
                , "ngMaterial"
                ]
 
@@ -80,12 +81,13 @@ genAngularBind maid  {- (AuthPerms{..}) something -} = -- do
 
     setDefaultRoute "/demos/about"
 
---     addController "LeftCtrl"   $(juliusFile "angular/Controlers/LeftCtrl.julius")
-    addController "LeftCtrl"          $(ncoffeeFile "angular/Controlers/LeftCtrl.coffee")
-    addFilter     "splitChars"        $(juliusFile  "angular/Filters/splitChars.julius")
-    addFilter     "splitChars2"       $(ncoffeeFile "angular/Filters/splitChars2.coffee")
-    addService    "youtubeEmbedUtils" $(juliusFile  "angular/Service/youtubeEmbedUtils.julius")
-    addDirective  "youtubeVideo"      $(juliusFile  "angular/Directive/youtubeVideo.julius")
+--     addController "LeftCtrl"   $(juliusFile "angular/_lib/Controlers/LeftCtrl.julius")
+    addController "LeftCtrl"          $(ncoffeeFile "angular/_lib/Controlers/LeftCtrl.coffee")
+    addFilter     "splitChars"        $(juliusFile  "angular/_lib/Filters/splitChars.julius")
+    addFilter     "splitChars2"       $(ncoffeeFile "angular/_lib/Filters/splitChars2.coffee")
+    addService    "youtubeEmbedUtils" $(juliusFile  "angular/_lib/Service/youtubeEmbedUtils.julius")
+    addDirective  "youtubeVideo"      $(juliusFile  "angular/_lib/Directive/youtubeVideo.julius")
+    addDirective  "resize"            $(juliusFile  "angular/_lib/Directive/resize.julius")
   -- ^ empty
     addFactory "sections" [ncoffee|
 () ->

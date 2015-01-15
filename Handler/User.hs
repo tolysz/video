@@ -38,8 +38,7 @@ getGoogleUserR     =  "https://www.googleapis.com/oauth2/v2/userinfo"
 handleYTVideoBaseR = defaultLayout [whamlet||]
 getYTVideoR :: [Text] -> ApiReq [YoutubeVideo]
 getYTVideoR (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
- -- ACft-tpu47g
-     where
+    where
       req = "snippet,contentDetails,status,statistics,recordingDetails,fileDetails"
       base = [qm|https://www.googleapis.com/youtube/v3/videos?part=$req&id=$vid|]
       next MissingData a   = return a
@@ -62,7 +61,6 @@ handleYTChannelsR  = TC <$> next HaveNull []
            TC one <- fromString (base <> (possible "" "" ("&nextToken=" <>) n)) :: ApiReq YoutubeChannels
            next (fetchNext one) (a ++ (one ^. lrItems))
 
--- UCSkMt4A9QMBnuFVrmPHQ1iw
 -- all playlists for a given channel
 handleYTPlaylistsBaseR = defaultLayout [whamlet||]
 handleYTPlaylistsR :: String -> ApiReq [YoutubePlaylist]
@@ -87,8 +85,6 @@ handleYTPlaylistItemR pid = TC <$> next HaveNull []
     next n a = do
        TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq YoutubePlaylistItems
        next (fetchNext one) (a ++ (one ^. lrItems))
-
-
 
 -- get id, etag if etag does not match get ->
 -- auditDetails,brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails

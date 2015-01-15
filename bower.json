@@ -25,10 +25,12 @@
     "material-design-icons": "1.0.0",
     "google-youtube": "master",
     "modernizr": "2.8.3",
-    "polymer": "master"
+    "polymer": "master",
+    "angular-cookies": "~1.3.9"
   },
   "devDependencies": {
-    "angular-material": "master"
+    "angular-material": "master",
+    "angular-cookies": "~1.3.9"
   },
   "resolutions": {
     "angular": "master",

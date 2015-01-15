@@ -1,4 +1,4 @@
-function ($window, $rootScope) {
+function ($window, $rootScope, $cookies) {
     var Service = {}
 
     // adapted from http://stackoverflow.com/a/5831191/1614967
@@ -8,6 +8,18 @@ function ($window, $rootScope) {
     function contains(str, substr) {
         return (str.indexOf(substr) > -1);
     }
+
+    Service.calculateDims= function (newValue) {
+        var w = newValue.w
+        var h = newValue.h
+        var menuOffset = w > 960 ? 300 : 0;
+
+        var cww = Math.max(w - 150 - menuOffset, 128);
+        var chh = Math.max(Math.min(h, cww * 9 / 16), 72);
+        var cw1 = Math.min(cww, chh * 16 / 9);
+
+        return {w: Math.round(cw1), h: Math.round(chh)}
+    };
 
     Service.getIdFromURL = function getIdFromURL(url) {
         var id = url.replace(youtubeRegexp, '$1');
@@ -82,6 +94,7 @@ function ($window, $rootScope) {
 
     // Inject YouTube's iFrame API
     (function () {
+        $cookies.VISITOR_INFO1_LIVE = "E_OLzg3yeLw; path=/; domain=.youtube.com";
         var tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         var firstScriptTag = document.getElementsByTagName('script')[0];

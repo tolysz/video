@@ -1,0 +1,39 @@
+function($window, $log, youtubeEmbedUtils) {
+    return function (scope, element) {
+        var w = angular.element($window)[0];
+        scope.getWindowDimensions = function () {
+            //$log.debug(w)
+            return { 'h': win.innerHeight
+                   , 'w': win.innerWidth
+                   };
+        };
+        scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
+            
+            var ndim = youtubeEmbedUtils.calculateDims(newValue)
+
+            scope.windowHeight = ndim.h;
+            scope.windowWidth = ndim.w;
+
+            // $log.debug(scope)
+
+            if (scope.player) {
+                //$log.debug(p)
+                // $log.debug( newValue.w,newValue.h, menuOffset, cww, cw1,chh)
+                scope.player.setSize(ndim.w + 'px',ndim.h + 'px')  // (scope.playerWidth, scope.playerHeight);
+            }
+
+            scope.style = function () {
+             //   $log.debug("s")
+                return { 'height': ndim.h
+                       , 'width':  ndim.w
+                       };
+            };
+
+        }, true);
+
+        //w.bind('resize', function () {
+        //    scope.$apply();
+        //    $log.debug("resize" + scope.getWindowDimensions())
+        //});
+    }
+}

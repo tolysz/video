@@ -1,4 +1,4 @@
-<md-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$media('gt-md')" md-component-id="left" tabindex="-1"  >
+<md-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$media('gt-md')" md-component-id="left" tabindex="-1" style="width:250px" >
     <md-content style="overflow: auto;" .md-default-theme ng-controller="LeftCtrl">
         <md-toolbar style="min-height: 64px; max-height:64px;"  .md-default-theme>
           <h1 .md-toolbar-tools flex layout=row>

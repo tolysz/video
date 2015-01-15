@@ -1,6 +1,6 @@
 #!/bin/bash
 
-clu app.min ../bower_components/underscore/underscore.js ../bower_components/angular/angular.js ../bower_components/hammerjs/hammer.js ../bower_components/observe-js/src/observe.js ../bower_components/angular-sanitize/angular-sanitize.js ../bower_components/angular-aria/angular-aria.js ../bower_components/angular-animate/angular-animate.js ../bower_components/angular-material/angular-material.js ../bower_components/angular-ui-router/release/angular-ui-router.js
+clu app.min ../bower_components/underscore/underscore.js ../bower_components/angular/angular.js ../bower_components/hammerjs/hammer.js ../bower_components/observe-js/src/observe.js ../bower_components/angular-sanitize/angular-sanitize.js ../bower_components/angular-aria/angular-aria.js ../bower_components/angular-animate/angular-animate.js ../bower_components/angular-material/angular-material.js ../bower_components/angular-ui-router/release/angular-ui-router.js ../bower_components/angular-cookies/angular-cookies.js
 cp -r ../bower_components/URL .
 cp -r ../bower_components/polymer-gestures .
 cp -r ../bower_components/NodeBind .
