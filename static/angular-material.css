@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.7.0-rc2-master-e472348
+ * v0.7.0-rc3-master-1cabb62
  */
 *, *:before, *:after {
   box-sizing: border-box; }
@@ -546,11 +546,13 @@ md-tab > .md-ripple-container .md-ripple {
       -ms-flex-order: 9;
           order: 9; }
 
-[hide]:not([show]) {
-  display: none; }
-
+/**
+ * `hide-gt-sm show-gt-lg` should hide from 600px to 1200px
+ * `show-md hide-gt-sm` should show from 0px to 960px and hide at >960px
+ * `hide-gt-md show-gt-sm` should show everywhere (show overrides hide)`
+ */
 @media (max-width: 600px) {
-  [hide-sm]:not([show-sm]), [hide]:not([show-sm]) {
+  [hide-sm]:not([show-sm]):not([show]), [hide]:not([show-sm]):not([show]) {
     display: none; }
 
   [flex-order-sm="0"] {
@@ -914,9 +916,6 @@ md-tab > .md-ripple-container .md-ripple {
  }
 
 @media (min-width: 600px) {
-  [hide-gt-sm]:not([show-gt-sm]):not([show-md]):not([show-gt-md]):not([show-lg]):not([show-gt-lg]), [hide]:not([show-gt-sm]):not([show-md]):not([show-gt-md]):not([show-lg]):not([show-gt-lg]) {
-    display: none; }
-
   [flex-order-gt-sm="0"] {
     -webkit-order: 0;
         -ms-flex-order: 0;
@@ -1278,7 +1277,10 @@ md-tab > .md-ripple-container .md-ripple {
  }
 
 @media (min-width: 600px) and (max-width: 960px) {
-  [hide-md]:not([show-md]), [hide]:not([show-md]) {
+  [hide]:not([show-gt-sm]):not([show-md]):not([show]), [hide-gt-sm]:not([show-gt-sm]):not([show-md]):not([show]) {
+    display: none; }
+
+  [hide-md]:not([show-md]):not([show]) {
     display: none; }
 
   [flex-order-md="0"] {
@@ -1642,9 +1644,6 @@ md-tab > .md-ripple-container .md-ripple {
  }
 
 @media (min-width: 960px) {
-  [hide-gt-md]:not([show-gt-md]):not([show-lg]):not([show-gt-lg]), [hide]:not([show-gt-md]):not([show-lg]):not([show-gt-lg]) {
-    display: none; }
-
   [flex-order-gt-md="0"] {
     -webkit-order: 0;
         -ms-flex-order: 0;
@@ -2006,7 +2005,10 @@ md-tab > .md-ripple-container .md-ripple {
  }
 
 @media (min-width: 960px) and (max-width: 1200px) {
-  [hide-lg]:not([show-lg]), [hide]:not([show-lg]) {
+  [hide]:not([show-gt-sm]):not([show-gt-md]):not([show-lg]):not([show]), [hide-gt-sm]:not([show-gt-sm]):not([show-gt-md]):not([show-lg]):not([show]), [hide-gt-md]:not([show-gt-sm]):not([show-gt-md]):not([show-lg]):not([show]) {
+    display: none; }
+
+  [hide-lg]:not([show-lg]):not([show]) {
     display: none; }
 
   [flex-order-lg="0"] {
@@ -2370,7 +2372,7 @@ md-tab > .md-ripple-container .md-ripple {
  }
 
 @media (min-width: 1200px) {
-  [hide-gt-lg]:not([show-gt-lg]), [hide]:not([show-gt-lg]) {
+  [hide-gt-sm]:not([show-gt-sm]):not([show-gt-md]):not([show-gt-lg]):not([show]), [hide-gt-md]:not([show-gt-sm]):not([show-gt-md]):not([show-gt-lg]):not([show]), [hide-gt-lg]:not([show-gt-sm]):not([show-gt-md]):not([show-gt-lg]):not([show]), [hide]:not([show-gt-sm]):not([show-gt-md]):not([show-gt-lg]):not([show]) {
     display: none; }
 
   [flex-order-gt-lg="0"] {
@@ -3195,7 +3197,6 @@ md-dialog {
   min-width: 240px;
   max-width: 80%;
   max-height: 80%;
-  margin: auto;
   position: relative;
   overflow: hidden;
   box-shadow: 0px 27px 24px 0 rgba(0, 0, 0, 0.2);
@@ -3221,7 +3222,7 @@ md-dialog {
     padding: 24px;
     overflow: auto;
     -webkit-overflow-scrolling: touch; }
-    md-dialog md-content *:first-child {
+    md-dialog md-content:not([layout=row]) *:first-child {
       margin-top: 0px; }
   md-dialog .md-actions {
     display: -webkit-flex;
@@ -3257,7 +3258,12 @@ md-icon {
   display: inline-block;
   margin-top: 5px;
   background-repeat: no-repeat no-repeat;
-  pointer-events: none; }
+  pointer-events: none;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex; }
+  md-icon object.md-icon {
+    display: inline-block; }
 
 svg, object {
   fill: currentColor;
@@ -3295,7 +3301,8 @@ md-input-container {
             transform: translate3d(0, 24px, 0) scale(1);
     -webkit-transform-origin: left top;
             transform-origin: left top;
-    transition: all cubic-bezier(0.25, 0.8, 0.25, 1) 0.25s; }
+    transition: -webkit-transform cubic-bezier(0.25, 0.8, 0.25, 1) 0.25s;
+    transition: transform cubic-bezier(0.25, 0.8, 0.25, 1) 0.25s; }
   md-input-container .md-input {
     -webkit-flex: 1;
         -ms-flex: 1;
@@ -3312,26 +3319,26 @@ md-input-container {
     -ms-flex-preferred-size: 26px; }
     md-input-container .md-input:focus {
       outline: none; }
-  md-input-container ng-messages, md-input-container [ng-messages] {
+  md-input-container ng-messages, md-input-container data-ng-messages, md-input-container x-ng-messages, md-input-container [ng-messages], md-input-container [data-ng-messages], md-input-container [x-ng-messages] {
     -webkit-order: 3;
         -ms-flex-order: 3;
             order: 3;
     position: relative; }
-  md-input-container ng-message, md-input-container [ng-message], md-input-container .md-char-counter {
+  md-input-container ng-message, md-input-container data-ng-message, md-input-container x-ng-message, md-input-container [ng-message], md-input-container [data-ng-message], md-input-container [x-ng-message], md-input-container .md-char-counter {
     -webkit-font-smoothing: antialiased;
     position: absolute;
     font-size: 12px;
     line-height: 24px; }
-    md-input-container ng-message.ng-enter, md-input-container [ng-message].ng-enter, md-input-container .md-char-counter.ng-enter {
+    md-input-container ng-message.ng-enter, md-input-container data-ng-message.ng-enter, md-input-container x-ng-message.ng-enter, md-input-container [ng-message].ng-enter, md-input-container [data-ng-message].ng-enter, md-input-container [x-ng-message].ng-enter, md-input-container .md-char-counter.ng-enter {
       transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       transition-delay: 0.2s; }
-    md-input-container ng-message.ng-leave, md-input-container [ng-message].ng-leave, md-input-container .md-char-counter.ng-leave {
+    md-input-container ng-message.ng-leave, md-input-container data-ng-message.ng-leave, md-input-container x-ng-message.ng-leave, md-input-container [ng-message].ng-leave, md-input-container [data-ng-message].ng-leave, md-input-container [x-ng-message].ng-leave, md-input-container .md-char-counter.ng-leave {
       transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2); }
-    md-input-container ng-message.ng-enter, md-input-container ng-message.ng-leave.ng-leave-active, md-input-container [ng-message].ng-enter, md-input-container [ng-message].ng-leave.ng-leave-active, md-input-container .md-char-counter.ng-enter, md-input-container .md-char-counter.ng-leave.ng-leave-active {
+    md-input-container ng-message.ng-enter, md-input-container ng-message.ng-leave.ng-leave-active, md-input-container data-ng-message.ng-enter, md-input-container data-ng-message.ng-leave.ng-leave-active, md-input-container x-ng-message.ng-enter, md-input-container x-ng-message.ng-leave.ng-leave-active, md-input-container [ng-message].ng-enter, md-input-container [ng-message].ng-leave.ng-leave-active, md-input-container [data-ng-message].ng-enter, md-input-container [data-ng-message].ng-leave.ng-leave-active, md-input-container [x-ng-message].ng-enter, md-input-container [x-ng-message].ng-leave.ng-leave-active, md-input-container .md-char-counter.ng-enter, md-input-container .md-char-counter.ng-leave.ng-leave-active {
       opacity: 0;
       -webkit-transform: translate3d(0, -20%, 0);
               transform: translate3d(0, -20%, 0); }
-    md-input-container ng-message.ng-leave, md-input-container ng-message.ng-enter.ng-enter-active, md-input-container [ng-message].ng-leave, md-input-container [ng-message].ng-enter.ng-enter-active, md-input-container .md-char-counter.ng-leave, md-input-container .md-char-counter.ng-enter.ng-enter-active {
+    md-input-container ng-message.ng-leave, md-input-container ng-message.ng-enter.ng-enter-active, md-input-container data-ng-message.ng-leave, md-input-container data-ng-message.ng-enter.ng-enter-active, md-input-container x-ng-message.ng-leave, md-input-container x-ng-message.ng-enter.ng-enter-active, md-input-container [ng-message].ng-leave, md-input-container [ng-message].ng-enter.ng-enter-active, md-input-container [data-ng-message].ng-leave, md-input-container [data-ng-message].ng-enter.ng-enter-active, md-input-container [x-ng-message].ng-leave, md-input-container [x-ng-message].ng-enter.ng-enter-active, md-input-container .md-char-counter.ng-leave, md-input-container .md-char-counter.ng-enter.ng-enter-active {
       opacity: 1;
       -webkit-transform: translate3d(0, 0, 0);
               transform: translate3d(0, 0, 0); }
@@ -5633,7 +5640,8 @@ md-switch {
 md-tabs {
   display: block;
   width: 100%;
-  font-weight: 500; }
+  font-weight: 500;
+  overflow: auto; }
 
 .md-header {
   width: 100%;

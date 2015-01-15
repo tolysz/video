@@ -1,4 +1,5 @@
-($scope, $timeout, $mdSidenav, $log, maid, sections) ->
+($scope, $mdSidenav, $log, maid, sections) ->
+  
   $scope.sections = sections
   $scope.maid = maid;
 

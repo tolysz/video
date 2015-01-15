@@ -1,16 +1,24 @@
 <md-toolbar .md-accent>
     <div .md-toolbar-tools>
       <span .md-flex>
-         Playlists for: {{playlists[0].snippet.channelTitle}} <md-switch ng-model="debug" aria-label="debug">
+         Playlists for: {{playlists[0].snippet.channelTitle}}
+         <md-switch ng-model="debug" aria-label="debug" style="float:left;">
+         <button .fa .sort-desc ng-show=sort ng-click=flipSort()>
+         <button .fa .sort-up ng-hide=sort ng-click=flipSort()>
+         
     <div flex>
     
 <md-content>
-    <div layout="row" ng-repeat="pl in playlists | orderBy: pl.snippet.title">
-       <div flex=20 show-gt-md layout-align="center center">
-         <a ui-sref=oauth2.playlist({pid:pl.id})>
-            <img ng-src={{pl.snippet.thumbnails.default.url}} class="cover" alt="{{pl.snippet.title}}">
-       <div flex=100 flex-gt-md=80  layout-align="center center" >
-         <a ui-sref=oauth2.playlist({pid:pl.id})> {{pl.snippet.title}}
-         <div  ng-bind-html=to_trusted(pl.player.embedHtml)>
-         <pre ng-show=debug>
-             {{ pl | json}}
+    <div layout="row" >
+       <div flex=20>
+         <div layout=column>
+           <div layout-align="center center" ng-repeat="pl in playlists | orderBy:'snippet.title':sort " ng-show=pl.contentDetails.itemCount >
+                <img ng-src={{pl.snippet.thumbnails.default.url}} class="cover" alt="{{snippet.title}}" ng-click=setThose(pl) >
+       <div flex=80  layout-align="center center" >
+         <div layout=column>
+             <a ui-sref=oauth2.playlist({pid:curr_id})> {{curr_title}}
+             <youtube-video player-vars="curr_vars" playerWidth="'100%'" ></youtube-video>
+             <pre ng-show=debug>
+                 {{ curr_pl | json}}
+
+             $#              <a ui-sref=oauth2.playlist({pid:pl.id})>

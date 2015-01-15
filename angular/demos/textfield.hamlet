@@ -4,18 +4,38 @@
 <md-content layout=column >
   <section>
     <form layout=column layout-gt-sm=row layout-padding layout-margin layout-fill>
-        <md-text-float .pad20 label="Title" ng-model=user.title>
-        <md-text-float .pad20 label="eMail" ng-model=user.email type=email>
+        <md-input-container .pad20>
+          <label>Title
+          <input ng-model="user.title">
+        <md-input-container .pad20>
+          <label>eMail
+          <input user.email type=email>
 
   <section>
     <form >
-      <md-text-float .pad20 label="Company"   ng-model=user.company disabled>
+      <md-input-container>
+        <label>Company
+        <input ng-model=user.company disabled>
       <div layout=column layout-gt-sm=row layout-padding layout-margin layout-fill>
-          <md-text-float .pad20 label="FirstName" ng-model=user.firstName>
-          <md-text-float .pad20 label="LastName"  ng-model=user.lastName .long>
-      <md-text-float .pad20 label="Address"   ng-model=user.address>
+          <md-input-container .pad20>
+              <label>FirstName
+              <input ng-model=user.firstName>
+          <md-input-container .pad20>
+              <label>LastName
+              <input ng-model=user.lastName .long>
+      <md-input-container .pad20>
+         <label>Address
+         <input ng-model=user.address>
       <div layout=column layout-gt-sm=row layout-padding layout-margin layout-fill>
-          <md-text-float .pad20 label="City"      ng-model=user.city>
-          <md-text-float .pad20 label="State"     ng-model=user.state>
-          <md-text-float .pad20 label="Postal Code" ng-model=user.postalCode>
-      <md-text-float .pad20 label="Country"   ng-model=user.country disabled>
+          <md-input-container .pad20>
+             <label>City
+             <input ng-model=user.city>
+          <md-input-container .pad20>
+             <label>State
+             <input ng-model=user.state>
+          <md-input-container .pad20>
+             <label>Postal Code
+             <input ng-model=user.postalCode>
+      <md-input-container .pad20>
+         <label>Country
+         <input ng-model=user.country disabled>

@@ -81,9 +81,11 @@ genAngularBind maid  {- (AuthPerms{..}) something -} = -- do
     setDefaultRoute "/demos/about"
 
 --     addController "LeftCtrl"   $(juliusFile "angular/Controlers/LeftCtrl.julius")
-    addController "LeftCtrl"    $(ncoffeeFile "angular/Controlers/LeftCtrl.coffee")
-    addFilter     "splitChars"  $(juliusFile  "angular/Filters/splitChars.julius")
-    addFilter     "splitChars2" $(ncoffeeFile "angular/Filters/splitChars2.coffee")
+    addController "LeftCtrl"          $(ncoffeeFile "angular/Controlers/LeftCtrl.coffee")
+    addFilter     "splitChars"        $(juliusFile  "angular/Filters/splitChars.julius")
+    addFilter     "splitChars2"       $(ncoffeeFile "angular/Filters/splitChars2.coffee")
+    addService    "youtubeEmbedUtils" $(juliusFile  "angular/Service/youtubeEmbedUtils.julius")
+    addDirective  "youtubeVideo"      $(juliusFile  "angular/Directive/youtubeVideo.julius")
   -- ^ empty
     addFactory "sections" [ncoffee|
 () ->

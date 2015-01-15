@@ -1,5 +1,5 @@
 function($scope,$log,$http,$sce,$stateParams){
-
+    $scope.sort = 0
         $scope.getList = function(){
             $log.debug($stateParams.cid)
             $http.get('@{YTPlaylistsBaseR}' + "/" + $stateParams.cid)
@@ -19,6 +19,22 @@ function($scope,$log,$http,$sce,$stateParams){
         if (! _.isEmpty(html_code))
             return $sce.trustAsHtml( fixup(html_code));
         return "";
+    }
+    
+    $scope.setThose = function (pl){
+        
+        $log.debug (pl);
+        $scope.curr_pl = pl;
+        $scope.curr_id = pl.id;
+        $scope.curr_vars = { list: pl.id }
+        $scope.curr_title = pl.snippet.title;
+        
+    }
+
+    $scope.flipSort = function(){
+        $log.debug($scope.sort)
+        $scope.sort = ! $scope.sort
+        
     }
     $scope.getList()
 }
