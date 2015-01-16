@@ -3,8 +3,8 @@ module Google.Api.Kinds -- (ApiKind (..),ListResponse (..), AsStr(..))
  (module Google.Api.Kinds )
  where
 
--- import Data.Text (Text)
--- import Data.Text as T
+import Data.Text (Text)
+import Data.Text as T
 
 import Prelude
 import Data.Aeson
