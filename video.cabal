@@ -62,7 +62,7 @@ library
         cpp-options:   -DDEVELOPMENT
         ghc-options:   -Wall -fwarn-tabs -O0
     else
-        ghc-options:   -Wall -fwarn-tabs -O2
+        ghc-options:   -Wall -fwarn-tabs -O2  -fPIC
 
     extensions: TemplateHaskell
                 QuasiQuotes
@@ -144,7 +144,7 @@ executable         video
     hs-source-dirs:    app
     build-depends:     base, video
 
-    ghc-options:       -threaded -O2 -rtsopts -with-rtsopts=-N -fPIC
+    ghc-options:       -threaded -O2 -rtsopts -with-rtsopts=-N
 
 test-suite test
     type:              exitcode-stdio-1.0
