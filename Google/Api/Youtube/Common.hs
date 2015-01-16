@@ -17,13 +17,14 @@ module Google.Api.Youtube.Common where
 
  -- https://developers.google.com/youtube/v3/docs/#Channels
 
-import Prelude             (Bool, Integer, Int, Show(..))
-import Data.Aeson          (Value)
+import Prelude             ( -- Bool, Integer,
+                             Int, Show(..))
+-- import Data.Aeson          (Value)
 import Data.Aeson.TH       (deriveJSON)
 import Data.Text           (Text)
 import Data.Possible       (Possible)
 import Data.Typeable       (Typeable)
-import Data.Time.Clock     (UTCTime(..))
+-- import Data.Time.Clock     (UTCTime(..))
 import Data.HashMap.Strict (HashMap)
 import Control.Lens        (makeLenses)
 import GHC.Generics        (Generic)

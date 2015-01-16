@@ -36,6 +36,7 @@ data GoogleUser = GoogleUser
   , _googleUserVerifiedEmail :: Possible Bool
   } deriving  (Show, Typeable, Generic)
 
+opts :: Options
 opts = defaultOptions { fieldLabelModifier = fromCamel 11 }
 
 instance FromJSON GoogleUser where parseJSON = genericParseJSON opts
