@@ -17,10 +17,11 @@ before_install:
  - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$HOME/.cabal/bin:$PATH
  - cabal --version
  - echo $GHCVER $CABALVER
-
-install:
+ - npm install coffee-script
  - travis_retry cabal update
  - cabal install alex happy
+
+install:
  - cabal sandbox init
  - cabal install aeson-0.8.0.2.tar.gz yesod-angular-ui-0.1.0.0.tar.gz haxl-0.1.0.0.tar.gz
  - cabal install --only-dependencies --enable-tests

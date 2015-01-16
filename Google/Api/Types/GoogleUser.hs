@@ -8,14 +8,13 @@
 
 
 module Google.Api.Types.GoogleUser
- (GoogleUser (..))
+ -- (GoogleUser (..))
  where
 
 import Data.Aeson
 import Prelude     hiding (id)
 import Data.Aeson.Types
 import Data.Text          (Text)
-
 import Data.Possible
 import Data.Default
 import Control.Lens       (makeLenses) -- , set)
