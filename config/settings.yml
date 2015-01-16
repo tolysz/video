@@ -1,0 +1,41 @@
+# Values formatted like "_env:ENV_VAR_NAME:default_value" can be overridden by the specified environment variable.
+# See https://github.com/yesodweb/yesod/wiki/Configuration#overriding-configuration-values-with-environment-variables
+
+static-dir:     "_env:STATIC_DIR:static"
+host:           "_env:HOST:*4" # any IPv4 host
+port:           "_env:PORT:3000"
+approot:        "_env:APPROOT:http://localhost:3000"
+ip-from-header: "_env:IP_FROM_HEADER:false"
+
+# Optional values with the following production defaults.
+# In development, they default to the inverse.
+#
+# development: false
+# detailed-logging: false
+# should-log-all: false
+# reload-templates: false
+# mutable-static: false
+# skip-combining: false
+
+database:
+  user:        "video"
+  password:    "video"
+  host:        "localhost"
+  database:    "video"
+  connections: 50
+
+copyright: "2015© Marcin Tolysz website, content various copyrights"
+
+google-api-server: "_env:GOOGLE_API_SERVER"
+google-api-browser: "_env:GOOGLE_API_BROWSER"
+
+google-oauth:
+#  auth_uri: "https://accounts.google.com/o/oauth2/auth"
+# token_uri: "https://accounts.google.com/o/oauth2/token"
+#  revoke_uri: "https://accounts.google.com/o/oauth2/revoke"
+   client_id: "_env:CLIENT_ID:"
+   client_secret: "_env:CLIENT_SECRET:"
+   client_email:  "_env:CLIENT_EMAIL:"
+   client_x509_cert_url:  "_env:CLIENT_X509_CERT_URL:"
+#  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
+#  javascript_origins: ["https://video.kio.sx"]

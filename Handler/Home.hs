@@ -24,9 +24,11 @@ import Yesod.AngularUI
 handleHomeR :: Handler Html
 handleHomeR =  do
            maid <- fmap (userIdent . fromJust) . runDB . get =<< requireAuthId
+
+           devel <- appDevelopment . appSettings <$> getYesod
            {-- ap :: AuthPerms  <- queryDB sadasd -}
            {- conf <- liftIO getIt -}
-           genAngularBind maid {- -> ap-> conf -> -} (\y x ->
+           genAngularBind maid devel {- -> ap-> conf -> -} (\y x ->
                  angularUILayout y $ do
                    setTitle "Video Selector" -- "Welcome To Yesod!"
                    -- addStylesheetRemote "//fonts.googleapis.com/css?family=Nothing+You+Could+Do"
@@ -36,11 +38,11 @@ handleHomeR =  do
                  )
 
 
-development :: Bool
-development = True
+-- development :: Bool
+-- development = True
 
-genAngularBind :: Text-> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind maid  {- (AuthPerms{..}) something -} = -- do
+genAngularBind :: Text -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
+genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
   -- canViewIt <- verifyBool permsViewSomething apSitePerms
 
   runAngularUI True {- <- maybe change it to debug? to have instant refreh -} (const $ return ()) $ do

@@ -61,6 +61,8 @@ data AppSettings = AppSettings
     , appGoogleBrowserKey        :: Maybe Text
     -- ^ Google Api Browser Key
     , appGoogleWebAppOAuth       :: Maybe OAuth2Google
+    -- ^ OAuth2 config
+    , appDevelopment             :: Bool
     }
 
 
@@ -91,6 +93,7 @@ instance FromJSON AppSettings where
         appGoogleServerKey        <- o .:? "google-api-server"
         appGoogleBrowserKey       <- o .:? "google-api-browser"
         appGoogleWebAppOAuth      <- o .:? "google-oauth"
+        appDevelopment            <- pure defaultDev
 
         return AppSettings {..}
 
