@@ -1,4 +1,7 @@
-language: haskell
+language:
+   haskell
+   gcc:
+     - "4.8"
 before_install:
 env:
  - GHCVER=7.8.4 CABALVER=1.22
@@ -18,7 +21,8 @@ before_install:
  - gcc --version
  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
  - sudo apt-get -qq update
- - sudo apt-get -qq install g++-4.7
+ - sudo apt-get -qq install gcc-4.8
+ - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
  - gcc --version
  - cabal --version
  - echo $GHCVER $CABALVER
