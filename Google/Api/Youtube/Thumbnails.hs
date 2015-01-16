@@ -9,9 +9,9 @@
 module Google.Api.Youtube.Thumbnails where
 
  -- https://developers.google.com/youtube/v3/docs/#Thumbnails
-import Data.Aeson
-import Data.Aeson.Types
-import Data.Aeson.TH
+-- import Data.Aeson
+-- import Data.Aeson.Types
+-- import Data.Aeson.TH
 
 {-
 {

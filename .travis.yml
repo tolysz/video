@@ -29,8 +29,8 @@ install:
 script:
  - cabal configure --enable-tests --enable-library-coverage || cabal configure --enable-tests --enable-coverage
  - cabal build
- - cabal test
+# - cabal test
 
-after_script:
- - cabal install hpc-coveralls
- - hpc-coveralls --exclude-dir=test test
+#after_script:
+# - cabal install hpc-coveralls
+# - hpc-coveralls --exclude-dir=test test

@@ -6,7 +6,7 @@ import Network.HTTP.ClientExtra
 import Network.HTTP.ClientExtra.Types
 import Network.HTTP.Client
 import Network.HTTP.OAuth2.Types
-import qualified Network.HTTP.Types as H
+import Network.HTTP.Types.Header (ResponseHeaders)
 import Network.HTTP.Types.Method (Method)
 
 import Data.Aeson
@@ -15,16 +15,16 @@ import Data.Bool
 import Data.Default
 import Data.Monoid
 import Data.String
-import Data.String.QM
+-- import Data.String.QM
 import Data.Text (Text)
-import Data.Time.Clock (UTCTime (..), getCurrentTime, addUTCTime)
+import Data.Time.Clock (getCurrentTime, addUTCTime)
 import qualified Data.Text as T
 import Data.Text.Encoding(decodeUtf8)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 
 import Control.Applicative
-import Control.Monad.IO.Class (MonadIO, liftIO)
+import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Catch (MonadThrow (..))
 
 import Debug.Trace
@@ -46,13 +46,17 @@ instance  ToQueryE Scope where
  toQueryE (Scope []) = def
  toQueryE (Scope a) = QueryE [("scope", Just $ T.intercalate " " a)]
 
+bearer :: Text -> Text -> RequestHeadersE
 bearer bb token = RequestHeadersE $ if T.null token then [] else [("Authorization",  bb <> " " <> token)]
 
+authorizeUrl :: OAuth2 -> QueryE
 authorizeUrl OAuth2{..} = QueryE [ ("client_id"    , Just oauthClientId)
                                  , ("redirect_uri" , Just oauthRedirectUri)
                                  ]
-
+forceOfflineIncremental :: QueryE
 forceOfflineIncremental = forceOffline  <> QueryE [("include_granted_scopes", Just "true"   )]
+
+forceOffline :: QueryE
 forceOffline = QueryE [ ("access_type"         , Just "offline")
                       , ("approval_prompt"     , Just "force"  )
                       , ("response_type"       , Just "code"   )
@@ -62,6 +66,7 @@ generateAuthUrl :: OAuth2 -> Bool -> Scope ->  String
 -- ^ Requested OA2 Scopes Incremental?
 generateAuthUrl o@(OAuth2{..}) b s = oauthAuthUri <> BS.unpack ( fromQueryE  (authorizeUrl o <> bool forceOffline forceOfflineIncremental b <> toQueryE s))
 
+traceS :: Show a => a -> a
 traceS a = trace (show a) a
 
 fetchAccessToken :: Text -> Manager -> OAuth2 -> IO (OAuth2Result AuthToken)
@@ -100,6 +105,14 @@ patchOAuth2 mgr AuthToken{..} url qq hh = methodJSONOAuth mgr "PATCH" Nothing ur
 
 postOAuth2 :: (Functor m, MonadIO m, ContentEncoder m b, MonadThrow m, FromJSON a) => Manager -> AuthToken -> String -> b -> m (OAuth2Result a)
 postOAuth2 mgr AuthToken{..} url= methodJSONOAuth mgr "POST" Nothing url def (bearer atTokenType atAccessToken)
+
+getOAuth2BSL :: (MonadThrow m, MonadIO m) =>
+                      Manager
+                      -> AuthToken
+                      -> String
+                      -> m (Either
+                              (BSL.ByteString, Int)
+                              (BSL.ByteString,CookieJar,ResponseHeaders))
 
 getOAuth2BSL mgr AuthToken{..} url = methodBSL mgr "GET" Nothing url def (bearer atTokenType atAccessToken) (EmptyBody def)
 

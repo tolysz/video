@@ -32,7 +32,7 @@ toCamel1 n = worker True . drop n
   where
    worker _     []     = []
    worker True  (c:cs) = toLower c : worker False cs
-   worker False css@(c:cs) = c : worker False cs
+   worker False (c:cs) = c : worker False cs
 
 dropL :: Int -> String -> String
 dropL n = worker . drop n

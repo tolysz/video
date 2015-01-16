@@ -12,9 +12,9 @@ import qualified Network.HTTP.Types.URI    as HU
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.Char8 as BSL8
-
+import Data.CaseInsensitive (CI(..))
 import qualified Data.Text.Encoding as DTE
-import Control.Arrow (first, (***))
+import Control.Arrow ((***))
 
 import qualified Data.Aeson as DA
 import Data.CaseInsensitive (mk)
@@ -23,7 +23,7 @@ import Data.Monoid
 import Data.Default
 import qualified Data.ByteString.Base64.Lazy as B64
 
-import Control.Monad.IO.Class (MonadIO, liftIO)
+import Control.Monad.IO.Class (MonadIO)
 import Network.HTTP.Client 
 
 import Blaze.ByteString.Builder
@@ -37,6 +37,7 @@ data EmptyBody     = EmptyBody RequestHeadersE
 newtype RequestHeadersE = RequestHeadersE [(Text,Text)] deriving Show
 newtype QueryE = QueryE { unQueryE :: HU.QueryText } deriving Show
 
+unRequestHeaders :: RequestHeadersE -> [(CI BS.ByteString, BS.ByteString)]
 unRequestHeaders (RequestHeadersE a)= Prelude.map ( (mk . DTE.encodeUtf8) *** DTE.encodeUtf8) a
 
 instance Default RequestHeadersE where
@@ -72,7 +73,7 @@ class (MonadIO m) => ContentEncoder m a where
        (body,eh) <- buildBody part
        return $ renderHeader eh <> body <> renderBoundary b
     where
-      renderBoundary b = cp "\r\n--" <> cp b
+      renderBoundary b1 = cp "\r\n--" <> cp b1
       renderHeader (RequestHeadersE a) = go a
         where
           go [] = cp "\r\n\r\n"

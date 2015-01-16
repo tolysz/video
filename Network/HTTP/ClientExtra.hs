@@ -17,35 +17,35 @@ module Network.HTTP.ClientExtra
 import Network.HTTP.Client
  
 -- import Network.HTTP.Client.MultipartFormData
-import Network.HTTP.ClientExtra.Multipart
+import Network.HTTP.ClientExtra.Multipart()
 import Network.HTTP.ClientExtra.Types
 import Network.HTTP.Types.Method (Method)
 import qualified Network.HTTP.Types.Header as HH
 import qualified Network.HTTP.Types.Status as HS
-import qualified Network.HTTP.Types.URI    as HU
-import qualified Data.Text.Encoding as DTE
+-- import qualified Network.HTTP.Types.URI    as HU
+-- import qualified Data.Text.Encoding as DTE
 
 import qualified Data.Aeson as DA
-import Data.CaseInsensitive (mk)
+-- import Data.CaseInsensitive (mk)
 
 import Control.Applicative ((<$>))
-import Control.Arrow (first, (***))
+-- import Control.Arrow (first, (***))
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import qualified Control.Exception as Ex
+-- import qualified Control.Exception as Ex
 import Control.Monad.Catch (MonadThrow (..))
 
 import Data.Monoid
 import Data.Either
-import Data.Default
-import Data.Text
+-- import Data.Default
+-- import Data.Text
 import Prelude
 
 import Debug.Trace
 
 import qualified Data.ByteString.Lazy as BSL
-import qualified Data.ByteString as BS
-import qualified Data.Text.Encoding as TE
-import Blaze.ByteString.Builder -- (toByteString)
+-- import qualified Data.ByteString as BS
+-- import qualified Data.Text.Encoding as TE
+-- import Blaze.ByteString.Builder -- (toByteString)
 
 methodBSL :: (MonadIO m, ContentEncoder m b, MonadThrow m) => Manager -> Method -> Maybe CookieJar -> String -> QueryE -> RequestHeadersE -> b -> m (Either (BSL.ByteString, Int) (BSL.ByteString, CookieJar, HH.ResponseHeaders))
 methodBSL manager m j url extraQuery extraHeaders reqBody = do
