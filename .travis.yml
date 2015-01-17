@@ -24,7 +24,7 @@ before_install:
  - gcc --version
  - cabal --version
  - echo $GHCVER $CABALVER
- - npm install coffee-script
+ - sudo npm -g install coffee-script
  - travis_retry cabal update
  - cabal install alex happy
 
