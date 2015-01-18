@@ -150,10 +150,12 @@ instance YesodAuthPersist App
 
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.
+mkMessage "App" "messages" "en"
 instance RenderMessage App FormMessage where
     renderMessage _ _ = defaultFormMessage
 
--- Note: Some functionality previously present in the scaffolding has been
+-- Note: Some functionality previously pre
+-- -- --  sent in the scaffolding has been
 -- moved to documentation in the Wiki. Following are some hopefully helpful
 -- links:
 --
@@ -161,7 +163,15 @@ instance RenderMessage App FormMessage where
 -- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
 
+-- instance (YesodAngular app ~ app, RenderMessage app m) => RenderMessage app m where
+--   renderMessage  =  renderMessage
+
+-- instance RenderMessage (YesodAngular ) FormMessage where
+--    renderMessage _ _ = defaultFormMessage
+
+-- todo: find a way on how to add i18n to angular
 instance YesodAngular App where
+--   renderMessageAUI = Just renderMessage
    angularUIEntry = [whamlet|
  <div layout=column layout-fill>
    <section >
