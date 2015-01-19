@@ -1,6 +1,5 @@
 [![Coverage Status](https://img.shields.io/coveralls/tolysz/video.svg)](https://coveralls.io/r/tolysz/video)
 [![Build Status](https://travis-ci.org/tolysz/video.svg?branch=master)](https://travis-ci.org/tolysz/video)
-For whatever issues with `happy` it fails to build on travisCI
 
 Sample Webap
 ============

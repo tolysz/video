@@ -80,6 +80,9 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "oauth2.playlists" "/playlists/:cid" )
     $(addStateJ     "oauth2.playlist"  "/playlist/:pid" )
     $(addStateJ     "oauth2.video"     "/video/:vid" )
+    
+    $(addStateJ     "admin"           "/admin"      )
+
 
     setDefaultRoute "/demos/about"
 
@@ -89,12 +92,17 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     addFilter     "splitChars2"       $(ncoffeeFile "angular/_lib/Filters/splitChars2.coffee")
     addService    "youtubeEmbedUtils" $(juliusFile  "angular/_lib/Service/youtubeEmbedUtils.julius")
     addDirective  "youtubeVideo"      $(juliusFile  "angular/_lib/Directive/youtubeVideo.julius")
-    addDirective  "resize"            $(juliusFile  "angular/_lib/Directive/resize.julius")
+--     addDirective  "resize"            $(juliusFile  "angular/_lib/Directive/resize.julius")
   -- ^ empty
     addFactory "sections" [ncoffee|
 () ->
   sections =
-    [
+    [ 
+      state: "admin"
+      name: "admin"
+      visible: false
+      pages: []
+    ,
       state: "oauth2"
       name:  "oauth2"
       visible : false

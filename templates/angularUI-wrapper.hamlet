@@ -22,7 +22,7 @@ $doctype 5
             <footer style="clear: both; float: left; display: block; position: relative;">
                 #{extraCopyright $ appExtra $ settings master}
         $maybe browserKey <- appGoogleBrowserKey $ settings master
-            <script src="//maps.google.com/maps/api/js?key=#{browserKey}&sensor=false&v=3.15" type="text/javascript">
+            <script src="//maps.google.com/maps/api/js?key=#{browserKey}&sensor=false&v=3.18" type="text/javascript">
         $nothing
             <script src="//maps.google.com/maps/api/js?sensor=false" type="text/javascript">
         $maybe analytics <- extraAnalytics $ appExtra $ settings master

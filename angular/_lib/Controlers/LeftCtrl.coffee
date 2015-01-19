@@ -2,6 +2,8 @@
   
   $scope.sections = sections
   $scope.maid = maid;
+  
+  $scope.player = "Test";
 
   $scope.toggleLeft = () -> $mdSidenav('left') .toggle()
   $scope.openLeft   = () -> $mdSidenav('left') .open()

@@ -62,4 +62,11 @@ ChannelMember
     user          UserId
     UniqueChannelMember ref user
     deriving Show Typeable Generic
+    
+-- Let start the other end
+
+SiteGroup
+  public          Bool
+  name            Text
+  deriving Show Typeable Generic
 
