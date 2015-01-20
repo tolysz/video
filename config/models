@@ -4,7 +4,7 @@ User
     friendly      Text Maybe
     password      Text Maybe
     UniqueUser    ident
-    siteAdmin     Bool default=False
+    siteAdmin     Bool
     deriving Typeable Show
 
 Email
@@ -72,10 +72,13 @@ SiteGroupMember
   fullMember    Bool
   userAdmin     Bool
   videoAdmin    Bool
-  
+  deriving Show Typeable Generic
+
 SiteGroup
   public          Bool
   name            Text
+  notes           Text Maybe
+  url             Text Maybe
   deriving Show Typeable Generic
 
 VirtualVideo

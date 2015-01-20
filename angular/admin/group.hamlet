@@ -1,0 +1,7 @@
+
+<md-content .md-padding .sliderdemoBasicUsage>
+    <h3>Share with: {{shareName}}
+    <md-slider md-discrete ng-model=share step=1 min=1 max=6 aria-label=shareName md-label=shareName label={{shareName}}>
+
+<h3>
+  {{longDesc}}

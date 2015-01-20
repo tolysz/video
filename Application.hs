@@ -26,6 +26,7 @@ import Handler.Common
 import Handler.Home
 import Handler.OAuth2
 import Handler.User
+import Handler.DB
 
 
 -- This line actually creates our YesodDispatch instance. It is the second half

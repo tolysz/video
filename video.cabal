@@ -28,6 +28,7 @@ library
                      Handler.Home
                      Handler.User
                      Handler.OAuth2
+                     Handler.DB
 
                 --  move to a separate module after testing or merge with http-client?
                      Network.HTTP.OAuth2.Types

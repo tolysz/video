@@ -10,7 +10,6 @@
 
 module Handler.OAuth2 where
 
-import Types
 import Import
 
 import Data.Time.Clock ( diffUTCTime )
@@ -25,8 +24,6 @@ import Data (Time.Clock ( diffUTCTime ), Possible, Text qualified as T)
 import Network.HTTP.OAuth2
 import Network.HTTP.OAuth2.Types
 import Google.Api.Kinds
-
-type ApiReq a = Handler (TC a)
 
 fetchNext :: ListResponse a sym -> Possible String
 fetchNext lr = lr ^. lrNextPageToken . to (fmap T.unpack) -- . to (possible Nothing Nothing (Just . T.unpack))

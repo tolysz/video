@@ -1,9 +1,6 @@
 module Handler.Home where
 
 import Import
-
-import Data.Maybe
-
 -- import Text.Hamlet
 import Text.Julius
 -- import Text.Coffee
@@ -11,9 +8,6 @@ import Text.Naked.Coffee
 
 import Yesod.AngularUI
 
---import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3,
---                              withSmallInput)
---
 -- This is a handler function for the GET request method on the HomeR
 -- resource pattern. All of your resource patterns are defined in
 -- config/routes
@@ -23,7 +17,7 @@ import Yesod.AngularUI
 -- inclined, or create a single monolithic file.
 handleHomeR :: Handler Html
 handleHomeR =  do
-           maid <- fmap (userIdent . fromJust) . runDB . get =<< requireAuthId
+           maid <- maybe (permissionDenied "You need to have login") (return . userIdent) =<< runDB . get =<< requireAuthId
 
            devel <- appDevelopment . appSettings <$> getYesod
            {-- ap :: AuthPerms  <- queryDB sadasd -}
@@ -36,10 +30,6 @@ handleHomeR =  do
                    -- toWidget [julius| alert("Hello World!"); |]
                    x
                  )
-
-
--- development :: Bool
--- development = True
 
 genAngularBind :: Text -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
 genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
@@ -63,7 +53,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                , "ngMaterial"
                ]
 
-    $(addStateJ     "demos"            "/demos"     )
+    $(addStateJ     "demos"            "/demos"     ) -- could work without passwords
     $(addStateJ     "demos.empty"      "/empty"     )
     $(addStateJ     "demos.panel"      "/panel"     )
     $(addStateJ     "demos.button"     "/button"    )
@@ -75,15 +65,16 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "demos.youtube"    "/youtube"   )
     $(addStateJ     "demos.about"      "/about"     )
 
-    $(addStateJ     "oauth2"           "/oauth2"    )
+    $(addStateJ     "oauth2"           "/oauth2"    )  -- show only to channel admin who autenticated oauth
     $(addStateJ     "oauth2.channels"  "/channels"  )
     $(addStateJ     "oauth2.playlists" "/playlists/:cid" )
     $(addStateJ     "oauth2.playlist"  "/playlist/:pid" )
     $(addStateJ     "oauth2.video"     "/video/:vid" )
-    
-    $(addStateJ     "admin"            "/admin"      )
+
+    $(addStateJ     "admin"            "/admin"      ) -- only channel admin
     $(addStateJ     "admin.video"      "/video"      )
-    $(addStateJ     "site"             "/site"       ) -- will require special permissions
+    $(addStateJ     "admin.group"      "/group"      ) -- require special permissions
+    $(addStateJ     "site"             "/site"       ) -- will be per user
 
     setDefaultRoute "/demos/about"
 
@@ -98,7 +89,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     addFactory "sections" [ncoffee|
 () ->
   sections =
-    [ 
+    [
       state: "site"
       name: "site"
       visible: false
@@ -107,7 +98,9 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
       state: "admin"
       name: "admin"
       visible: false
-      pages: [ { state:"admin.video", name: "video", icon: "fa video-camera"}]
+      pages: [ { state:"admin.video", name: "video", icon: "fa video-camera"}
+             , { state:"admin.group", name: "group", icon: "fa group"}
+             ]
     ,
       state: "oauth2"
       name:  "oauth2"

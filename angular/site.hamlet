@@ -6,3 +6,16 @@
      <md-content .buttondemoBasicUsage>
 
 Site Create, List, assign owner.
+
+ <md-list>
+      <md-item ng-repeat="site in sites">
+        <md-item-content>
+          <div class="md-tile-left">
+              <img ng-src="{{site.logo}}" class="logo" alt="{{site.who}}">
+          <div class="md-tile-content">
+            
+            <h3>{{site.name}}
+            <h4>{{site.andmin | json}}
+            <p>
+              {{ site.notes}}
+              {{ site.public }}

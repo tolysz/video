@@ -3,7 +3,6 @@ module Handler.User where
 
 import Handler.OAuth2
 import Import
-import Types
 
 import Data.Possible
 import Data.String.QM
@@ -20,14 +19,6 @@ import Data.Text as T
 {-
 import Google.Api{Kinds, Types.GoogleUser, Youtube{Channels, Playlists, Videos}}
 -}
-
--- Module dedicated to accessing Data?
-getUserChannelsR :: ApiReq [YTChannel]
-getUserChannelsR =
-  TC . catMaybes <$> do
-        uid <- getUserIdent
-        runDB $ selectList [ChannelMemberUser ==. uid] []
-          >>= mapM (\(Entity _ q) -> get $ channelMemberRef q )
 
 -- Requires OAuth2
 -- get information about logged user
