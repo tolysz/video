@@ -81,8 +81,9 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "oauth2.playlist"  "/playlist/:pid" )
     $(addStateJ     "oauth2.video"     "/video/:vid" )
     
-    $(addStateJ     "admin"           "/admin"      )
-
+    $(addStateJ     "admin"            "/admin"      )
+    $(addStateJ     "admin.video"      "/video"      )
+    $(addStateJ     "site"             "/site"       ) -- will require special permissions
 
     setDefaultRoute "/demos/about"
 
@@ -98,10 +99,15 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
 () ->
   sections =
     [ 
+      state: "site"
+      name: "site"
+      visible: false
+      pages: []
+    ,
       state: "admin"
       name: "admin"
       visible: false
-      pages: []
+      pages: [ { state:"admin.video", name: "video", icon: "fa video-camera"}]
     ,
       state: "oauth2"
       name:  "oauth2"

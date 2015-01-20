@@ -49,9 +49,9 @@ makeFoundation appSettings = do
 
     -- Create the database connection pool
     appConnPool <- createPoolConfig $ appDatabaseConf appSettings
-    
-    -- My Specific ones
 
+    -- My Specific ones
+--     runLoggingT (runSqlPool (runMigration migrateAll) appConnPool) logFunc
     return App {..}
 
 -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and

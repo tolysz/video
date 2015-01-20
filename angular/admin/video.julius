@@ -1,0 +1,21 @@
+function($scope){
+    
+    //$scope.shareName = "";
+  $scope.share = 2;
+        $scope.$watch('share', function() {
+        var r = [ ["",""]
+                , ["me", "only you"]
+                , ["people from meeting", "all people who seen it anyway"]
+                , ["all members", "people who are members of your Toastmaster"]
+                , ["channel members", "all members and friends (i.e. guests)"]
+                , ["site members", "all other Toastmaster groups"]
+                , ["the youtube", "Everyone! this is going into the public playlist viewable by everyone"]
+                ]
+        $scope.shareName = r[$scope.share][0]
+        $scope.longDesc  = r[$scope.share][1]
+
+
+        })
+    
+    
+}

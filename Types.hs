@@ -67,6 +67,17 @@ data ViewChan = Owner    -- Puts Channel offline
                          --  channel is listed
               | World    -- everyone lgged can see and enter channel
     deriving (Show, Read, Eq, Typeable, Generic)
-derivePersistField "ViewChan"
 
+derivePersistField "ViewChan"
 instance ToJSON ViewChan
+
+data PlaylistType = PLRaw
+                  | PLPresent
+                  | PLMambers
+                  | PLGroup
+                  | PLSite
+                  | PLWorld
+    deriving (Show, Read, Eq, Typeable, Generic)
+
+derivePersistField "PlaylistType"
+instance ToJSON PlaylistType

@@ -4,6 +4,7 @@ User
     friendly      Text Maybe
     password      Text Maybe
     UniqueUser    ident
+    siteAdmin     Bool default=False
     deriving Typeable Show
 
 Email
@@ -62,11 +63,37 @@ ChannelMember
     user          UserId
     UniqueChannelMember ref user
     deriving Show Typeable Generic
-    
+
 -- Let start the other end
 
+SiteGroupMember
+  user          UserId
+  group         SiteGroupId
+  fullMember    Bool
+  userAdmin     Bool
+  videoAdmin    Bool
+  
 SiteGroup
   public          Bool
   name            Text
   deriving Show Typeable Generic
 
+VirtualVideo
+  raw     YTVideoId
+  users   [UserId]
+  votes   [Int]
+  note    Text
+  start   Int
+  end     Int
+  UniqueVirtualVideo raw start
+  deriving Show Typeable Generic
+
+Event
+  title   Text
+  time    UTCTime 
+  group   SiteGroupId
+
+PlaylistEvent
+  type     PlaylistType
+  event    EventId
+  playlist YTVideoPlaylistId

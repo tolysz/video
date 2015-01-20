@@ -41,3 +41,12 @@ this one will be replaced by y-bower
 still looking for a clean way to include it into the project
 
 
+Running
+======
+You need to create a site admin, this will be the user who can create new sites, or even create new admins? (well let not go this far)
+one can run the command bellow for any user
+    
+    
+    mongo
+    use somedatabase
+    db.User.update({ident: "tolysz@gmail.com"},{$set:{siteAdmin:true}},{})
