@@ -3,7 +3,6 @@ module Handler.Home where
 import Import
 -- import Text.Hamlet
 import Text.Julius
--- import Text.Coffee
 import Text.Naked.Coffee
 
 import Yesod.AngularUI

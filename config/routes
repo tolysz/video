@@ -28,3 +28,5 @@
 
 -- normal authentication level
 /user/channels                    UserChannelsR GET
+
+/admin/user                       UserR INSERT GET PUT

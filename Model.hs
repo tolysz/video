@@ -12,8 +12,9 @@ import Types
 -- You can find more information on persistent and how to declare entities
 -- at:
 -- http://www.yesodweb.com/book/persistent/
-let mongoSettings = (mkPersistSettings (ConT ''MongoContext))
+let mongoSettings = mkPersistSettings (ConT ''MongoContext)
  in share [mkPersist mongoSettings]
     $(persistFileWith upperCaseSettings "config/models")
 
 instance ToJSON YTChannel
+instance ToJSON User

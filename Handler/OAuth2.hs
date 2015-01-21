@@ -13,7 +13,6 @@ module Handler.OAuth2 where
 import Import
 
 import Data.Time.Clock ( diffUTCTime )
-import Data.Possible
 import qualified Data.Text as T
 import Control.Lens
 {--

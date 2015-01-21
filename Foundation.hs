@@ -136,7 +136,7 @@ instance YesodAuth App where
             Nothing -> do
                 fmap Just $ insert User
                     { userIdent = credsIdent creds
-                    , userPassword  = Nothing
+          --          , userPassword  = Nothing
                     , userName      = Nothing
                     , userFriendly  = Nothing
                     , userSiteAdmin = False
@@ -220,10 +220,17 @@ angularUILayout ngApp widget = do
 -- instance IsString ((Route App -> [(Text, Text)] -> Text) -> Javascript) where
 --  fromString a = [js|^{rawJS a}|]
 
--- get user identity from the DB, meybe this is already cached?
+-- get user identity from the DB, maybe this is already cached?
 getUserIdent :: Handler (Key User)
 getUserIdent = do
   aid <- fmap (userIdent . fromJust) . runDB . get =<< requireAuthId
   runDB $ do
      Just (Entity k _) <- getBy $ UniqueUser aid
      return k
+
+getUserAdmin :: Handler Bool
+getUserAdmin = do
+  aid <- fmap (userIdent . fromJust) . runDB . get =<< requireAuthId
+  runDB $ do
+     Just (Entity _ v) <- getBy $ UniqueUser aid
+     return $ userSiteAdmin v
