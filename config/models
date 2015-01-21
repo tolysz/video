@@ -78,6 +78,7 @@ SiteGroupMember
 SiteGroup
   public          Bool
   name            Text
+  short           ShortName
   notes           Text Maybe
   url             Text Maybe
   deriving Show Typeable Generic

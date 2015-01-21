@@ -174,7 +174,7 @@ instance RenderMessage App FormMessage where
 instance YesodAngular App where
 --   renderMessageAUI = Just renderMessage
    angularUIEntry = [whamlet|
- <div layout=column layout-fill>
+ <div layout=column layout-fill ng-cloak>
    <section >
      <div layout="row"  hide-gt-md ng-controller="LeftCtrl"  layout-align="space-between start">
        <md-button ng-click="toggleLeft()" class="md-primary" >

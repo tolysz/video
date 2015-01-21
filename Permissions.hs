@@ -17,7 +17,11 @@ restOpenM f = requireJsonBody >>= f >>= \case
          Nothing -> notFound
 
 hasPerm :: Permssions -> AppM ()
-hasPerm p = bool (permissionDenied $ fromString $ show p) (return ()) =<< validPerm p
+hasPerm p = hasPermR (fromString $ show p) (validPerm p)
+
+hasPermR :: Text -> AppM Bool -> AppM ()
+hasPermR f p = bool (permissionDenied f) (return ()) =<< p
+
 
 validPerm :: Permssions -> AppM Bool
 validPerm _ = getUserAdmin
@@ -29,3 +33,6 @@ permInsertUser, permUpdateUser, permListUsers  :: Permssions
 permInsertUser = Permssions
 permUpdateUser = Permssions
 permListUsers  = Permssions
+
+guardAllAdmin :: AppM ()
+guardAllAdmin  = hasPermR "Not a site admin, sorry ;)" getUserAdmin

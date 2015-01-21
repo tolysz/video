@@ -16,5 +16,12 @@ let mongoSettings = mkPersistSettings (ConT ''MongoContext)
  in share [mkPersist mongoSettings]
     $(persistFileWith upperCaseSettings "config/models")
 
-instance ToJSON YTChannel
-instance ToJSON User
+
+instance FromJSON YTChannel
+instance ToJSON   YTChannel
+
+instance FromJSON User
+instance ToJSON   User
+
+instance FromJSON SiteGroup
+instance ToJSON SiteGroup
