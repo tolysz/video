@@ -1,12 +1,24 @@
 <div ui-view layout-fill tabindex="-1" role=main>
      <md-toolbar .md-accent>
           <div .md-toolbar-tools>
-                <span .md-flex> All Groups
+                <span .md-flex> All Users
           <div flex>
      <md-content>
-       <pre>
-          {{ groups | json }}
-       <code>
+         <md-list>
+           <md-item ng-repeat="user in users">
+             <md-item-content>
+               <div class="md-tile-left">
+                   <img ng-src={{user.avatar}} ng-show={{user.avatar}} class="cover" alt="{{user.someName}}">
+                   <span .fa .user .font-3x ng-hide={{user.avatar}}>
+               <div class="md-tile-content">
+                 <h3>
+                    <a ui-sref=oauth2.playlists({cid:chan.id})>
+                           {{user.someName}}
+                 <h4>{{chan.kind}}
+                 <p>
+                   <pre>
+                      {{ user | json }}
+         <code>
            \ SiteGroupMember
            \   user          UserId
            \   group         SiteGroupId

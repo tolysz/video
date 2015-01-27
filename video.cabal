@@ -30,6 +30,8 @@ library
                      Handler.User
                      Handler.OAuth2
                      Handler.DB
+                --  maybe a package
+                     Data.CMap
 
                 --  move to a separate module after testing or merge with http-client?
                      Network.HTTP.OAuth2.Types
@@ -127,6 +129,9 @@ library
                  , auto-update
                  , lens
                  , lens-aeson
+                 , stm
+                 , yesod-websockets
+                 , websockets
 
                -- deps for oauth
                  , case-insensitive
@@ -140,6 +145,11 @@ library
                  , blaze-builder
                -- http-extra
                  , case-insensitive
+                 
+               -- CMap
+                 , stm-containers
+                 , list-t
+                 , focus
 
 executable         video
     if flag(library-only)

@@ -1,4 +1,4 @@
-($scope, $mdSidenav, $log, maid, sections) ->
+($scope, $mdSidenav, $log, maid, sections, wsLink) ->
   
   $scope.sections = sections
   $scope.maid = maid;
@@ -14,6 +14,7 @@
        (s1) -> 
           if (s1 == s)
             s1.visible =  ! s1.visible
+            wsLink.get()
           else
             s1.visible = false
        )

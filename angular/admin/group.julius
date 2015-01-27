@@ -1,2 +1,13 @@
-function(){
+function($scope,$http,$log){
+
+    $scope.getList = function(){
+        $http.get("@{AllSiteGroupR}")
+            .success( function(data){
+                $log.debug(data);
+                $scope.groups = data;
+            }
+        )
+    }
+
+    $scope.getList()
 }

@@ -3,12 +3,12 @@
           <div .md-toolbar-tools>
                 <span .md-flex> Admin panel {{ maid }}
           <div flex>
-     <md-content .buttondemoBasicUsage>
+     <md-content>
+       <pre>
+            Channels  / add / remove / list
+            Users     / add / remove / list
+            Videos    / add / remove / list
+            Playlists / add / remove / list
+              tags [members, event, guests]
 
-Channels  / add / remove / list
-Users     / add / remove / list
-Videos    / add / remove / list
-Playlists / add / remove / list
-  tags [members, event, guests]
-  
-here {{player}} is!
+            here {{player}} is!

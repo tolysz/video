@@ -4,6 +4,7 @@ module Handler.DB where
 import Import
 import Permissions
 import Data.Aeson.Lens
+import Data.Aeson.Types
 import Control.Lens ((^?)) -- , (^.))
 
 -- import Database.MongoDB.Query (MongoContext(..))
@@ -21,7 +22,7 @@ getUserChannelsR =
 liftMaybe :: Monad m => Maybe a -> MaybeT m a
 liftMaybe = MaybeT . return
 
--- Insert -- post
+-- Insert New user-- post
 postAllUserR :: AppM Value
 postAllUserR = do
         guardAllAdmin
@@ -30,38 +31,57 @@ postAllUserR = do
             MaybeT $ runDB $ getBy (UniqueUser email) >>= \case
                 Just (Entity uid _) -> return $ Just uid
                 Nothing -> Just <$> insert User
-                          { userIdent = email
+                          { userIdent     = email
                           , userName      = Nothing
                           , userFriendly  = Nothing
                           , userSiteAdmin = False
+                          , userAvatar    = Nothing
                           }
 
-getAllSiteGroupR      = listsOfAll :: ApiReq [SiteGroup      ]
-getAllUserR           = listsOfAll :: ApiReq [User           ]
+-- | todo: find out how to cut this boilerplate!
+--   force compiler not to disply signature missing if the type is fully defined otherwise
+getAllSiteGroupR      = listsOfAll :: ApiReq [   SiteGroup   ]
+getAllUserR           = listsOfAll :: ApiReq [     User      ]
 -- | debug stuff -- mongo admin?
-getAllOAuthAccess     = listsOfAll :: ApiReq [OAuthAccess    ]
-getAllEmail           = listsOfAll :: ApiReq [Email          ]
-getAllYTChannel       = listsOfAll :: ApiReq [YTChannel      ]
-getAllYTPlaylist      = listsOfAll :: ApiReq [YTPlaylist     ]
+getAllOAuthAccess     = listsOfAll :: ApiReq [  OAuthAccess  ]
+getAllEmail           = listsOfAll :: ApiReq [     Email     ]
+getAllYTChannel       = listsOfAll :: ApiReq [   YTChannel   ]
+getAllYTPlaylist      = listsOfAll :: ApiReq [   YTPlaylist  ]
 getAllYTVideoPlaylist = listsOfAll :: ApiReq [YTVideoPlaylist]
-getAllYTVideo         = listsOfAll :: ApiReq [YTVideo        ]
-getAllYTVideoUser     = listsOfAll :: ApiReq [YTVideoUser    ]
-getAllChannelMember   = listsOfAll :: ApiReq [ChannelMember  ]
+getAllYTVideo         = listsOfAll :: ApiReq [    YTVideo    ]
+getAllYTVideoUser     = listsOfAll :: ApiReq [  YTVideoUser  ]
+getAllChannelMember   = listsOfAll :: ApiReq [ ChannelMember ]
 getAllSiteGroupMember = listsOfAll :: ApiReq [SiteGroupMember]
-getAllSiteGroup       = listsOfAll :: ApiReq [SiteGroup      ]
-getAllVirtualVideo    = listsOfAll :: ApiReq [VirtualVideo   ]
-getAllEvent           = listsOfAll :: ApiReq [Event          ]
-getAllPlaylistEvent   = listsOfAll :: ApiReq [PlaylistEvent  ]
+getAllSiteGroup       = listsOfAll :: ApiReq [   SiteGroup   ]
+getAllVirtualVideo    = listsOfAll :: ApiReq [ VirtualVideo  ]
+getAllEvent           = listsOfAll :: ApiReq [     Event     ]
+getAllPlaylistEvent   = listsOfAll :: ApiReq [ PlaylistEvent ]
 
 -- | type magic
---   convert any list of all into a respoce
+--   convert any list of all into a respoce; too many things to import
+--   just to make this line a happy line
 listsOfAll = do
     guardAllAdmin
     TC . map (\(Entity _ v) -> v) <$> runDB (selectList [] [])
 
 -- | Add some anonymous user, without adding her to any group
-putAllUserR :: AppM ()
-putAllUserR = guardAllAdmin
+
+putAllUserR :: AppM Value
+putAllUserR =
+    restPermsM permAllAdmin $ \(u :: Value) -> runMaybeT $ do
+           email <- liftMaybe (u ^? key "userIdent" . _String )
+           MaybeT $ runDB $ getBy (UniqueUser email) >>= \case
+               Just (Entity uid _) -> return $ Just uid
+               Nothing -> Just <$> insert User
+                                  { userIdent     = email
+                                  , userName      = Nothing
+                                  , userFriendly  = Nothing
+                                  , userSiteAdmin = False
+                                  , userAvatar    = Nothing
+                                  }
+
+-- putAllUserR :: AppM ()
+-- putAllUserR = guardAllAdmin
 
 {-
 postAllUserR :: AppM Value
@@ -77,3 +97,12 @@ postAllUserR =
                           , userSiteAdmin = False
                           }
 -}
+
+assessValue :: (ToJSON s, FromJSON a) => Permssions -> s -> a
+assessValue _ _ = undefined
+
+patchValue :: (ToJSON a, FromJSON a) => a -> Value -> Either String a
+patchValue t p = resultToEither . fromJSON $ toJSON t
+
+resultToEither (Error a) = Left a
+resultToEither (Success a) = Right a

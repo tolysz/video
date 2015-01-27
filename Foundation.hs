@@ -12,7 +12,7 @@ import Yesod.Default.Util       (addStaticContentExternal)
 import Yesod.AngularUI
 -- import SubSite.Data
 import Data.Maybe (fromJust)
-
+import Types
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -24,6 +24,7 @@ data App = App
     , appConnPool    :: ConnectionPool -- ^ Database connection pool.
     , appHttpManager :: Manager
     , appLogger      :: Logger
+    , userChannels   :: CMap MsgBus
 --     , appOAuth2      :: OAuth2App
     }
 
@@ -140,6 +141,7 @@ instance YesodAuth App where
                     , userName      = Nothing
                     , userFriendly  = Nothing
                     , userSiteAdmin = False
+                    , userAvatar    = Nothing
                     }
 
     -- You can add other plugins like BrowserID, email or OAuth here

@@ -43,8 +43,8 @@ still looking for a clean way to include it into the project
 
 Running
 ======
-You need to create a site admin, this will be the user who can create new sites, or even create new admins? (well let not go this far)
-one can run the command bellow for any user
+You need to create a site admin, this will be the user who can create new sites, or even create new admins? (well let's not go this far)
+one can run the command bellow for any user on a server which hosts your database
     
     
     mongo

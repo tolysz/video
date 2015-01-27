@@ -5,6 +5,7 @@ User
  -- password      Text Maybe
     UniqueUser    ident
     siteAdmin     Bool
+    avatar        Text Maybe
     deriving Show Typeable Generic
 
 Email
@@ -66,7 +67,6 @@ ChannelMember
     deriving Show Typeable Generic
 
 -- Let start the other end
-
 SiteGroupMember
   user          UserId
   group         SiteGroupId

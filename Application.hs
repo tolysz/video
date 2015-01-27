@@ -28,7 +28,6 @@ import Handler.OAuth2
 import Handler.User
 import Handler.DB
 
-
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
 -- comments there for more details.
@@ -52,6 +51,7 @@ makeFoundation appSettings = do
     appConnPool <- createPoolConfig $ appDatabaseConf appSettings
 
     -- My Specific ones
+    userChannels <- newCMapIO
 --     runLoggingT (runSqlPool (runMigration migrateAll) appConnPool) logFunc
     return App {..}
 

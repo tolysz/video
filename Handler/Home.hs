@@ -6,6 +6,7 @@ import Text.Julius
 import Text.Naked.Coffee
 
 import Yesod.AngularUI
+import Yesod.WebSockets
 
 -- This is a handler function for the GET request method on the HomeR
 -- resource pattern. All of your resource patterns are defined in
@@ -17,10 +18,15 @@ import Yesod.AngularUI
 handleHomeR :: Handler Html
 handleHomeR =  do
            maid <- maybe (permissionDenied "You need to have login") (return . userIdent) =<< runDB . get =<< requireAuthId
-
            devel <- appDevelopment . appSettings <$> getYesod
            {-- ap :: AuthPerms  <- queryDB sadasd -}
            {- conf <- liftIO getIt -}
+           
+           ch <- liftIO . atomically . getChan maid =<< userChannels <$> getYesod
+           
+           webSockets ( chatApp ch )
+--            create websocket
+           
            genAngularBind maid devel {- -> ap-> conf -> -} (\y x ->
                  angularUILayout y $ do
                    setTitle "Video Selector" -- "Welcome To Yesod!"
@@ -50,6 +56,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                , "ngAria"
                , "ngCookies"
                , "ngMaterial"
+               , "ngWebSocket"
                ]
 
     $(addStateJ     "demos"            "/demos"     ) -- could work without passwords
@@ -73,6 +80,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "admin"            "/admin"      ) -- only channel admin
     $(addStateJ     "admin.video"      "/video"      )
     $(addStateJ     "admin.group"      "/group"      ) -- require special permissions
+    $(addStateJ     "admin.allusers"   "/allusers"      ) -- require special permissions
     $(addStateJ     "site"             "/site"       ) -- will be per user
 
     setDefaultRoute "/demos/about"
@@ -85,6 +93,31 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     addDirective  "youtubeVideo"      $(juliusFile  "angular/_lib/Directive/youtubeVideo.julius")
 --     addDirective  "resize"            $(juliusFile  "angular/_lib/Directive/resize.julius")
   -- ^ empty
+    addFactory "wsLink" [js| function($websocket, $log) {
+      // Open a WebSocket connection
+      var dataStream = $websocket('@{HomeR}'.replace("http:", "ws:").replace("https:", "wss:"));
+
+      var collection = [];
+
+      dataStream.onMessage(function(message) {
+        $log.debug(message)
+        try{
+        collection.push(JSON.parse(message.data));
+        }catch(e)
+         {
+          collection.push({"other":message.data});
+         }
+      });
+
+      var methods = {
+        collection: collection,
+        get: function() {
+          dataStream.send(JSON.stringify({ action: 'get' }));
+        }
+      };
+
+      return methods;
+    }|]
     addFactory "sections" [ncoffee|
 () ->
   sections =
@@ -98,7 +131,8 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
       name: "admin"
       visible: false
       pages: [ { state:"admin.video", name: "video", icon: "fa video-camera"}
-             , { state:"admin.group", name: "group", icon: "fa group"}
+             , { state:"admin.group", name: "group", icon: "fa group font-spin"}
+             , { state:"admin.allusers", name: "allusers", icon: "fa users"}
              ]
     ,
       state: "oauth2"
@@ -123,3 +157,18 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     ]
   return sections
 |]
+
+
+chatApp :: TChan MsgBus -> WebSocketsT Handler ()
+chatApp writeChan = do
+    sendTextData ("Welcome to the chat server, please enter your name." :: Text)
+    name <- receiveData
+    sendTextData $ "Welcome, " <> name
+    -- App writeChan <- getYesod
+    atomically $ do
+        writeTChan writeChan $ Other $ name <> " has joined the chat"
+        -- dupTChan writeChan
+    race_
+        (forever $ atomically (readTChan writeChan) >>= sendTextData)
+        (sourceWS $$ mapM_C (\msg ->
+            atomically $ writeTChan writeChan $ Other $ name <> ": " <> msg))

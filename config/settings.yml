@@ -18,11 +18,11 @@ ip-from-header: "_env:IP_FROM_HEADER:false"
 # skip-combining: false
 
 database:
-  user:        "video"
-  password:    "video"
-  host:        "localhost"
-  database:    "video"
-  connections: 50
+  user:        "_env:DB_USER:video"
+  password:    "_env:DB_PASSWORD:video"
+  host:        "_env:DB_HOST:localhost"
+  database:    "_env:DB_DATABASE:video"
+  connections: "_env:DB_CONNECTIONS:50"
 
 copyright: "2015© Marcin Tolysz website, content various copyrights"
 

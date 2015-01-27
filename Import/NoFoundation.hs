@@ -12,3 +12,4 @@ import Yesod.Core.Types          as Import (loggerSet)
 import Yesod.Default.Config2     as Import
 import Control.Monad.Trans.Maybe as Import
 import Data.Possible             as Import
+import Data.CMap                 as Import
