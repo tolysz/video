@@ -18,29 +18,12 @@ import Data.Aeson
 import Yesod.Core.Content
 -- import Data.String
 import Database.Persist.TH
-import Data.String
+
 import Control.Applicative ((<$>))
-import qualified Data.Aeson as DA
+
+import Types.MsgBus
 
 import Data.Maybe (fromMaybe)
-
-import qualified Data.Text.Lazy.Encoding as TL
-import qualified Data.Text.Lazy as TL
--- import Yesod.WebSockets
-import qualified Network.WebSockets as WS
-data MsgBus = Other Text
-    deriving (Show, Eq, Typeable, Generic)
-
-instance FromJSON MsgBus
-instance ToJSON   MsgBus
-
-
-instance IsString MsgBus where
-  fromString = Other . fromString
-
-instance WS.WebSocketsData MsgBus where
-  fromLazyByteString a = fromMaybe (Other . TL.toStrict . TL.decodeUtf8 $ a) (DA.decode a)
-  toLazyByteString   = DA.encode
 
 
 data OAuth2Google = OAuth2Google

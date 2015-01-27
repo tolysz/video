@@ -49,10 +49,12 @@ makeFoundation appSettings = do
 
     -- Create the database connection pool
     appConnPool <- createPoolConfig $ appDatabaseConf appSettings
+--     runLoggingT (runSqlPool (runMigration migrateAll) appConnPool) logFunc
 
     -- My Specific ones
     userChannels <- newCMapIO
---     runLoggingT (runSqlPool (runMigration migrateAll) appConnPool) logFunc
+    -- add RabbitMQ Broadcast
+
     return App {..}
 
 -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and

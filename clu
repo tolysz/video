@@ -15,4 +15,5 @@ closure \
   --js_output_file ${OUT}.js \
   --js $@
 
-echo -e "\n//@ sourceMappingURL=${OUT}.map" >>  ${OUT}.js
+
+# echo -e "\n//@ sourceMappingURL=${OUT}.map" >>  ${OUT}.js

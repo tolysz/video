@@ -3,6 +3,8 @@
   $scope.sections = sections
   $scope.maid = maid;
   
+  $scope.remote = wsLink.collection;
+  
   $scope.player = "Test";
 
   $scope.toggleLeft = () -> $mdSidenav('left') .toggle()
@@ -14,7 +16,7 @@
        (s1) -> 
           if (s1 == s)
             s1.visible =  ! s1.visible
-            wsLink.get()
+            wsLink.get(s)
           else
             s1.visible = false
        )

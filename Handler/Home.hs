@@ -1,3 +1,4 @@
+{-# LANGUAGE  ScopedTypeVariables#-}
 module Handler.Home where
 
 import Import
@@ -7,6 +8,10 @@ import Text.Naked.Coffee
 
 import Yesod.AngularUI
 import Yesod.WebSockets
+
+-- import Data.Time
+
+import Debug.Trace
 
 -- This is a handler function for the GET request method on the HomeR
 -- resource pattern. All of your resource patterns are defined in
@@ -22,9 +27,9 @@ handleHomeR =  do
            {-- ap :: AuthPerms  <- queryDB sadasd -}
            {- conf <- liftIO getIt -}
            
-           ch <- liftIO . atomically . getChan maid =<< userChannels <$> getYesod
+           ch <- userChannels <$> getYesod
            
-           webSockets ( chatApp ch )
+           webSockets ( chatApp ch maid)
 --            create websocket
            
            genAngularBind maid devel {- -> ap-> conf -> -} (\y x ->
@@ -82,6 +87,8 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "admin.group"      "/group"      ) -- require special permissions
     $(addStateJ     "admin.allusers"   "/allusers"      ) -- require special permissions
     $(addStateJ     "site"             "/site"       ) -- will be per user
+    
+    $(addStateJ     "chat"             "/chat"       ) -- will be per user
 
     setDefaultRoute "/demos/about"
 
@@ -93,28 +100,36 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     addDirective  "youtubeVideo"      $(juliusFile  "angular/_lib/Directive/youtubeVideo.julius")
 --     addDirective  "resize"            $(juliusFile  "angular/_lib/Directive/resize.julius")
   -- ^ empty
-    addFactory "wsLink" [js| function($websocket, $log) {
+    addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid) {
       // Open a WebSocket connection
       var dataStream = $websocket('@{HomeR}'.replace("http:", "ws:").replace("https:", "wss:"));
-
       var collection = [];
 
       dataStream.onMessage(function(message) {
-        $log.debug(message)
-        try{
-        collection.push(JSON.parse(message.data));
-        }catch(e)
-         {
-          collection.push({"other":message.data});
-         }
+      $log.debug(message);
+      var myReader = new FileReader();
+        myReader.readAsText(message.data);
+        myReader.addEventListener("loadend", function(e)
+            {
+              $rootScope.$apply( function() {
+                var buffer = JSON.parse(e.srcElement.result);
+                $log.debug(buffer);
+                // if (_.isUndefined (collection[buffer.tag])) collection[buffer.tag] = [];
+                collection.unshift({tag:buffer.tag, cont:buffer.contents});
+              })
+            });
+
+        
       });
 
-      var methods = {
-        collection: collection,
-        get: function() {
-          dataStream.send(JSON.stringify({ action: 'get' }));
-        }
-      };
+      var methods = { collection: collection
+                    , get: function(s) {
+                             dataStream.send(JSON.stringify({ action: 'get', value: s }));
+                            }
+                    , shout: function(s){
+                               dataStream.send(JSON.stringify({ tag: 'Shout', contents: [maid, new Date() ,s] }));
+                            }
+                    };
 
       return methods;
     }|]
@@ -140,6 +155,11 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
       visible : false
       pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt" }]
     ,
+      state: "chat"
+      name:  "chat"
+      visible : false
+      pages: []
+    ,
       state : "demos"
       name:   "Demos"
       visible : false
@@ -158,17 +178,23 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
   return sections
 |]
 
+noop = return ()
 
-chatApp :: TChan MsgBus -> WebSocketsT Handler ()
-chatApp writeChan = do
-    sendTextData ("Welcome to the chat server, please enter your name." :: Text)
-    name <- receiveData
-    sendTextData $ "Welcome, " <> name
-    -- App writeChan <- getYesod
-    atomically $ do
-        writeTChan writeChan $ Other $ name <> " has joined the chat"
-        -- dupTChan writeChan
+chatApp :: CMap MsgBus -> Text  -> WebSocketsT Handler ()
+chatApp chans name = do
+    now1 <- liftIO getCurrentTime
+    sendBinaryData (MsgInfo now1 $ "Welcome to the chat server, please enter your name.")
+    sendBinaryData $ MsgInfo now1 $ "Welcome, " <> name
+
+    rChan <- atomically $ do
+        adjustFilter (\_ -> [\ k u _ -> if (trace (show k) k) == name then (trace "N" HaveNull) else (trace "M" MissingData) ]) name chans
+        broadcastChan (SystemInfo now1 $ name <> " has joined the chat") name chans
+        getChan name chans
     race_
-        (forever $ atomically (readTChan writeChan) >>= sendTextData)
-        (sourceWS $$ mapM_C (\msg ->
-            atomically $ writeTChan writeChan $ Other $ name <> ": " <> msg))
+        (forever $ atomically (readTChan rChan) >>= sendBinaryData)
+        (sourceWS $$ mapM_C (\(msg :: MsgBus)-> do
+          now <- upTime <$> liftIO getCurrentTime
+          atomically $ do
+            maybe noop (sendSendChan False chans name) (toEcho $ now msg)
+            broadcastChan (now msg) name chans
+            ))

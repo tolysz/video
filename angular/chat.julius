@@ -1,0 +1,16 @@
+function($scope, maid, wsLink, $log){
+    $scope.maid   = maid
+    $scope.wsLink = wsLink;
+    $scope.inp = {};
+    //$scope.shout = "";
+
+    $scope.send = function(s){
+      //if(_.isString($scope.shout)) {
+          $log.debug(s)
+          if(!_.isEmpty(s)) {
+              wsLink.shout(s);
+              $scope.inp.shout = ""
+          }
+      //}
+    }
+}

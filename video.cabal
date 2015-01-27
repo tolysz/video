@@ -32,6 +32,7 @@ library
                      Handler.DB
                 --  maybe a package
                      Data.CMap
+                     Types.MsgBus
 
                 --  move to a separate module after testing or merge with http-client?
                      Network.HTTP.OAuth2.Types
@@ -150,6 +151,8 @@ library
                  , stm-containers
                  , list-t
                  , focus
+               -- Msg
+                 , binary
 
 executable         video
     if flag(library-only)
