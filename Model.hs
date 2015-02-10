@@ -1,4 +1,4 @@
-{-# Language DeriveGeneric #-}
+{-# Language DeriveGeneric, FlexibleInstances #-}
 
 module Model where
 
@@ -24,3 +24,27 @@ instance ToJSON   YTChannel
 
 deriveJSON optsL4 ''User
 deriveJSON optsL9 ''SiteGroup
+
+instance ToContent SiteGroup where
+  toContent = toContent . TC
+
+instance ToTypedContent SiteGroup where
+  toTypedContent = toTypedContent . TC
+
+instance ToContent User where
+  toContent = toContent . TC
+
+instance ToTypedContent User where
+  toTypedContent = toTypedContent . TC
+
+instance ToTypedContent (Entity SiteGroup) where
+  toTypedContent (Entity _ s) = toTypedContent s
+
+instance ToTypedContent (Entity User) where
+    toTypedContent (Entity _ s) = toTypedContent s
+
+instance ToContent (Entity SiteGroup) where
+  toContent (Entity _ s) = toContent s
+
+instance ToContent (Entity User) where
+    toContent (Entity _ s) = toContent s

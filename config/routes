@@ -29,5 +29,8 @@
 -- normal authentication level
 /user/channels                    UserChannelsR GET
 
-/admin/user                       AllUserR GET POST PUT
-/admin/group                      AllSiteGroupR GET POST
+/admin/user                       UserR  GET POST
+/admin/user/#EmailQuery           User1R GET
+
+/admin/group                      SiteGroupR GET POST
+/admin/group/#ShortName           SiteGroup1R GET

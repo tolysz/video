@@ -1,0 +1,17 @@
+function($scope, $stateParams, Group) {
+
+    /*
+     { 'get':    {method:'GET'}
+     , 'save':   {method:'POST'}
+     , 'query':  {method:'GET', isArray:true}
+     , 'remove': {method:'DELETE'}
+     , 'delete': {method:'DELETE'}
+     };
+     */
+
+    $scope.group = Group.get({short:$stateParams.short});
+
+    $scope.save = function()
+    { Group.save($scope.group)
+    }
+}

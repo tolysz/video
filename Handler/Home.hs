@@ -87,8 +87,8 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "admin.video"      "/video"          )
     $(addStateJ     "admin.group"      "/group"          ) -- require special permissions
     $(addStateJ     "admin.group.add"  "/add"            ) -- require special permissions
-    $(addStateJ     "admin.group.edit" "/edit/:short"    ) -- require special permissions
-    $(addStateJ     "admin.allusers"   "/allusers"       ) -- require special permissions
+    $(addStateJ     "admin.group.edit" "/edit/:short"         ) -- require special permissions
+    $(addStateJ     "admin.user"       "/user"           ) -- require special permissions
     $(addStateJ     "site"             "/site"           ) -- will be per user
 
     $(addStateJ     "chat"             "/chat"           ) -- will be per user
@@ -112,8 +112,8 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     } |]
 
 
-    addFactory "Group" [js| function($resource) { return $resource("@{AllSiteGroupR}/:short"); }|]
-    addFactory "User"  [js| function($resource) { return $resource("@{AllUserR}/:email");      }|]
+    addFactory "Group" [js| function($resource) { return $resource("@{SiteGroupR}/:short"); }|]
+    addFactory "User"  [js| function($resource) { return $resource("@{UserR}/:email");      }|]
 
     addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid) {
       // Open a WebSocket connection

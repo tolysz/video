@@ -27,31 +27,33 @@ liftMaybe = maybe mzero return
 
 -- Insert New user-- post
 
-getAllUserR = listsOfAll :: ApiReq [     User      ]
-postAllSiteGroupR :: AppM Value
-postAllSiteGroupR = do
+getSiteGroupR      = listsOfAll :: ApiReq [   SiteGroup   ]
+postSiteGroupR :: AppM Value
+postSiteGroupR = do
         guardAllAdmin
-
-        -- name     siteGroupName            Text
-        -- short    siteGroupShort           ShortName
-        -- notes    siteGroupNotes           Text Maybe
-        -- public   siteGroupPublic          Bool
-        -- url      siteGroupUrl             Text Maybe
-
         restOpenM $ \(v :: Value) -> runMaybeT $ do
             siteGroupName  <-          liftMaybe (v ^? key "name"   . _String )
             siteGroupShort <-          liftMaybe (v ^? key "short"  . _String )
             siteGroupNotes <- Just <$> liftMaybe (v ^? key "notes"  . _String )
             siteGroupPublic<-          liftMaybe (v ^? key "public" . _Bool   )
             siteGroupUrl   <- Just <$> liftMaybe (v ^? key "url"    . _String )
-
+            let sg = SiteGroup {..}
             MaybeT $ runDB $ getBy (UniqueSiteGroup siteGroupShort) >>= \case
-                Just (Entity uid _) -> return $ Just uid
-                Nothing -> Just <$> insert SiteGroup {..}
+                Just (Entity uid _) -> replace uid sg >> return (Just uid)
+                Nothing -> Just <$> insert sg
 
-getAllSiteGroupR      = listsOfAll :: ApiReq [   SiteGroup   ]
-postAllUserR :: AppM Value
-postAllUserR = do
+
+oneOr404 [a] = return a
+oneOr404 _ = notFound
+
+getSiteGroup1R gid = do
+  guardAllAdmin
+  -- oneOr404 =<<
+  runDB (getBy404 (UniqueSiteGroup gid))
+
+getUserR = listsOfAll :: ApiReq [     User      ]
+postUserR :: AppM Value
+postUserR = do
         guardAllAdmin
         restOpenM $ \(v :: Value) -> runMaybeT $ do
             email <- liftMaybe (v ^? key "email" . _String )
@@ -64,6 +66,9 @@ postAllUserR = do
                           , userSiteAdmin = False
                           , userAvatar    = Nothing
                           }
+getUser1R gid = do
+   guardAllAdmin
+   runDB (getBy404 (UniqueUser gid))
 
 
 

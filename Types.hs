@@ -91,6 +91,10 @@ derivePersistField "PlaylistType"
 instance ToJSON PlaylistType
 
 type ShortName = Text
+
+type EmailQuery = Text
+
+
 --   deriving (Show, Read, Eq, Typeable, Generic)
 
 -- instance ToJSON ShortName
