@@ -4,6 +4,7 @@
                 <span .md-flex> All Users
           <div flex>
      <md-content>
+         <md-button admin.group.add>
          <md-list>
            <md-item ng-repeat="user in users">
              <md-item-content>

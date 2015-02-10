@@ -1,0 +1,5 @@
+function($scope, User) {
+    $scope.save = function()
+    { User.save($scope.user)
+    }
+}

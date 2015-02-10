@@ -7,7 +7,7 @@
         <input ng-model="group.name">
       <md-input-container>
         <label>Short name
-        <input ng-model="group.short">
+        <input ng-model="group.short" disabled>
       <md-input-container flex>
         <label>Notes
         <textarea ng-model="group.notes" columns="1" md-maxlength="350">

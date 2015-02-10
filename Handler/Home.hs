@@ -89,6 +89,9 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "admin.group.add"  "/add"            ) -- require special permissions
     $(addStateJ     "admin.group.edit" "/edit/:short"         ) -- require special permissions
     $(addStateJ     "admin.user"       "/user"           ) -- require special permissions
+    $(addStateJ     "admin.user.add"   "/add"            ) -- require special permissions
+    $(addStateJ     "admin.user.edit"  "/edit/:ident"         ) -- require special permissions
+
     $(addStateJ     "site"             "/site"           ) -- will be per user
 
     $(addStateJ     "chat"             "/chat"           ) -- will be per user
@@ -113,7 +116,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
 
 
     addFactory "Group" [js| function($resource) { return $resource("@{SiteGroupR}/:short"); }|]
-    addFactory "User"  [js| function($resource) { return $resource("@{UserR}/:email");      }|]
+    addFactory "User"  [js| function($resource) { return $resource("@{UserR}/:ident" );      }|]
 
     addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid) {
       // Open a WebSocket connection
@@ -161,8 +164,8 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
       visible: false
       pages: [ { state:"admin.video", name: "video", icon: "fa video-camera"}
              , { state:"admin.group", name: "group", icon: "fa group font-spin"}
-             , { state:"admin.group.add", name: "group add", icon: "fa group font-spin"}
-             , { state:"admin.allusers", name: "allusers", icon: "fa users"}
+             //, { state:"admin.group.add", name: "group add", icon: "fa group font-spin"}
+             , { state:"admin.user", name: "users", icon: "fa users"}
              ]
     ,
       state: "oauth2"

@@ -1,0 +1,21 @@
+<md-toolbar .md-accent>
+    <div .md-toolbar-tools>
+        <span .md-flex>User
+    <md-content .md-padding>
+      <md-input-container>
+        <label>Email
+        <input ng-model=user.ident disabled>
+      <md-input-container>
+        <label>Name
+        <input ng-model=user.name>
+      <md-input-container>
+        <label>Friendly
+        <input ng-model=user.friendly>
+      <md-checkbox ng-model=user.siteAdmin aria-label="site admin" disabled>
+         site admin
+      <md-input-container>
+         <label>Avatar
+         <input ng-model=user.avatar type=url>
+    <md-button .md-raised .md-warn ng-click=save()>Save
+<pre>
+  {{ user | json }}

@@ -24,7 +24,8 @@ getUserChannelsR =
 
 liftMaybe :: (MonadPlus m) => Maybe a -> m a
 liftMaybe = maybe mzero return
-
+liftJust :: (MonadPlus m) => a -> m a
+liftJust = return
 -- Insert New user-- post
 
 getSiteGroupR      = listsOfAll :: ApiReq [   SiteGroup   ]
@@ -32,11 +33,11 @@ postSiteGroupR :: AppM Value
 postSiteGroupR = do
         guardAllAdmin
         restOpenM $ \(v :: Value) -> runMaybeT $ do
-            siteGroupName  <-          liftMaybe (v ^? key "name"   . _String )
-            siteGroupShort <-          liftMaybe (v ^? key "short"  . _String )
-            siteGroupNotes <- Just <$> liftMaybe (v ^? key "notes"  . _String )
-            siteGroupPublic<-          liftMaybe (v ^? key "public" . _Bool   )
-            siteGroupUrl   <- Just <$> liftMaybe (v ^? key "url"    . _String )
+            siteGroupName   <-          liftMaybe (v ^? key "name"   . _String )
+            siteGroupShort  <-          liftMaybe (v ^? key "short"  . _String )
+            siteGroupNotes  <- Just <$> liftMaybe (v ^? key "notes"  . _String )
+            siteGroupPublic <-          liftMaybe (v ^? key "public" . _Bool   )
+            siteGroupUrl    <- Just <$> liftMaybe (v ^? key "url"    . _String )
             let sg = SiteGroup {..}
             MaybeT $ runDB $ getBy (UniqueSiteGroup siteGroupShort) >>= \case
                 Just (Entity uid _) -> replace uid sg >> return (Just uid)
@@ -48,7 +49,6 @@ oneOr404 _ = notFound
 
 getSiteGroup1R gid = do
   guardAllAdmin
-  -- oneOr404 =<<
   runDB (getBy404 (UniqueSiteGroup gid))
 
 getUserR = listsOfAll :: ApiReq [     User      ]
@@ -56,21 +56,19 @@ postUserR :: AppM Value
 postUserR = do
         guardAllAdmin
         restOpenM $ \(v :: Value) -> runMaybeT $ do
-            email <- liftMaybe (v ^? key "email" . _String )
-            MaybeT $ runDB $ getBy (UniqueUser email) >>= \case
-                Just (Entity uid _) -> return $ Just uid
-                Nothing -> Just <$> insert User
-                          { userIdent     = email
-                          , userName      = Nothing
-                          , userFriendly  = Nothing
-                          , userSiteAdmin = False
-                          , userAvatar    = Nothing
-                          }
+            userIdent     <- liftMaybe (v ^? key "email"    . _String )
+            userName      <- liftJust  (v ^? key "name"     . _String )
+            userFriendly  <- liftJust  (v ^? key "friendly" . _String )
+            userSiteAdmin <- liftJust  False -- (v ^? key "siteAdmin" . _String )
+            userAvatar    <- liftJust  (v ^? key "avatar"   . _String )
+            let us = User {..}
+            MaybeT $ runDB $ getBy (UniqueUser userIdent) >>= \case
+                 -- keep the old admin privs
+                Just (Entity uid old) -> replace uid us{userSiteAdmin = Import.userSiteAdmin old} >> return (Just uid)
+                Nothing -> Just <$> insert us
 getUser1R gid = do
    guardAllAdmin
    runDB (getBy404 (UniqueUser gid))
-
-
 
 -- | todo: find out how to cut this boilerplate!
 --   force compiler not to disply signature missing if the type is fully defined otherwise

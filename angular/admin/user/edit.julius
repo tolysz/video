@@ -1,0 +1,8 @@
+function($scope, $stateParams, User) {
+
+    $scope.group = User.get({ident:$stateParams.ident});
+
+    $scope.save = function()
+    { User.save($scope.user)
+    }
+}
