@@ -3,9 +3,9 @@ User
     name          Text Maybe
     friendly      Text Maybe
  -- password      Text Maybe
-    UniqueUser    ident
     siteAdmin     Bool
     avatar        Text Maybe
+    UniqueUser    ident
     deriving Show Typeable Generic
 
 Email
@@ -81,6 +81,7 @@ SiteGroup
   short           ShortName
   notes           Text Maybe
   url             Text Maybe
+  UniqueSiteGroup short
   deriving Show Typeable Generic
 
 VirtualVideo
@@ -95,7 +96,7 @@ VirtualVideo
 
 Event
   title   Text
-  time    UTCTime 
+  time    UTCTime
   group   SiteGroupId
 
 PlaylistEvent

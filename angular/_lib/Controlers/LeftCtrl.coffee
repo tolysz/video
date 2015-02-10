@@ -12,6 +12,7 @@
   $scope.closeLeft  = () -> $mdSidenav('left') .close()
   $scope.goHome     = () -> $log.debug "Yupi we are here"
   
+  # make it double click to select topic/expandable state
   $scope.unselect   = (s) -> _.map( $scope.sections ,
        (s1) -> 
           if (s1 == s)

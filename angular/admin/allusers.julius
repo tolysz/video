@@ -1,16 +1,3 @@
-function($scope,$http,$log){
-
-    $scope.getList = function(){
-        $http.get("@{AllUserR}")
-            .success( function(data){
-                $log.debug(data);
-                $scope.users = _.map(data, function(item){
-                 item.someName = item.userFriendly || item.userName || item.userIdent;
-                 return item;
-                })
-            }
-        )
-    }
-
-    $scope.getList()
+function($scope, User){
+    $scope.users = User.query();
 }

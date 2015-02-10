@@ -1,6 +1,22 @@
 {-# LANGUAGE DeriveDataTypeable    #-}
 {-# LANGUAGE DeriveGeneric         #-}
 
+{-# LANGUAGE NoImplicitPrelude #-}
+
+{-# LANGUAGE ScopedTypeVariables
+           , TemplateHaskell
+           , TypeFamilies
+           , GADTs
+           , KindSignatures
+           , DataKinds
+           , PolyKinds
+           , TypeOperators
+           , FlexibleContexts
+           , RankNTypes
+           , UndecidableInstances
+           , FlexibleInstances
+           #-}
+
 module Types.MsgBus where
 
 -- import Yesod.WebSockets
@@ -17,25 +33,58 @@ import qualified Data.Text as T
 import qualified Data.Time
 
 import qualified Network.WebSockets as WS
+import Data.Singletons.TH
 
 time0 :: UTCTime
 time0 = UTCTime (ModifiedJulianDay 0) 0
 
 type Who = Text
-data MsgBus = Other       UTCTime Text
-            | Shout   Who UTCTime Text
-            | SystemInfo  UTCTime Text
-            | MsgInfo     UTCTime Text
-            | SelfEcho    UTCTime Text
-    deriving (Show, Eq, Typeable, Generic)
+data MsgBus
+    = Other       !UTCTime !Text
+    | Shout  !Who !UTCTime !Text
+    | SystemInfo  !UTCTime !Text
+    | MsgInfo     !UTCTime !Text
+    | SelfEcho    !UTCTime !Text
+        deriving (Show, Eq, Typeable, Generic)
 
+singletons [d|
+  data SubChannel
+    = SCOther
+    | SCShout
+    | SCSystemInfo
+    | SCMsgInfo
+    | SCSelfEcho
+     deriving (Enum, Generic)
+  |]
 
-upTime :: UTCTime -> MsgBus -> MsgBus
-upTime n ( Other      _ t ) = Other      n t
-upTime n ( Shout    w _ t ) = Shout    w n t
-upTime n ( SystemInfo _ t ) = SystemInfo n t
-upTime n ( MsgInfo    _ t ) = MsgInfo    n t
-upTime n ( SelfEcho   _ t ) = SelfEcho   n t
+data TimeValue    = TimeValue    UTCTime Text
+data TimeValueWho = TimeValueWho UTCTime Text Who
+
+type family WSRequest (chan :: SubChannel) :: * where
+  WSRequest 'SCOther      = TimeValue
+  WSRequest 'SCShout      = TimeValueWho
+  WSRequest 'SCSystemInfo = TimeValue
+  WSRequest 'SCMsgInfo    = TimeValue
+  WSRequest 'SCSelfEcho   = TimeValue
+
+type family WSResponse (chan :: SubChannel) :: * where
+  WSResponse 'SCOther      = ()
+  WSResponse 'SCShout      = TimeValue
+  WSResponse 'SCSystemInfo = ()
+  WSResponse 'SCMsgInfo    = ()
+  WSResponse 'SCSelfEcho   = ()
+
+forSubscriptionChannel :: SSubChannel c
+  -> (WSRequest c -> m (WSResponse c))
+  -> m ()
+forSubscriptionChannel = undefined
+
+upTime' :: UTCTime -> MsgBus -> MsgBus
+upTime' n ( Other      _ t ) = Other      n t
+upTime' n ( Shout    w _ t ) = Shout    w n t
+upTime' n ( SystemInfo _ t ) = SystemInfo n t
+upTime' n ( MsgInfo    _ t ) = MsgInfo    n t
+upTime' n ( SelfEcho   _ t ) = SelfEcho   n t
 
 toEcho (Shout _ t m) = Just (SelfEcho t m)
 toEcho _ = Nothing
@@ -54,5 +103,3 @@ instance IsString MsgBus where
 instance WS.WebSocketsData MsgBus where
   fromLazyByteString a = fromMaybe (Other time0 . TL.toStrict . TL.decodeUtf8 $ a) (DA.decode a)
   toLazyByteString   = DA.encode
-
-

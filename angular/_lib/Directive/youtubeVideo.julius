@@ -88,7 +88,7 @@ function (youtubeEmbedUtils, $window,$log) {
 
             function loadPlayer () {
                 if (scope.playerVars.videoId || scope.playerVars.list) {
-                    if (scope.player && scope.player.d &&
+                    if (scope.player && scope.player.destroy &&
                         typeof scope.player.destroy === 'function') {
                         scope.player.destroy();
                     }

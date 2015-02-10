@@ -7,6 +7,8 @@ import Database.Persist.Quasi
 import Database.Persist.MongoDB hiding (master)
 import Language.Haskell.TH.Syntax
 import Types
+import Google.Api.Utils
+import Data.Aeson.TH       (deriveJSON)
 
 -- You can define all of your database entities in the entities file.
 -- You can find more information on persistent and how to declare entities
@@ -20,8 +22,5 @@ let mongoSettings = mkPersistSettings (ConT ''MongoContext)
 instance FromJSON YTChannel
 instance ToJSON   YTChannel
 
-instance FromJSON User
-instance ToJSON   User
-
-instance FromJSON SiteGroup
-instance ToJSON SiteGroup
+deriveJSON optsL4 ''User
+deriveJSON optsL9 ''SiteGroup

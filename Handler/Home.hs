@@ -62,33 +62,36 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                , "ngCookies"
                , "ngMaterial"
                , "ngWebSocket"
+               , "ngResource"
                ]
 
-    $(addStateJ     "demos"            "/demos"     ) -- could work without passwords
-    $(addStateJ     "demos.empty"      "/empty"     )
-    $(addStateJ     "demos.panel"      "/panel"     )
-    $(addStateJ     "demos.button"     "/button"    )
-    $(addStateJ     "demos.checkbox"   "/checkbox"  )
-    $(addStateJ     "demos.content"    "/content"   )
-    $(addStateJ     "demos.dialog"     "/dialog"    )
-    $(addStateJ     "demos.slider"     "/slider"    )
-    $(addStateJ     "demos.textfield"  "/textfield" )
-    $(addStateJ     "demos.youtube"    "/youtube"   )
-    $(addStateJ     "demos.about"      "/about"     )
+    $(addStateJ     "demos"            "/demos"          ) -- could work without passwords
+    $(addStateJ     "demos.empty"      "/empty"          )
+    $(addStateJ     "demos.panel"      "/panel"          )
+    $(addStateJ     "demos.button"     "/button"         )
+    $(addStateJ     "demos.checkbox"   "/checkbox"       )
+    $(addStateJ     "demos.content"    "/content"        )
+    $(addStateJ     "demos.dialog"     "/dialog"         )
+    $(addStateJ     "demos.slider"     "/slider"         )
+    $(addStateJ     "demos.textfield"  "/textfield"      )
+    $(addStateJ     "demos.youtube"    "/youtube"        )
+    $(addStateJ     "demos.about"      "/about"          )
 
-    $(addStateJ     "oauth2"           "/oauth2"    )  -- show only to channel admin who autenticated oauth
-    $(addStateJ     "oauth2.channels"  "/channels"  )
+    $(addStateJ     "oauth2"           "/oauth2"         )  -- show only to channel admin who autenticated oauth
+    $(addStateJ     "oauth2.channels"  "/channels"       )
     $(addStateJ     "oauth2.playlists" "/playlists/:cid" )
-    $(addStateJ     "oauth2.playlist"  "/playlist/:pid" )
-    $(addStateJ     "oauth2.video"     "/video/:vid" )
+    $(addStateJ     "oauth2.playlist"  "/playlist/:pid"  )
+    $(addStateJ     "oauth2.video"     "/video/:vid"     )
 
-    $(addStateJ     "admin"            "/admin"      ) -- only channel admin
-    $(addStateJ     "admin.video"      "/video"      )
-    $(addStateJ     "admin.group"      "/group"      ) -- require special permissions
-    $(addStateJ     "admin.allusers"   "/allusers"      ) -- require special permissions
-    $(addStateJ     "site"             "/site"       ) -- will be per user
-    
-    $(addStateJ     "chat"             "/chat"       ) -- will be per user
+    $(addStateJ     "admin"            "/admin"          ) -- only channel admin
+    $(addStateJ     "admin.video"      "/video"          )
+    $(addStateJ     "admin.group"      "/group"          ) -- require special permissions
+    $(addStateJ     "admin.group.add"  "/add"            ) -- require special permissions
+    $(addStateJ     "admin.group.edit" "/edit/:short"    ) -- require special permissions
+    $(addStateJ     "admin.allusers"   "/allusers"       ) -- require special permissions
+    $(addStateJ     "site"             "/site"           ) -- will be per user
+
+    $(addStateJ     "chat"             "/chat"           ) -- will be per user
 
     setDefaultRoute "/demos/about"
 
@@ -100,6 +103,18 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     addDirective  "youtubeVideo"      $(juliusFile  "angular/_lib/Directive/youtubeVideo.julius")
 --     addDirective  "resize"            $(juliusFile  "angular/_lib/Directive/resize.julius")
   -- ^ empty
+    addFactory "ytPlayer" [js| function (){
+      var player, curr_vars;
+
+      var methods = { player: player, curr_vars: curr_vars};
+      return methods;
+
+    } |]
+
+
+    addFactory "Group" [js| function($resource) { return $resource("@{AllSiteGroupR}/:short"); }|]
+    addFactory "User"  [js| function($resource) { return $resource("@{AllUserR}/:email");      }|]
+
     addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid) {
       // Open a WebSocket connection
       var dataStream = $websocket('@{HomeR}'.replace("http:", "ws:").replace("https:", "wss:"));
@@ -118,8 +133,6 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                 collection.unshift({tag:buffer.tag, cont:buffer.contents});
               })
             });
-
-        
       });
 
       var methods = { collection: collection
@@ -133,6 +146,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
 
       return methods;
     }|]
+
     addFactory "sections" [ncoffee|
 () ->
   sections =
@@ -147,6 +161,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
       visible: false
       pages: [ { state:"admin.video", name: "video", icon: "fa video-camera"}
              , { state:"admin.group", name: "group", icon: "fa group font-spin"}
+             , { state:"admin.group.add", name: "group add", icon: "fa group font-spin"}
              , { state:"admin.allusers", name: "allusers", icon: "fa users"}
              ]
     ,
@@ -193,7 +208,7 @@ chatApp chans name = do
     race_
         (forever $ atomically (readTChan rChan) >>= sendBinaryData)
         (sourceWS $$ mapM_C (\(msg :: MsgBus)-> do
-          now <- upTime <$> liftIO getCurrentTime
+          now <- upTime' <$> liftIO getCurrentTime
           atomically $ do
             maybe noop (sendSendChan False chans name) (toEcho $ now msg)
             broadcastChan (now msg) name chans

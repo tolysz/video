@@ -1,0 +1,21 @@
+<md-toolbar .md-accent>
+    <div .md-toolbar-tools>
+        <span .md-flex>Add a new group
+    <md-content .md-padding>
+      <md-input-container>
+        <label>Full name
+        <input ng-model="group.name">
+      <md-input-container>
+        <label>Short name
+        <input ng-model="group.short">
+      <md-input-container flex>
+        <label>Notes
+        <textarea ng-model="group.notes" columns="1" md-maxlength="350">
+      <md-checkbox ng-model="group.public" aria-label="group is public">
+         group is public
+      <md-input-container>
+         <label>Url</label>
+         <input ng-model="group.url" type="url">
+    <md-button .md-raised .md-warn ng-click=save()>Create
+<pre>
+  {{ group | json }}

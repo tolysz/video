@@ -1,0 +1,14 @@
+function($scope, Group) {
+
+/*
+ { 'get':    {method:'GET'}
+ , 'save':   {method:'POST'}
+ , 'query':  {method:'GET', isArray:true}
+ , 'remove': {method:'DELETE'}
+ , 'delete': {method:'DELETE'}
+ };
+*/
+$scope.save = function()
+            { Group.save($scope.group)
+            }
+}

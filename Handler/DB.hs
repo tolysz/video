@@ -19,10 +19,37 @@ getUserChannelsR =
         runDB $ selectList [ChannelMemberUser ==. uid] []
           >>= mapM (\(Entity _ q) -> get $ channelMemberRef q )
 
-liftMaybe :: Monad m => Maybe a -> MaybeT m a
-liftMaybe = MaybeT . return
+-- liftMaybe :: Monad m => Maybe a -> MaybeT m a
+-- liftMaybe = MaybeT . return
+
+liftMaybe :: (MonadPlus m) => Maybe a -> m a
+liftMaybe = maybe mzero return
 
 -- Insert New user-- post
+
+getAllUserR = listsOfAll :: ApiReq [     User      ]
+postAllSiteGroupR :: AppM Value
+postAllSiteGroupR = do
+        guardAllAdmin
+
+        -- name     siteGroupName            Text
+        -- short    siteGroupShort           ShortName
+        -- notes    siteGroupNotes           Text Maybe
+        -- public   siteGroupPublic          Bool
+        -- url      siteGroupUrl             Text Maybe
+
+        restOpenM $ \(v :: Value) -> runMaybeT $ do
+            siteGroupName  <-          liftMaybe (v ^? key "name"   . _String )
+            siteGroupShort <-          liftMaybe (v ^? key "short"  . _String )
+            siteGroupNotes <- Just <$> liftMaybe (v ^? key "notes"  . _String )
+            siteGroupPublic<-          liftMaybe (v ^? key "public" . _Bool   )
+            siteGroupUrl   <- Just <$> liftMaybe (v ^? key "url"    . _String )
+
+            MaybeT $ runDB $ getBy (UniqueSiteGroup siteGroupShort) >>= \case
+                Just (Entity uid _) -> return $ Just uid
+                Nothing -> Just <$> insert SiteGroup {..}
+
+getAllSiteGroupR      = listsOfAll :: ApiReq [   SiteGroup   ]
 postAllUserR :: AppM Value
 postAllUserR = do
         guardAllAdmin
@@ -38,10 +65,10 @@ postAllUserR = do
                           , userAvatar    = Nothing
                           }
 
+
+
 -- | todo: find out how to cut this boilerplate!
 --   force compiler not to disply signature missing if the type is fully defined otherwise
-getAllSiteGroupR      = listsOfAll :: ApiReq [   SiteGroup   ]
-getAllUserR           = listsOfAll :: ApiReq [     User      ]
 -- | debug stuff -- mongo admin?
 getAllOAuthAccess     = listsOfAll :: ApiReq [  OAuthAccess  ]
 getAllEmail           = listsOfAll :: ApiReq [     Email     ]

@@ -1,0 +1,7 @@
+{ "name": "polymer"
+, "main": ["polymer.js"]
+, "dependencies":
+  { "core-component-page": "Polymer/core-component-page#^0.5"
+  , "webcomponentsjs": "Polymer/webcomponentsjs#^0.5"
+  }
+}

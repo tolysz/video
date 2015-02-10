@@ -22,7 +22,7 @@ $newline never
         \<![endif]-->
 
 
-        <script type="text/javascript" src="static/polymer/polymer.js"></script>
+        $# <script type="text/javascript" src="static/polymer/polymer.js"></script>
         <script type="text/javascript" src="@{StaticR app_min_js}"></script>
 
         $# <script type="text/javascript" src="static/polymer/polymer.js"></script>

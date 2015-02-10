@@ -61,6 +61,10 @@ library
                      Google.Api.Youtube.Subscriptions
                      Google.Api.Youtube.VideoCategories
                      Google.Api.Youtube.Watermarks
+                  -- binary-js
+                     Data.Binary.JS
+                  -- binary-enum
+                     Data.Binary.Enum
 
 
     if flag(dev) || flag(library-only)
@@ -152,6 +156,12 @@ library
                  , list-t
                  , focus
                -- Msg
+                 , binary
+                 , singletons
+               -- binary-js
+                 , jmacro
+                 , generics-sop
+               -- binary-enum
                  , binary
 
 executable         video

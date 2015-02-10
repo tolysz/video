@@ -15,9 +15,8 @@
   ],
   "dependencies": {
     "underscore": "master",
-    "angular": "^1.3.9",
+    "angular": "^1.3.13",
     "angular-material": "tolysz/material-dist",
-    "angular-material-themes": "tolysz/angular-material-themes",
     "web-fonts-collection": "tolysz/web-fonts-collection",
     "angular-ui-router": "master",
     "angular-sanitize": "^1.3.9",
@@ -26,10 +25,11 @@
     "google-youtube": "master",
     "polymer": "Polymer/polymer#^0.5.2",
     "angular-cookies": "^1.3.9",
-    "angular-websocket": "tolysz/angular-websocket#master"
+    "angular-websocket": "tolysz/angular-websocket#master",
+    "angular-resource": "~1.3.13"
   },
   "resolutions": {
-    "angular": "^1.3.9",
+    "angular": "^1.3.13",
     "polymer": "^0.5.2",
     "angular-material": "^0.7",
     "core-component-page": "^0.5.0",

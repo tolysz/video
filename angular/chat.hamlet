@@ -38,6 +38,12 @@
              <div .md-tile-content>
                  <h3>{{line.cont | json}}
 
+           <md-item-content ng-switch-default>
+             <div .md-tile-left>
+                 <span .fa .bug .font-3x >
+             <div .md-tile-content>
+                 <h3>{{line}}
+
                $# <h3>{{line.cont | json}}
                $#<h4>{{item.who}}
                $#<p>

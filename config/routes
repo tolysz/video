@@ -30,4 +30,4 @@
 /user/channels                    UserChannelsR GET
 
 /admin/user                       AllUserR GET POST PUT
-/admin/group                      AllSiteGroupR GET
+/admin/group                      AllSiteGroupR GET POST
