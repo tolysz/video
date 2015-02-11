@@ -17,6 +17,7 @@ import Network.Wai.Handler.Warp    (HostPreference)
 import Yesod.Default.Config2       (applyEnvValue, configSettingsYml)
 import Yesod.Default.Util         --  (WidgetFileSettings, widgetFileNoReload,
                                    --  widgetFileReload)
+import qualified Facebook as FB
 
 import Text.Coffee
 
@@ -62,7 +63,10 @@ data AppSettings = AppSettings
     -- ^ Google Api Browser Key
     , appGoogleWebAppOAuth       :: Maybe OAuth2Google
     -- ^ OAuth2 config
+    , appFbCredentials           :: FB.Credentials
+    -- ^ Facebook creds
     , appDevelopment             :: Bool
+
     }
 
 
@@ -95,6 +99,10 @@ instance FromJSON AppSettings where
         appGoogleWebAppOAuth      <- o .:? "google-oauth"
         appDevelopment            <- pure defaultDev
 
+        fbId                      <- o .:? "facebook-app-id"     .!= ""
+        fbApp                     <- o .:? "facebook-app-name"   .!= ""
+        fbSecret                  <- o .:? "facebook-app-secret" .!= ""
+        let appFbCredentials = FB.Credentials fbApp fbId fbSecret
         return AppSettings {..}
 
 

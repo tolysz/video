@@ -6,14 +6,17 @@ import Import.NoFoundation
 import Text.Hamlet              (hamletFile)
 -- import Text.Julius              (Javascript,js)
 import Text.Jasmine             (minifym)
-import Yesod.Auth.BrowserId     (authBrowserId)
-import Yesod.Auth.GoogleEmail   (authGoogleEmail)
 import Yesod.Core.Types         (Logger)
 import Yesod.Default.Util       (addStaticContentExternal)
 import Yesod.AngularUI
 -- import SubSite.Data
 import Data.Maybe (fromJust)
 import Types
+
+import Yesod.Auth.BrowserId           (authBrowserId)
+import Yesod.Auth.GoogleEmail3        (authGoogleEmail, YesodGoogleAuth(..))
+import Yesod.Facebook
+import Yesod.Auth.Facebook2           (authFacebook)
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -26,6 +29,7 @@ data App = App
     , appHttpManager :: Manager
     , appLogger      :: Logger
     , userChannels   :: CMap MsgBus
+
 --     , appOAuth2      :: OAuth2App
     }
 
@@ -121,6 +125,15 @@ instance YesodPersist App where
             action
             (appConnPool master)
 
+instance YesodFacebook App where
+ fbHttpManager = appHttpManager
+ fbCredentials = appFbCredentials . appSettings
+
+instance YesodGoogleAuth App where
+  googleClientID     a = gaClientId     <$> (appGoogleWebAppOAuth . appSettings) a
+  googleClientSecret a = gaClientSecret <$> (appGoogleWebAppOAuth . appSettings) a
+
+
 instance YesodAuth App where
     type AuthId App = UserId
 
@@ -132,6 +145,9 @@ instance YesodAuth App where
     redirectToReferer _ = True
 
     getAuthId creds = runDB $ do
+        $(logError) $ credsPlugin creds
+        $(logError) $ credsIdent creds
+        $(logError) $ fromString $ show $ credsExtra creds
         x <- getBy $ UniqueUser $ credsIdent creds
         case x of
             Just (Entity uid _) -> return $ Just uid
@@ -148,9 +164,16 @@ instance YesodAuth App where
     -- You can add other plugins like BrowserID, email or OAuth here
     authPlugins _ = [ authBrowserId def
                     , authGoogleEmail
+                    , authFacebook ["email"]
                     ]
 
     authHttpManager = getHttpManager
+
+--     loginHandler = lift $ defaultLayout $ [whamlet|<div style="width:500px;margin:0 auto">^{login}|]
+
+
+-- login :: Widget
+-- login = toWidget $ {-addCassius $(cassiusFile "login") >> -}$(hamletFile "templates/login.hamlet")
 
 instance YesodAuthPersist App
 

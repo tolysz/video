@@ -65,7 +65,9 @@ library
                      Data.Binary.JS
                   -- binary-enum
                      Data.Binary.Enum
-
+                  -- patch yesod google auth
+                     Yesod.Auth.GoogleEmail3
+                     Yesod.Auth.Facebook2
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -137,6 +139,11 @@ library
                  , stm
                  , yesod-websockets
                  , websockets
+                 , fb
+                 , yesod-fb
+                 , yesod-auth-fb
+                 , wai
+
 
                -- deps for oauth
                  , case-insensitive
@@ -163,6 +170,9 @@ library
                  , generics-sop
                -- binary-enum
                  , binary
+               -- yesod google auth
+                 , mime-mail
+                 , conduit-extra
 
 executable         video
     if flag(library-only)
