@@ -14,7 +14,7 @@
       <md-checkbox ng-model="group.public" aria-label="group is public">
          group is public
       <md-input-container>
-         <label>Url</label>
+         <label>Url
          <input ng-model="group.url" type="url">
     <md-button .md-raised .md-warn ng-click=save()>Save
 <pre>

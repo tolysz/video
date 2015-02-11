@@ -5,7 +5,8 @@ import Import
 import Permissions
 import Data.Aeson.Lens
 import Data.Aeson.Types
-import Control.Lens ((^?)) -- , (^.))
+import Control.Lens ((^?) , (^.))
+import Control.Lens.Iso (non)
 
 -- import Database.MongoDB.Query (MongoContext(..))
 -- import Data.Aeson.Types (emptyObject)
@@ -35,9 +36,9 @@ postSiteGroupR = do
         restOpenM $ \(v :: Value) -> runMaybeT $ do
             siteGroupName   <-          liftMaybe (v ^? key "name"   . _String )
             siteGroupShort  <-          liftMaybe (v ^? key "short"  . _String )
-            siteGroupNotes  <- Just <$> liftMaybe (v ^? key "notes"  . _String )
-            siteGroupPublic <-          liftMaybe (v ^? key "public" . _Bool   )
-            siteGroupUrl    <- Just <$> liftMaybe (v ^? key "url"    . _String )
+            siteGroupNotes  <-          liftJust  (v ^? key "notes"  . _String )
+            siteGroupPublic <-          liftJust  (v ^? key "public" . _Bool   ^. non False)
+            siteGroupUrl    <-          liftJust  (v ^? key "url"    . _String )
             let sg = SiteGroup {..}
             MaybeT $ runDB $ getBy (UniqueSiteGroup siteGroupShort) >>= \case
                 Just (Entity uid _) -> replace uid sg >> return (Just uid)
@@ -56,7 +57,7 @@ postUserR :: AppM Value
 postUserR = do
         guardAllAdmin
         restOpenM $ \(v :: Value) -> runMaybeT $ do
-            userIdent     <- liftMaybe (v ^? key "email"    . _String )
+            userIdent     <- liftMaybe (v ^? key "ident"    . _String )
             userName      <- liftJust  (v ^? key "name"     . _String )
             userFriendly  <- liftJust  (v ^? key "friendly" . _String )
             userSiteAdmin <- liftJust  False -- (v ^? key "siteAdmin" . _String )
@@ -64,8 +65,8 @@ postUserR = do
             let us = User {..}
             MaybeT $ runDB $ getBy (UniqueUser userIdent) >>= \case
                  -- keep the old admin privs
-                Just (Entity uid old) -> replace uid us{userSiteAdmin = Import.userSiteAdmin old} >> return (Just uid)
-                Nothing -> Just <$> insert us
+                Just (Entity uid old) -> let nx = us{userSiteAdmin = Import.userSiteAdmin old} in replace uid nx >> return (Just nx)
+                Nothing -> insert us >> return (Just us)
 getUser1R gid = do
    guardAllAdmin
    runDB (getBy404 (UniqueUser gid))
@@ -96,19 +97,19 @@ listsOfAll = do
 
 -- | Add some anonymous user, without adding her to any group
 
-putAllUserR :: AppM Value
-putAllUserR =
-    restPermsM permAllAdmin $ \(u :: Value) -> runMaybeT $ do
-           email <- liftMaybe (u ^? key "userIdent" . _String )
-           MaybeT $ runDB $ getBy (UniqueUser email) >>= \case
-               Just (Entity uid _) -> return $ Just uid
-               Nothing -> Just <$> insert User
-                                  { userIdent     = email
-                                  , userName      = Nothing
-                                  , userFriendly  = Nothing
-                                  , userSiteAdmin = False
-                                  , userAvatar    = Nothing
-                                  }
+-- putAllUserR :: AppM Value
+-- putAllUserR =
+--     restPermsM permAllAdmin $ \(u :: Value) -> runMaybeT $ do
+--            email <- liftMaybe (u ^? key "userIdent" . _String )
+--            MaybeT $ runDB $ getBy (UniqueUser email) >>= \case
+--                Just (Entity uid v) -> return $ Just v
+--                Nothing -> Just <$> insert User
+--                                   { userIdent     = email
+--                                   , userName      = Nothing
+--                                   , userFriendly  = Nothing
+--                                   , userSiteAdmin = False
+--                                   , userAvatar    = Nothing
+--                                   }
 
 -- putAllUserR :: AppM ()
 -- putAllUserR = guardAllAdmin

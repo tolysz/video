@@ -1,4 +1,4 @@
-function($scope,$log,$http,$stateParams, ytPlayer){
+function($scope,$log,$http,$stateParams /*, ytPlayer */){
     $scope.sort = 0
         $scope.getList = function(){
             $log.debug($stateParams.cid)
@@ -9,8 +9,8 @@ function($scope,$log,$http,$stateParams, ytPlayer){
                 }
             )
         }
-    $scope.curr_vars = ytPlayer.curr_vars;
-    $scope.player = ytPlayer.player;
+    //$scope.curr_vars = ytPlayer.curr_vars;
+    //$scope.player = ytPlayer.player;
 
     $scope.setThose = function (pl){
         $log.debug (pl);
@@ -19,7 +19,7 @@ function($scope,$log,$http,$stateParams, ytPlayer){
         $scope.curr_vars = { list: pl.id }
         $scope.curr_title = pl.snippet.title;
 
-        ytPlayer.curr_vars = $scope.curr_vars;
+        //ytPlayer.curr_vars = $scope.curr_vars;
     }
 
     $scope.flipSort = function(){

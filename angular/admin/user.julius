@@ -1,3 +1,4 @@
-function($scope, User){
+function($scope, User, $log){
+    //$log.debug($scope);
     $scope.users = User.query();
 }

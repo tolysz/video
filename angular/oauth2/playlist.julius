@@ -1,7 +1,7 @@
-function($scope,$log,$http,ytPlayer,$stateParams){
+function($scope,$log,$http /*, ytPlayer*/ ,$stateParams){
 
-    $scope.player    = ytPlayer.player;
-    $scope.curr_vars = ytPlayer.curr_vars;
+    //$scope.player    = ytPlayer.player;
+    //$scope.curr_vars = ytPlayer.curr_vars;
 
     $scope.getList = function(){
         $log.debug($stateParams.pid)
@@ -21,7 +21,7 @@ function($scope,$log,$http,ytPlayer,$stateParams){
         $scope.curr_vars = { videoId: pl.contentDetails.videoId}
         $scope.curr_title = pl.snippet.title;
 
-        ytPlayer.curr_vars = $scope.curr_vars;
+        //ytPlayer.curr_vars = $scope.curr_vars;
     }
 
     $scope.flipSort = function(){

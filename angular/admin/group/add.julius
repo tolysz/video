@@ -1,14 +1,8 @@
-function($scope, Group) {
-
-/*
- { 'get':    {method:'GET'}
- , 'save':   {method:'POST'}
- , 'query':  {method:'GET', isArray:true}
- , 'remove': {method:'DELETE'}
- , 'delete': {method:'DELETE'}
- };
-*/
-$scope.save = function()
-            { Group.save($scope.group)
-            }
+function($scope, $state, Group) {
+$scope.save = function(){
+   Group
+    .save($scope.group).$promise.then( function(){
+         $state.go('admin.group.edit',$scope.group);
+         })
+   }
 }

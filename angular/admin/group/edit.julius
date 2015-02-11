@@ -1,17 +1,18 @@
-function($scope, $stateParams, Group) {
-
-    /*
-     { 'get':    {method:'GET'}
-     , 'save':   {method:'POST'}
-     , 'query':  {method:'GET', isArray:true}
-     , 'remove': {method:'DELETE'}
-     , 'delete': {method:'DELETE'}
-     };
-     */
+function($scope, $state, $stateParams, Group) {
 
     $scope.group = Group.get({short:$stateParams.short});
 
     $scope.save = function()
-    { Group.save($scope.group)
+    {
+      Group.save($scope.group).$promise.then( function(d) {
+          var match = _.find($scope.groups, function(item) { return item.short === d.short })
+          if (match) {
+              _.extend(match,d);
+          } else
+           { $scope.groups = Group.query();
+           }
+
+          $state.go('admin.group');
+      })
     }
 }

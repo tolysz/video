@@ -7,6 +7,7 @@ import Text.Hamlet              (hamletFile)
 -- import Text.Julius              (Javascript,js)
 import Text.Jasmine             (minifym)
 import Yesod.Auth.BrowserId     (authBrowserId)
+import Yesod.Auth.GoogleEmail   (authGoogleEmail)
 import Yesod.Core.Types         (Logger)
 import Yesod.Default.Util       (addStaticContentExternal)
 import Yesod.AngularUI
@@ -145,7 +146,9 @@ instance YesodAuth App where
                     }
 
     -- You can add other plugins like BrowserID, email or OAuth here
-    authPlugins _ = [authBrowserId def]
+    authPlugins _ = [ authBrowserId def
+                    , authGoogleEmail
+                    ]
 
     authHttpManager = getHttpManager
 

@@ -115,8 +115,8 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     } |]
 
 
-    addFactory "Group" [js| function($resource) { return $resource("@{SiteGroupR}/:short"); }|]
-    addFactory "User"  [js| function($resource) { return $resource("@{UserR}/:ident" );      }|]
+    addFactory "Group" [js| function($resource) { var Group = $resource("@{SiteGroupR}/:short"); return Group; }|]
+    addFactory "User"  [js| function($resource) { var User  = $resource(     "@{UserR}/:ident"); return User;  }|]
 
     addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid) {
       // Open a WebSocket connection
@@ -164,7 +164,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
       visible: false
       pages: [ { state:"admin.video", name: "video", icon: "fa video-camera"}
              , { state:"admin.group", name: "group", icon: "fa group font-spin"}
-             //, { state:"admin.group.add", name: "group add", icon: "fa group font-spin"}
+             #, { state:"admin.group.add", name: "group add", icon: "fa group font-spin"}
              , { state:"admin.user", name: "users", icon: "fa users"}
              ]
     ,

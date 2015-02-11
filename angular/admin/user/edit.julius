@@ -1,8 +1,18 @@
-function($scope, $stateParams, User) {
+function($scope, $state, $stateParams, User, $log) {
 
-    $scope.group = User.get({ident:$stateParams.ident});
+    $scope.user = User.get({ident:$stateParams.ident});
+
+    $log.debug($scope.users);
 
     $scope.save = function()
-    { User.save($scope.user)
+    { User.save($scope.user).$promise.then(function(d){
+
+    var match = _.find($scope.users, function(item) { return item.ident === d.ident })
+    if (match) {
+        _.extend(match,d);
+    } else
+      { $scope.users = User.query();
+      }
+     $state.go('admin.user'); });
     }
 }

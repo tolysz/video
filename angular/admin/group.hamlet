@@ -1,12 +1,28 @@
 <div ui-view layout-fill tabindex="-1" role=main>
      <md-toolbar .md-accent>
           <div .md-toolbar-tools>
-                <span .md-flex> All Groups
+                <span .md-flex>
+                   All Groups
+                   <md-switch ng-model="debug" aria-label="debug" style="float:left;">
           <div flex>
      <md-content>
-       <pre>
+       <a ui-sref="admin.group.add">
+          <md-button .md-raised .md-primary>Add new group
+       <md-list>
+          <md-item ng-repeat="group in groups">
+            <md-item-content>
+              <div class="md-tile-left">
+                  <a ui-sref="admin.group.edit({short:group.short})">
+                      <img ng-src={{group.avatar}} ng-show=group.avatar .cover alt="{{group.short}}">
+                      <span .cover .fa .user .font-3x ng-hide=group.avatar>
+              <div class="md-tile-content">
+                <h3>
+                   {{ group.name }}
+                   <a ui-sref=oauth2.playlists({cid:chan.id})>
+                          {{user.someName}}
+       <pre ng-show=debug>
           {{ groups | json }}
-       <code>
+       <code ng-show=debug>
            \ SiteGroupMember
            \   user          UserId
            \   group         SiteGroupId

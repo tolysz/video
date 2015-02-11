@@ -1,6 +1,8 @@
 <md-toolbar .md-accent>
     <div .md-toolbar-tools>
-        <span .md-flex>User
+        <span .md-flex>
+          User
+          <md-switch ng-model="debug" aria-label="debug" style="float:left;">
     <md-content .md-padding>
       <md-input-container>
         <label>Email
@@ -17,5 +19,5 @@
          <label>Avatar
          <input ng-model=user.avatar type=url>
     <md-button .md-raised .md-warn ng-click=save()>Create
-<pre>
+<pre ng-show=debug>
   {{ user | json }}
