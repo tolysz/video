@@ -16,6 +16,12 @@
       <md-input-container>
          <label>Url
          <input ng-model="group.url" type="url">
-    <md-button .md-raised .md-warn ng-click=save()>Save
+    <div layout=row layout-sm=column layout-align="space-between center">
+         <md-button .md-raised .md-warn ng-click=save()>
+            <span .fa .floppy-o>
+            Save
+         <md-button .md-raised .md-warn ng-click=delete()>
+            <span .fa .times>
+            Delete
 <pre>
   {{ group | json }}

@@ -4,15 +4,30 @@ function($scope, $state, $stateParams, User, $log) {
 
     $log.debug($scope.users);
 
-    $scope.save = function()
-    { User.save($scope.user).$promise.then(function(d){
+    $scope.delete = function()
+    {
+        var i = $scope.user.ident;
+        User.delete($scope.user).$promise.then( function() {
+            for (var ix = $scope.users.length - 1; ix >= 0; ix--) {
+                    if ($scope.users[ix].ident === i) {
+                        $scope.users.splice(ix, 1);
+                    }
+                }
+            $state.go('admin.user');
+        })
+    }
 
-    var match = _.find($scope.users, function(item) { return item.ident === d.ident })
-    if (match) {
-        _.extend(match,d);
-    } else
-      { $scope.users = User.query();
-      }
-     $state.go('admin.user'); });
+    $scope.save = function()
+    {
+      User.save($scope.user).$promise.then(function(d){
+
+          var match = _.find($scope.users, function(item) { return item.ident === d.ident });
+
+          if (match) {
+                _.extend(match,d);
+            } else{
+                $scope.users = User.query();
+              }
+          $state.go('admin.user'); });
     }
 }

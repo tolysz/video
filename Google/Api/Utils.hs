@@ -19,6 +19,9 @@ optsL5 = defaultOptions { fieldLabelModifier = dropL 5 }
 optsL9 :: Options
 optsL9 = defaultOptions { fieldLabelModifier = dropL 9 }
 
+optsL15 :: Options
+optsL15 = defaultOptions { fieldLabelModifier = dropL 9 }
+
 fromCamel :: Int -> String -> String
 fromCamel n = worker True . drop n
   where

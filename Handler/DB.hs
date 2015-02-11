@@ -30,7 +30,7 @@ liftJust = return
 -- Insert New user-- post
 
 getSiteGroupR      = listsOfAll :: ApiReq [   SiteGroup   ]
-postSiteGroupR :: AppM Value
+-- postSiteGroupR :: AppM Value
 postSiteGroupR = do
         guardAllAdmin
         restOpenM $ \(v :: Value) -> runMaybeT $ do
@@ -41,19 +41,25 @@ postSiteGroupR = do
             siteGroupUrl    <-          liftJust  (v ^? key "url"    . _String )
             let sg = SiteGroup {..}
             MaybeT $ runDB $ getBy (UniqueSiteGroup siteGroupShort) >>= \case
-                Just (Entity uid _) -> replace uid sg >> return (Just uid)
-                Nothing -> Just <$> insert sg
-
+                Just (Entity uid _) -> replace uid sg >> return (Just $ TC sg)
+                Nothing -> insert sg >> return (Just $ TC sg)
 
 oneOr404 [a] = return a
 oneOr404 _ = notFound
 
-getSiteGroup1R gid = do
-  guardAllAdmin
-  runDB (getBy404 (UniqueSiteGroup gid))
+getSiteGroup1R :: ShortName -> ApiReq SiteGroup
+getSiteGroup1R = jsonDB1 . getBy404 . UniqueSiteGroup
+
+deleteSiteGroup1R :: ShortName -> ApiReq SiteGroup
+deleteSiteGroup1R u1 =
+ jsonDB1 $ do
+   u@(Entity k _) <- getBy404 (UniqueSiteGroup u1)
+   delete k
+   return u
 
 getUserR = listsOfAll :: ApiReq [     User      ]
-postUserR :: AppM Value
+-- postUserR :: AppM Value
+-- postUserR :: ApiReq User
 postUserR = do
         guardAllAdmin
         restOpenM $ \(v :: Value) -> runMaybeT $ do
@@ -65,11 +71,22 @@ postUserR = do
             let us = User {..}
             MaybeT $ runDB $ getBy (UniqueUser userIdent) >>= \case
                  -- keep the old admin privs
-                Just (Entity uid old) -> let nx = us{userSiteAdmin = Import.userSiteAdmin old} in replace uid nx >> return (Just nx)
-                Nothing -> insert us >> return (Just us)
-getUser1R gid = do
-   guardAllAdmin
-   runDB (getBy404 (UniqueUser gid))
+                Just (Entity uid old) -> let nx = us{userSiteAdmin = Import.userSiteAdmin old} in replace uid nx >> return (Just $ TC nx)
+                Nothing -> insert us >> return (Just $ TC us)
+getUser1R :: EmailQuery -> ApiReq User
+getUser1R = jsonDB1 . getBy404 . UniqueUser
+
+deleteUser1R :: EmailQuery -> ApiReq User
+deleteUser1R u1 =
+ jsonDB1 $ do
+   u@(Entity k _) <- getBy404 (UniqueUser u1)
+   delete k
+   return u
+
+getSiteGroupUserR gid =
+   jsonDB $ do
+     Entity ent _ <- getBy404 (UniqueSiteGroup gid)
+     selectList [SiteGroupMemberGroup ==. ent] []
 
 -- | todo: find out how to cut this boilerplate!
 --   force compiler not to disply signature missing if the type is fully defined otherwise
@@ -91,43 +108,19 @@ getAllPlaylistEvent   = listsOfAll :: ApiReq [ PlaylistEvent ]
 -- | type magic
 --   convert any list of all into a respoce; too many things to import
 --   just to make this line a happy line
-listsOfAll = do
-    guardAllAdmin
-    TC . map (\(Entity _ v) -> v) <$> runDB (selectList [] [])
+listsOfAll = jsonDB (selectList [] [])
+
+jsonDB q = do
+  guardAllAdmin
+  TC . map (\(Entity _ v) -> v) <$> runDB q
+
+jsonDB1 q = do
+  guardAllAdmin
+  TC . (\(Entity _ v) -> v) <$> runDB q
+
+eToTC (Entity _ v) = TC v
 
 -- | Add some anonymous user, without adding her to any group
-
--- putAllUserR :: AppM Value
--- putAllUserR =
---     restPermsM permAllAdmin $ \(u :: Value) -> runMaybeT $ do
---            email <- liftMaybe (u ^? key "userIdent" . _String )
---            MaybeT $ runDB $ getBy (UniqueUser email) >>= \case
---                Just (Entity uid v) -> return $ Just v
---                Nothing -> Just <$> insert User
---                                   { userIdent     = email
---                                   , userName      = Nothing
---                                   , userFriendly  = Nothing
---                                   , userSiteAdmin = False
---                                   , userAvatar    = Nothing
---                                   }
-
--- putAllUserR :: AppM ()
--- putAllUserR = guardAllAdmin
-
-{-
-postAllUserR :: AppM Value
-postAllUserR =
-        restPermsM permAllAdmin $ \(v :: Value) -> runMaybeT $ do
-            email <- liftMaybe (v ^? key "email" . _String )
-            MaybeT $ runDB $ getBy (UniqueUser email) >>= \case
-                Just (Entity uid _) -> return $ Just uid
-                Nothing -> Just <$> insert User
-                          { userIdent = email
-                          , userName      = Nothing
-                          , userFriendly  = Nothing
-                          , userSiteAdmin = False
-                          }
--}
 
 assessValue :: (ToJSON s, FromJSON a) => Permssions -> s -> a
 assessValue _ _ = undefined

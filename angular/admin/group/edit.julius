@@ -2,6 +2,20 @@ function($scope, $state, $stateParams, Group) {
 
     $scope.group = Group.get({short:$stateParams.short});
 
+    $scope.delete = function()
+    {
+        var i = $scope.group.short;
+        Group.delete($scope.group).$promise.then( function() {
+            for (var ix = $scope.groups.length - 1; ix >= 0; ix--) {
+                if ($scope.groups[ix].short === i) {
+                    $scope.groups.splice(ix, 1);
+                }
+            }
+            $state.go('admin.group');
+        })
+    }
+
+
     $scope.save = function()
     {
       Group.save($scope.group).$promise.then( function(d) {

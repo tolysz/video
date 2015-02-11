@@ -30,7 +30,14 @@
 /user/channels                    UserChannelsR GET
 
 /admin/user                       UserR  GET POST
-/admin/user/#EmailQuery           User1R GET
+/admin/user/#EmailQuery           User1R GET DELETE
 
 /admin/group                      SiteGroupR GET POST
-/admin/group/#ShortName           SiteGroup1R GET
+/admin/group/#ShortName           SiteGroup1R GET DELETE
+
+/admin/group/#ShortName/user      SiteGroupUserR GET
+-- /admin/group/#ShortName/user/#EmailQuery  SiteGroupUser1R GET POST
+
+-- user centric/ creds from the session
+-- /user
+-- /groups

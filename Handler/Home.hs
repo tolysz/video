@@ -115,8 +115,9 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     } |]
 
 
-    addFactory "Group" [js| function($resource) { var Group = $resource("@{SiteGroupR}/:short"); return Group; }|]
-    addFactory "User"  [js| function($resource) { var User  = $resource(     "@{UserR}/:ident"); return User;  }|]
+    addFactory "Group"     [js| function($resource) { var Group = $resource("@{SiteGroupR}/:short"); return Group; }|]
+    addFactory "User"      [js| function($resource) { var User  = $resource(     "@{UserR}/:ident"); return User;  }|]
+    addFactory "GroupUser" [js| function($resource) { var GroupUser = $resource("@{SiteGroupR}/:short/user"); return GroupUser; }|]
 
     addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid) {
       // Open a WebSocket connection

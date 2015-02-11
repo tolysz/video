@@ -1,8 +1,9 @@
 function($scope, $state, Group) {
 $scope.save = function(){
    Group
-    .save($scope.group).$promise.then( function(){
-         $state.go('admin.group.edit',$scope.group);
+    .save($scope.group).$promise.then( function(newGroup){
+             $scope.groups.push(newGroup);
+             $state.go('admin.group');
          })
    }
 }

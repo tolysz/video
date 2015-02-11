@@ -1,6 +1,8 @@
 function($scope, $state, User) {
     $scope.save = function()
     {
-     User.save($scope.user).$promise.then( function(){$state.go('admin.user.edit',$scope.user);})
+     User.save($scope.user).$promise.then( function(newUser){
+         $scope.users.push(newUser);
+         $state.go('admin.user');})
     }
 }

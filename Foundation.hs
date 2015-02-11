@@ -145,9 +145,6 @@ instance YesodAuth App where
     redirectToReferer _ = True
 
     getAuthId creds = runDB $ do
-        $(logError) $ credsPlugin creds
-        $(logError) $ credsIdent creds
-        $(logError) $ fromString $ show $ credsExtra creds
         x <- getBy $ UniqueUser $ credsIdent creds
         case x of
             Just (Entity uid _) -> return $ Just uid
@@ -204,16 +201,16 @@ instance YesodAngular App where
    angularUIEntry = [whamlet|
  <div layout=column layout-fill ng-cloak>
    <section >
-     <div layout="row"  hide-gt-md ng-controller="LeftCtrl"  layout-align="space-between start">
-       <md-button ng-click="toggleLeft()" class="md-primary" >
+     <div layout=row  hide-gt-md ng-controller=LeftCtrl  layout-align="space-between start">
+       <md-button ng-click="toggleLeft()" .md-primary >
            <span .fa .indent >
            Menu
        <md-button  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
            <span .glyphicon .log-out>
            Logout({{maid | splitChars2:10 }})
      <div layout="row" layout-fill>
-      <md-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$media('gt-md')" md-component-id="left" tabindex="-1" style="width:250px" >
-          <md-content style="overflow: auto;" .md-default-theme ng-controller="LeftCtrl">
+      <md-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$media('gt-md')" md-component-id=left tabindex="-1" style="width:250px" >
+          <md-content style="overflow: auto;" .md-default-theme ng-controller=LeftCtrl>
               <md-toolbar style="min-height: 64px; max-height:64px;"  .md-default-theme>
                 <h1 .md-toolbar-tools flex layout=row>
                   <a href="" ng-click="goHome()" tabindex=0>
@@ -222,7 +219,7 @@ instance YesodAngular App where
                 <a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >
                   {{section.name}}
                 <a .menu-item .md-menu-item .menu-sub-item
-                   ng-show="section.visible"
+                   ng-show=section.visible
                    ng-repeat="page in section.pages"
                    ui-sref-active=active
                    ui-sref={{page.state}}

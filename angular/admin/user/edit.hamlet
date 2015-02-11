@@ -18,6 +18,13 @@
       <md-input-container>
          <label>Avatar
          <input ng-model=user.avatar type=url>
-    <md-button .md-raised .md-warn ng-click=save()>Save
+    <section >
+        <div layout=row layout-sm=column layout-align="space-between center">
+            <md-button .md-raised .md-warn ng-click=save()>
+                <span .fa .floppy-o>
+                Save
+            <md-button .md-raised .md-warn ng-click=delete()>
+                <span .fa .times>
+                Delete
 <pre ng-show=debug>
   {{ user | json }}

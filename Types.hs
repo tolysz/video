@@ -53,6 +53,9 @@ fromCamel n = worker True . drop n
 
 data TC a = TC a
 
+instance (ToJSON a) => ToJSON (TC a) where
+  toJSON (TC a) = toJSON a
+
 instance (ToJSON a) => ToContent (TC a) where
   toContent (TC a) = toContent $ toJSON a
 
