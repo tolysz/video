@@ -16,3 +16,4 @@ cabal.sandbox.config
 *.swp
 run.sh
 extra-bower
+bower_components

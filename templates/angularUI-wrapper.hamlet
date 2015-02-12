@@ -11,6 +11,8 @@ $doctype 5
         ^{scripts_import}
         <title>#{pageTitle pc}
         <meta name="viewport" content="width=device-width,initial-scale=1">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
         ^{pageHead pc}
         <script>
           document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
