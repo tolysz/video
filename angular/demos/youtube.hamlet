@@ -1,12 +1,9 @@
   <md-toolbar .md-accent>
     <div .md-toolbar-tools>
-      <span .md-flex>And we play ytube videos...
+      <span .md-flex>
+           And we play
+           <span .fa .youtube>
+           videos...
     <div flex>
   <md-content .md-padding>
-   <google-youtube
-         videoid="qdsTUfDTEhQ"
-         height="270px"
-         width="480px"
-         rel="0"
-         start="5"
-         autoplay="1">
+   <youtube-video player-vars="curr_vars">

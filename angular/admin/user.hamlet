@@ -7,7 +7,9 @@
           <div flex>
      <md-content>
          <a ui-sref="admin.user.add">
-            <md-button .md-raised .md-primary>And new user
+            <md-button .md-raised .md-primary>
+               <span .fa .user-plus>
+               And new user
          <md-list>
            <md-item ng-repeat="user in users">
              <md-item-content>

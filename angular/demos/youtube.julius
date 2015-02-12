@@ -1,0 +1,5 @@
+function ($scope) {
+    // have a video id
+    $scope.curr_vars = { videoId: 'qdsTUfDTEhQ'}
+
+}
