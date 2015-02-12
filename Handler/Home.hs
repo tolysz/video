@@ -121,8 +121,11 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
 
     addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid) {
       // Open a WebSocket connection
-      var dataStream = $websocket('@{HomeR}'.replace("http:", "ws:").replace("https:", "wss:"));
+      var methods = {};
       var collection = [];
+      try{
+      var dataStream = $websocket('@{HomeR}'.replace("http:", "ws:").replace("https:", "wss:"));
+
 
       dataStream.onMessage(function(message) {
       $log.debug(message);
@@ -139,7 +142,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
             });
       });
 
-      var methods = { collection: collection
+      methods = { collection: collection
                     , get: function(s) {
                              dataStream.send(JSON.stringify({ action: 'get', value: s }));
                             }
@@ -147,7 +150,12 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                                dataStream.send(JSON.stringify({ tag: 'Shout', contents: [maid, new Date() ,s] }));
                             }
                     };
-
+      }  catch(e) {
+         methods = { collection: collection
+                   , get: function(s){}
+                   , shout: function(s){}
+                   }
+      }
       return methods;
     }|]
 

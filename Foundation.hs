@@ -214,6 +214,7 @@ instance YesodAngular App where
               <md-toolbar style="min-height: 64px; max-height:64px;"  .md-default-theme>
                 <h1 .md-toolbar-tools flex layout=row>
                   <a href="" ng-click="toggleFullScreen()" tabindex=0>
+                        <span .fa .arrows-alt >
                         Video Selector
               <div ng-repeat="section in sections">
                 <a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >

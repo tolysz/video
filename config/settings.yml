@@ -10,12 +10,12 @@ ip-from-header: "_env:IP_FROM_HEADER:false"
 # Optional values with the following production defaults.
 # In development, they default to the inverse.
 #
-# development: false
-# detailed-logging: false
-# should-log-all: false
-# reload-templates: false
-# mutable-static: false
-# skip-combining: false
+development: false
+detailed-logging: true
+should-log-all: true
+reload-templates: false
+mutable-static: false
+skip-combining: false
 
 database:
   user:        "_env:DB_USER:video"
