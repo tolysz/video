@@ -13,7 +13,8 @@ function (youtubeEmbedUtils, $window,$log) {
 
     var eventPrefix = 'youtube.player.';
 
-    var win = angular.element($window)[0];
+    // var win = angular.element($window)[0];
+
 
     return {
         restrict: 'EA',
@@ -26,25 +27,38 @@ function (youtubeEmbedUtils, $window,$log) {
             playerWidth: '=?'
         },
         link: function (scope, element, attrs) {
-
-            function getWindowDimensions () {
-                //$log.debug(w)
-                return { 'h': win.innerHeight
-                       , 'w': win.innerWidth
-                      };
-            }
-            
             // allows us to $watch `ready`
+            var win = angular.element($window);
             scope.utils = youtubeEmbedUtils;
 
             // player-id attr > id attr > directive-generated ID
             var playerId = attrs.playerId || element[0].id || 'unique-youtube-embed-id-' + uniqId++;
             element[0].id = playerId;
 
-            // Attach to element
-            var dimm =  youtubeEmbedUtils.calculateDims(getWindowDimensions())
-            scope.playerHeight = dimm.h || 390; // scope.playerHeight
-            scope.playerWidth = dimm.w || 640; // scope.playerWidth
+            scope.$watch(function() {
+               return { 'h': $window.window.innerHeight
+                      , 'w': $window.window.innerWidth
+                      }
+                }
+                , function (newValue, oldValue) {
+
+                    var ndimm = youtubeEmbedUtils.calculateDims(newValue)
+
+                    scope.playerHeight = ndimm.h || 390; // scope.playerHeight
+                    scope.playerWidth = ndimm.w || 640; // scope.playerWidth
+
+                    if (scope.player) {
+                        scope.player.setSize(ndimm.w + 'px',ndimm.h + 'px')
+                    }
+
+                    scope.style = function () {
+                        return { 'height': ndimm.h
+                            , 'width':  ndimm.w
+                        };
+                    };
+
+                }, true);
+
             scope.playerVars = scope.playerVars || {};
 
             // YT calls callbacks outside of digest cycle
@@ -95,7 +109,7 @@ function (youtubeEmbedUtils, $window,$log) {
 
                     scope.player = createPlayer();
                 }
-            };
+            }
 
             var stopWatchingReady = scope.$watch(
                 function () {
@@ -124,25 +138,10 @@ function (youtubeEmbedUtils, $window,$log) {
                     }
             });
 
-            scope.$watch(getWindowDimensions, function (newValue, oldValue) {
 
-                var ndim = youtubeEmbedUtils.calculateDims(newValue)
-
-//                scope.windowHeight = ndim.h;
-//                scope.windowWidth = ndim.w;
-
-                if (scope.player) {
-                    scope.player.setSize(ndim.w + 'px',ndim.h + 'px')
-                }
-
-                scope.style = function () {
-                    //   $log.debug("s")
-                    return { 'height': ndim.h
-                        , 'width':  ndim.w
-                    };
-                };
-
-            }, true);
+            win.bind('resize', function () {
+                scope.$apply();
+            });
 
             scope.$on('$destroy', function () {
                 scope.player && scope.player.destroy();
