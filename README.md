@@ -30,6 +30,9 @@ Not in the repo stuff still in development
     bower install bootstrap --save
     bower install angular   --save
 
+    sudo npm -g install yuicompressor
+    sudo npm -g install clean-css
+
 It will generate the whole `static/` folder
 
 this one will be replaced by y-bower

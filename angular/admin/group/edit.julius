@@ -1,4 +1,5 @@
-function($scope, $state, $stateParams, Group) {
+function($scope, $state, $stateParams, Group, title) {
+    title.set("Edit group")
 
     $scope.group = Group.get({short:$stateParams.short});
 

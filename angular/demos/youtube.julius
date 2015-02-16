@@ -1,4 +1,4 @@
-function ($scope) {
-    // have a video id
+function ($scope, title, $sce) {
+    title.set( $sce.trustAsHtml("And we play <span class='fa youtube' /> videos..."));
     $scope.curr_vars = { videoId: 'qdsTUfDTEhQ'}
 }

@@ -1,11 +1,7 @@
-<md-toolbar .md-accent>
-    <div .md-toolbar-tools>
-      <span .md-flex>Sliders
-
-<md-content .md-padding .sliderdemoBasicUsage>
-      <h3>
-        RGB
-        <span ng-attr-style="border: 1px solid #333; background: rgb({{color.red}},{{color.green}},{{color.blue}})"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<div .sliderdemoBasicUsage>
+    <h3>
+      RGB
+      <span ng-attr-style="border: 1px solid #333; background: rgb({{color.red}},{{color.green}},{{color.blue}})"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <div layout>
       <div flex="10" layout layout-align="center center">
         <span>R

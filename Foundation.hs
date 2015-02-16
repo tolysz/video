@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances, RecordWildCards #-}
 module Foundation where
 
 import Database.Persist.MongoDB hiding (master)
@@ -19,6 +19,7 @@ import Yesod.Auth.GoogleEmail3        (authGoogleEmail, YesodGoogleAuth(..))
 import qualified Yesod.Auth.GoogleEmail3        as GId( forwardUrl )
 import Yesod.Facebook
 import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
+import qualified Data.Text as T (split)
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -87,6 +88,8 @@ instance Yesod App where
     isAuthorized RobotsR _ = return Authorized
     -- isAuthorized GoogleVerifyR _ = return Authorized
     -- Default to Authorized for now.
+    isAuthorized (RedirHashR _) _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
+    isAuthorized (HomeR)        _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
     isAuthorized _ _ = return Authorized
 
     -- This function creates static content files in the static folder
@@ -140,9 +143,14 @@ instance YesodAuth App where
     type AuthId App = UserId
 
     -- Where to send a user after successful login
-    loginDest _ = HomeR
+    loginDest a = HomeR -- RedirHashR []
+    --     do
+--       YesodRequest{..} <- getRequest <$> getYesod
+--       maybe HomeR (RedirHashR . T.split (== '/')) $ "hash" `lookup` reqCookies
+    -- :#:
+--     loginDest a =
     -- Where to send a user after logout
-    logoutDest _ = HomeR
+    logoutDest _ = AuthR LoginR
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer _ = True
 
@@ -241,48 +249,14 @@ instance RenderMessage App FormMessage where
 -- todo: find a way on how to add i18n to angular
 instance YesodAngular App where
 --   renderMessageAUI = Just renderMessage
-   angularUIEntry = [whamlet|
- <div layout=column layout-fill ng-cloak>
-   <section >
-     <div layout=row  hide-gt-md ng-controller=LeftCtrl  layout-align="space-between start">
-       <md-button ng-click="toggleLeft()" .md-primary >
-           <span .fa .indent >
-           Menu
-       <md-button  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
-           <span .glyphicon .log-out>
-           Logout({{maid | splitChars2:10 }})
-     <div layout="row" layout-fill>
-      <md-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$media('gt-md')" md-component-id=left tabindex="-1" style="width:250px" >
-          <md-content style="overflow: auto;" .md-default-theme ng-controller=LeftCtrl>
-              <md-toolbar style="min-height: 64px; max-height:64px;"  .md-default-theme>
-                <h1 .md-toolbar-tools flex layout=row>
-                  <a href="" ng-click="toggleFullScreen()" tabindex=0>
-                        <span .fa .arrows-alt >
-                        Video Selector
-              <div ng-repeat="section in sections">
-                <a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >
-                  {{section.name}}
-                <a .menu-item .md-menu-item .menu-sub-item
-                   ng-show=section.visible
-                   ng-repeat="page in section.pages"
-                   ui-sref-active=active
-                   ui-sref={{page.state}}
-                   md-ink-ripple="#bbb"
-                   >
-                 <span ng-class=page.icon>
-                 {{page.name}}
-              <a .menu-item .md-menu-item .menu-title  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
-                 <span .glyphicon .log-out>
-                 Logout
-      <div data-ui-view layout-fill tabindex="-1" role=main>
-   |]
+   angularUIEntry = $(widgetFile "uiEntry")
 
 angularUILayout :: Text -> WidgetT App IO () ->  HandlerT App IO Html
 angularUILayout ngApp widget = do
         void requireAuthId
         master <- getYesod
         pc <- widgetToPageContent $ do
-            addStylesheet $ StaticR app_css
+            addStylesheet $ StaticR app_min_css
             $(widgetFile "empty-layout")
         withUrlRenderer $(hamletFile "templates/angular-layout-wrapper.hamlet")
 

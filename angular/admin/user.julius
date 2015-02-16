@@ -1,4 +1,5 @@
-function($scope, User, $log){
+function($scope, User, title){
     //$log.debug($scope);
+    title.set("All Users")
     $scope.users = User.query();
 }

@@ -1,11 +1,6 @@
-<div ui-view layout-fill tabindex="-1" role=main>
-    <md-toolbar .md-accent>
-     <div .md-toolbar-tools>
-       <span .md-flex> OAuth2 Stuff
-     <div flex>
-    <md-content .buttondemoBasicUsage>
-       <section >
-         <div layout=column layout-gt-md="row" layout-align="center center">
-           <md-button .md-warn .md-raised .md-hue-2 href=@{GoogleOAuthLogoutR}> Logout / remove Credentials
-           <md-button .md-accent href=@{GoogleManageR} target="_blank" >Manage Credentials
-           <md-button .md-accent .md-raised .md-hue-3 target="_blank" href=@{GoogleOAuthLoginR} >Login to Admin
+<md-content .buttondemoBasicUsage>
+   <section >
+     <div layout=column layout-gt-md="row" layout-align="center center">
+       <md-button .md-warn .md-raised .md-hue-2 href=@{GoogleOAuthLogoutR}> Logout / remove Credentials
+       <md-button .md-accent href=@{GoogleManageR} target="_blank" >Manage Credentials
+       <md-button .md-accent .md-raised .md-hue-3 target="_blank" href=@{GoogleOAuthLoginR} >Login to Admin

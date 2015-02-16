@@ -1,5 +1,5 @@
-function($scope){
-    
+function($scope, title){
+  title.set("Video")
     //$scope.shareName = "";
   $scope.share = 2;
         $scope.$watch('share', function() {

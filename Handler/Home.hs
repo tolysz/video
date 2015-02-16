@@ -11,6 +11,8 @@ import Yesod.WebSockets
 
 -- import Data.Time
 
+import qualified Data.Text as T
+
 import Debug.Trace
 
 -- This is a handler function for the GET request method on the HomeR
@@ -20,13 +22,19 @@ import Debug.Trace
 -- The majority of the code you will write in Yesod lives in these handler
 -- functions. You can spread them across multiple files if you are so
 -- inclined, or create a single monolithic file.
+
+getRedirHashR :: [Text] -> Handler Html
+getRedirHashR [] = redirect HomeR
+--    cJar <- reqCookies <$> getRequest
+--    maybe (redirect HomeR) (\f -> redirect ( HomeR :#: f)) $ "hash" `lookup` cJar
+getRedirHashR pa = redirect $ HomeR :#: (T.intercalate "/" pa)
+
 handleHomeR :: Handler Html
 handleHomeR =  do
            maid <- maybe (permissionDenied "You need to have login") (return . userIdent) =<< runDB . get =<< requireAuthId
            devel <- appDevelopment . appSettings <$> getYesod
            {-- ap :: AuthPerms  <- queryDB sadasd -}
            {- conf <- liftIO getIt -}
-
            ch <- userChannels <$> getYesod
 
            webSockets ( chatApp ch maid)
@@ -53,8 +61,11 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     addConfig "$log"      [js|debugEnabled(#{development})|]
     addConfig "$compile"  [js|debugInfoEnabled(#{development})|]
     addConfig "$http"     [js|useApplyAsync(true)|]
-    addConfig "$location" [js|html5Mode({rewriteLinks:false, requireBase:false, enabled: false})|]
-
+--     addConfig "$location" [js|html5Mode({rewriteLinks:true, requireBase:false, enabled: false})|]
+--     addConfig "$location" [js|html5Mode({rewriteLinks:false, requireBase:false, enabled: false})|]
+    addConfig "$location" [js|html5Mode({rewriteLinks:true, requireBase:true, enabled: true})|]
+--     addConfig "$location" [js|html5Mode(true)|]
+--
     addModules [ "ui.router"
                , "ngSanitize"
                , "ngAnimate"
@@ -78,10 +89,10 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "demos.about"      "/about"          )
 
     $(addStateJ     "oauth2"           "/oauth2"         )  -- show only to channel admin who autenticated oauth
-    $(addStateJ     "oauth2.channels"  "/channels"       )
-    $(addStateJ     "oauth2.playlists" "/playlists/:cid" )
-    $(addStateJ     "oauth2.playlist"  "/playlist/:pid"  )
-    $(addStateJ     "oauth2.video"     "/video/:vid"     )
+    $(addStateV     "oauth2.channels"  "@" "/channels"       )
+    $(addStateV     "oauth2.playlists" "@" "/playlists/:cid" )
+    $(addStateV     "oauth2.playlist"  "@" "/playlist/:pid"  )
+    $(addStateV     "oauth2.video"     "@" "/video/:vid"     )
 
     $(addStateJ     "admin"            "/admin"          ) -- only channel admin
     $(addStateJ     "admin.video"      "/video"          )
@@ -96,6 +107,8 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "site"             "/site"           ) -- will be per user
 
     $(addStateJ     "chat"             "/chat"           ) -- will be per user
+
+    $(addStateJ     "logout"           "/auth/logout")
 
     setDefaultRoute "/demos/about"
 
@@ -157,7 +170,20 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
       }
       return methods;
     }|]
-
+    addFactory "title" [js| function($log, $timeout){
+       return { get: ""
+              , set: function (nt){
+                   var self = this;
+                   $timeout(
+                      function(){
+                          $log.debug("setTitle " + nt);
+                          self.get = nt;
+                          }
+                   , 0);
+                   }
+              }
+     }
+    |]
     addFactory "sections" [ncoffee|
 () ->
   sections =

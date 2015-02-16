@@ -1,14 +1,9 @@
-<div ui-view layout-fill tabindex="-1" role=main>
-     <md-toolbar .md-accent>
-          <div .md-toolbar-tools>
-                <span .md-flex> Admin panel {{ maid }}
-          <div flex>
-     <md-content>
-       <pre>
-            Channels  / add / remove / list
-            Users     / add / remove / list
-            Videos    / add / remove / list
-            Playlists / add / remove / list
-              tags [members, event, guests]
+<md-content ui-view>
+  <pre>
+    Channels  / add / remove / list
+    Users     / add / remove / list
+    Videos    / add / remove / list
+    Playlists / add / remove / list
+      tags [members, event, guests]
 
-            here {{player}} is!
+    here {{player}} is!

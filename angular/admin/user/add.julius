@@ -1,4 +1,5 @@
-function($scope, $state, User) {
+function($scope, $state, User, title) {
+    title.set("Add user")
     $scope.save = function()
     {
      User.save($scope.user).$promise.then( function(newUser){

@@ -1,4 +1,5 @@
-function($scope, maid) {
+function($scope, maid, title) {
+    title.set("Sample Form")
     $scope.user = {
        title:     "Technical Program Manager",
        email:     maid,

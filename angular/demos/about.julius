@@ -1,5 +1,6 @@
-function($scope) {
-     $scope.ngVersion = angular.version.full;
+function($scope,title,$sce) {
+    $scope.ngVersion = angular.version.full;
+    title.set( $sce.trustAsHtml("About: how are we here... <small>Some OpenSource technologies used.</small>"))
 //     $scope.d3Version = d3.version;
 //     $scope.jQVersion = jQuery.fn.jquery;
 //     $scope.bsVersion = jQuery.fn.affix.Constructor.VERSION;

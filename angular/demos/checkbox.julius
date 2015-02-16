@@ -1,4 +1,5 @@
-function($scope) {
+function($scope, title) {
+  title.set("Check it out");
   $scope.data = {};
   $scope.data.cb1 = true;
   $scope.data.cb2 = false;

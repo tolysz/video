@@ -1,7 +1,4 @@
-<md-toolbar .md-accent>
-  <div .md-toolbar-tools>
-      <span .md-flex>Sample Form
-  
+
 <md-content layout=column layout-gt-sm=row .md-padding>
       <md-input-container>
         <label>Title

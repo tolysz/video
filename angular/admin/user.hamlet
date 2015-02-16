@@ -1,43 +1,36 @@
-<div ui-view layout-fill tabindex="-1" role=main>
-     <md-toolbar .md-accent>
-          <div .md-toolbar-tools>
-                <span .md-flex>
-                    All Users
-                    <md-switch ng-model="debug" aria-label="debug" style="float:left;">
-          <div flex>
-     <md-content>
-         <a ui-sref="admin.user.add">
-            <md-button .md-raised .md-primary>
-               <span .fa .user-plus>
-               And new user
-         <md-list>
-           <md-item ng-repeat="user in users">
-             <md-item-content>
-               <div class="md-tile-left">
-                   <a ui-sref="admin.user.edit({ident:user.ident})">
-                       <img ng-src={{user.avatar}} ng-show=user.avatar .cover alt="{{user.someName}}">
-                       <span .cover .fa .user .font-3x ng-hide=user.avatar>
-               <div class="md-tile-content">
-                 <h3>
-                    <a ui-sref=oauth2.playlists({cid:chan.id})>
-                           {{user.someName}}
-                 <h4>{{chan.kind}}
-                 <p ng-show=debug>
-                   <pre>
-                      {{ user | json }}
-         <code ng-show=debug>
-           \ SiteGroupMember
-           \   user          UserId
-           \   group         SiteGroupId
-           \   fullMember    Bool
-           \   userAdmin     Bool
-           \   videoAdmin    Bool
-           \   deriving Show Typeable Generic
-           \
-           \ SiteGroup
-           \   public          Bool
-           \   name            Text
-           \   short           ShortName
-           \   notes           Text Maybe
-           \   url             Text Maybe
-           \   deriving Show Typeable Generic
+<div ui-view>
+ <a ui-sref="admin.user.add">
+    <md-button .md-raised .md-primary>
+       <span .fa .user-plus>
+       And new user
+ <md-list>
+   <md-item ng-repeat="user in users">
+     <md-item-content>
+       <div class="md-tile-left">
+           <a ui-sref="admin.user.edit({ident:user.ident})">
+               <img ng-src={{user.avatar}} ng-show=user.avatar .cover alt="{{user.someName}}">
+               <span .cover .fa .user .font-3x ng-hide=user.avatar>
+       <div class="md-tile-content">
+         <h3>
+            <a ui-sref=oauth2.playlists({cid:chan.id})>
+                   {{user.someName}}
+         <h4>{{chan.kind}}
+         <p ng-show=debug>
+           <pre>
+              {{ user | json }}
+ <code ng-show=debug>
+   \ SiteGroupMember
+   \   user          UserId
+   \   group         SiteGroupId
+   \   fullMember    Bool
+   \   userAdmin     Bool
+   \   videoAdmin    Bool
+   \   deriving Show Typeable Generic
+   \
+   \ SiteGroup
+   \   public          Bool
+   \   name            Text
+   \   short           ShortName
+   \   notes           Text Maybe
+   \   url             Text Maybe
+   \   deriving Show Typeable Generic

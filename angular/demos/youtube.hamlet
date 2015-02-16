@@ -1,9 +1,1 @@
-  <md-toolbar .md-accent>
-    <div .md-toolbar-tools>
-      <span .md-flex>
-           And we play
-           <span .fa .youtube>
-           videos...
-    <div flex>
-  <md-content .md-padding>
-   <youtube-video player-vars="curr_vars">
+<youtube-video player-vars="curr_vars">

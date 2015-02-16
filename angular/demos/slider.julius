@@ -1,4 +1,5 @@
-function($scope) {
+function($scope, title) {
+  title.set("Sliders")
   $scope.color = {
     red: Math.floor(Math.random() * 255),
     green: Math.floor(Math.random() * 255),

@@ -1,8 +1,14 @@
-($scope, $mdSidenav, $log, maid, sections, wsLink) ->
+($scope, $mdSidenav, $rootScope, $log, maid, sections, title, wsLink) ->
   
   $scope.sections = sections
   $scope.maid = maid;
-  
+  $scope.title = title;
+
+# if not the main menu
+#  $rootScope.$on('$stateChangeSuccess', () ->
+#       $log.debug "change"
+#       $scope.closeLeft() )
+
   $scope.remote = wsLink.collection;
   
   $scope.player = "Test";

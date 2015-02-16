@@ -1,30 +1,25 @@
-<md-toolbar .md-accent>
-    <div .md-toolbar-tools>
-        <span .md-flex>
-          User
-          <md-switch ng-model="debug" aria-label="debug" style="float:left;">
-    <md-content .md-padding>
-      <md-input-container>
-        <label>Email
-        <input ng-model=user.ident disabled>
-      <md-input-container>
-        <label>Name
-        <input ng-model=user.name>
-      <md-input-container>
-        <label>Friendly
-        <input ng-model=user.friendly>
-      <md-checkbox ng-model=user.siteAdmin aria-label="site admin" disabled>
-         site admin
-      <md-input-container>
-         <label>Avatar
-         <input ng-model=user.avatar type=url>
-    <section >
-        <div layout=row layout-sm=column layout-align="space-between center">
-            <md-button .md-raised .md-warn ng-click=save()>
-                <span .fa .floppy-o>
-                Save
-            <md-button .md-raised .md-warn ng-click=delete()>
-                <span .fa .times>
-                Delete
+<md-content .md-padding>
+  <md-input-container>
+    <label>Email
+    <input ng-model=user.ident disabled>
+  <md-input-container>
+    <label>Name
+    <input ng-model=user.name>
+  <md-input-container>
+    <label>Friendly
+    <input ng-model=user.friendly>
+  <md-checkbox ng-model=user.siteAdmin aria-label="site admin" disabled>
+     site admin
+  <md-input-container>
+     <label>Avatar
+     <input ng-model=user.avatar type=url>
+<section >
+    <div layout=row layout-sm=column layout-align="space-between center">
+        <md-button .md-raised .md-warn ng-click=save()>
+            <span .fa .floppy-o>
+            Save
+        <md-button .md-raised .md-warn ng-click=delete()>
+            <span .fa .times>
+            Delete
 <pre ng-show=debug>
   {{ user | json }}

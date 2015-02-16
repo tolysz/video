@@ -1,7 +1,4 @@
-<md-toolbar .md-accent>
- <div .md-toolbar-tools>
-   <span .md-flex>Check it out
-<md-content .checkboxdemoBasicUsage>
+<div .checkboxdemoBasicUsage>
   <md-checkbox ng-model="data.cb1" aria-label="Checkbox 1">
     Checkbox 1: {{ data.cb1 }}
   <md-checkbox ng-model="data.cb2" aria-label="Checkbox 2" ng-true-value="'yup'" ng-false-value="'nope'" .md-warn>

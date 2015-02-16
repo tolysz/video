@@ -1,6 +1,1 @@
-<div ui-view layout-fill tabindex="-1" role=main>
-     <md-toolbar .md-accent>
-          <div .md-toolbar-tools>
-                <span .md-flex> Demos for {{ maid }}
-          <div flex>
-     <md-content .buttondemoBasicUsage>
+<div ui-view>

@@ -1,18 +1,11 @@
-<div ui-view layout-fill tabindex="-1" role=main>
-     <md-toolbar .md-accent>
-          <div .md-toolbar-tools>
-                <span .md-flex> Site panel {{ maid }}
-          <div flex>
-     <md-content .buttondemoBasicUsage>
-
-Site Create, List, assign owner.
-
- <md-list>
-      <md-item ng-repeat="site in sites">
-        <md-item-content>
-          <div class="md-tile-left">
+<md-content .buttondemoBasicUsage  ui-view >
+  Site Create, List, assign owner.
+  <md-list>
+    <md-item ng-repeat="site in sites">
+      <md-item-content>
+        <div class="md-tile-left">
               <img ng-src="{{site.logo}}" class="logo" alt="{{site.who}}">
-          <div class="md-tile-content">
+        <div class="md-tile-content">
             
             <h3>{{site.name}}
             <h4>{{site.andmin | json}}

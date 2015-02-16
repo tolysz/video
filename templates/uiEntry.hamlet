@@ -1,0 +1,34 @@
+$newline never
+<md-sidenav .site-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$media('gt-md')" md-component-id=left tabindex="-1" style="width:250px" >
+  <section md-scroll-y style="height: 100vh;" .md-default-theme ng-controller=LeftCtrl>
+  $#<md-content style="overflow: auto;" .md-default-theme ng-controller=LeftCtrl>
+      <md-toolbar style="min-height: 64px; max-height:64px;"  .md-default-theme>
+        <h1 .md-toolbar-tools .md-toolbar-tools-bottom flex layout=row>
+          <a href="" ng-click="toggleFullScreen()" tabindex=0>
+                <span .fa .arrows-alt >
+                Video Selector
+      <div ng-repeat="section in sections">
+        <a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >
+          {{section.name}}
+        <a .menu-item .md-menu-item .menu-sub-item
+           ng-show=section.visible
+           ng-repeat="page in section.pages"
+           ui-sref-active=active
+           ui-sref={{page.state}}
+           md-ink-ripple="#bbb"
+           >
+         <span ng-class=page.icon>
+         {{page.name}}
+      <a .menu-item .md-menu-item .menu-title  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
+         <span .glyphicon .log-out>
+         Logout
+<div layout=column layout-fill ng-cloak tabindex="-1" role=main style="height: 100vh; overflow-y: scroll;" md-scroll-y>
+   <section  >
+      <md-toolbar md-default-theme md-scroll-shrink .md-accent ng-controller=LeftCtrl>
+         <div class="md-toolbar-tools" ng-click="toggleLeft()" tabindex="0" >
+            <md-button .md-primary .menu-icon aria-label="Toggle Menu" hide-gt-md>
+               <span .fa .font-2x .indent >
+            <div layout=row flex .fill-height>
+               <div .md-toolbar-item .md-breadcrumb>
+                  <span style="display: inline-block;" ng-bind-html="title.get">
+      <md-content data-ui-view flex .md-default-theme>

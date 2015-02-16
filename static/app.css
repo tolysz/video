@@ -1,6 +1,5 @@
- @import url('css/bootstrap-fonts.css');
- @import url('css/font-awesome.css');
- @import url('css/font-tools.css');
- @import url('themes.css');
+ @import url('bootstrap-fonts.css');
+ @import url('font-awesome.css');
+ @import url('font-tools.css');
  @import url('angular-material.css');
 

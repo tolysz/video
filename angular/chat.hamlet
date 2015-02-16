@@ -1,54 +1,47 @@
-<div ui-view layout-fill tabindex="-1" role=main>
-     <md-toolbar .md-accent>
-          <div .md-toolbar-tools>
-                <span .md-flex> Chat {{ maid }}
-                <md-switch ng-model="debug" aria-label="debug" style="float:left;">
-          <div flex>
-     <md-content>
-       <div layout=column layout-gt-sm=row layout-padding layout-margin layout-fill>
-           <md-input-container .pad20>
-              <label>Shout
-              <input ng-model=inp.shout ng-keyup="$event.keyCode == 13 ? send(inp.shout) : null">
-           <md-button ng-click=send(inp.shout)>Send
-     <md-list>
-       <md-item ng-repeat="line in wsLink.collection" ng-switch=line.tag>
-           <md-item-content ng-switch-when="MsgInfo">
-             <div .md-tile-left>
-                 <span .fa .eye .font-3x >
-             <div .md-tile-content>
-                 <h3>{{line.cont | json}}
-           <md-item-content ng-switch-when="Other">
-             <div .md-tile-left>
-                 <span .fa .user .font-3x>
-             <div .md-tile-content>
-                 <h3>{{line.cont | json}}
-           <md-item-content ng-switch-when="SystemInfo">
-             <div .md-tile-left>
-                 <span .fa .exclamation-circle .font-3x>
-             <div .md-tile-content>
-                 <h3>{{line.cont | json}}
-           <md-item-content ng-switch-when="SelfEcho">
-             <div .md-tile-left>
-                 <span .fa .retweet .font-3x >
-             <div .md-tile-content>
-                 <h3>{{line.cont | json}}
-           <md-item-content ng-switch-when="Shout">
-             <div .md-tile-left>
-                 <span .fa .bullhorn .font-3x >
-             <div .md-tile-content>
-                 <h3>{{line.cont | json}}
 
-           <md-item-content ng-switch-default>
-             <div .md-tile-left>
-                 <span .fa .bug .font-3x >
-             <div .md-tile-content>
-                 <h3>{{line}}
+<md-input-container .pad20>
+  <label>Shout
+  <input ng-model=inp.shout ng-keyup="$event.keyCode == 13 ? send(inp.shout) : null">
+<md-button ng-click=send(inp.shout)>Send
 
-               $# <h3>{{line.cont | json}}
-               $#<h4>{{item.who}}
-               $#<p>
-               $#  {{item.notes}}
-     <div ng-show=debug>
-         {{wsLink | json}}
-            
-            
+<md-list>
+   <md-item ng-repeat="line in wsLink.collection" ng-switch=line.tag>
+       <md-item-content ng-switch-when="MsgInfo">
+         <div .md-tile-left>
+             <span .fa .eye .font-3x >
+         <div .md-tile-content>
+             <h3>{{line.cont | json}}
+       <md-item-content ng-switch-when="Other">
+         <div .md-tile-left>
+             <span .fa .user .font-3x>
+         <div .md-tile-content>
+             <h3>{{line.cont | json}}
+       <md-item-content ng-switch-when="SystemInfo">
+         <div .md-tile-left>
+             <span .fa .exclamation-circle .font-3x>
+         <div .md-tile-content>
+             <h3>{{line.cont | json}}
+       <md-item-content ng-switch-when="SelfEcho">
+         <div .md-tile-left>
+             <span .fa .retweet .font-3x >
+         <div .md-tile-content>
+             <h3>{{line.cont | json}}
+       <md-item-content ng-switch-when="Shout">
+         <div .md-tile-left>
+             <span .fa .bullhorn .font-3x >
+         <div .md-tile-content>
+             <h3>{{line.cont | json}}
+
+       <md-item-content ng-switch-default>
+         <div .md-tile-left>
+             <span .fa .bug .font-3x >
+         <div .md-tile-content>
+             <h3>{{line}}
+
+           $# <h3>{{line.cont | json}}
+           $#<h4>{{item.who}}
+           $#<p>
+           $#  {{item.notes}}
+<div ng-show=debug>
+     {{wsLink | json}}
+

@@ -1,5 +1,5 @@
-function($scope, $state, $stateParams, User, $log) {
-
+function($scope, $state, $stateParams, User, $log, title) {
+    title.set("Edit User")
     $scope.user = User.get({ident:$stateParams.ident});
 
     $log.debug($scope.users);

@@ -1,9 +1,5 @@
-<div layout=column layout-fill>
-  <md-toolbar .md-accent>
-    <div .md-toolbar-tools>
-      <span .md-flex>Some flexi panels
-  <md-content .layout-content>
-    <div layout=row layout-fill>
+<div .layout-content>
+    <div layout=row layout-fill >
       <div flex=66 flex-sm=33>
           I flex to one-third of the space on mobile, and two-thirds on other devices.
       <div flex=33 flex-sm=66>

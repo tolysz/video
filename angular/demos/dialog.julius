@@ -1,4 +1,5 @@
-function($scope, $mdDialog) {
+function($scope, $mdDialog, title) {
+  title.set("Now you talk")
   $scope.alert = '';
   $scope.showAlert = function(ev) {
     $mdDialog.show(

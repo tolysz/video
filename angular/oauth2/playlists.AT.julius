@@ -1,4 +1,4 @@
-function($scope,$log,$http,$stateParams /*, ytPlayer */){
+function($scope,$log,$http,$stateParams /*, ytPlayer */, title){
     $scope.sort = 0
         $scope.getList = function(){
             $log.debug($stateParams.cid)
@@ -6,6 +6,7 @@ function($scope,$log,$http,$stateParams /*, ytPlayer */){
                 .success( function(data){
                     $log.debug(data);
                     $scope.playlists = data;
+                    title.set("Playlists for: " + data[0].snippet.channelTitle);
                 }
             )
         }

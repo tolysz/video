@@ -1,5 +1,5 @@
-function($scope, maid, wsLink, $log){
-    $scope.maid   = maid
+function($scope, maid, wsLink, $log, title){
+    title.set( "Chat " + maid);
     $scope.wsLink = wsLink;
     $scope.inp = {};
     //$scope.shout = "";

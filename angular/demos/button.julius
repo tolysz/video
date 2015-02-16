@@ -1,4 +1,5 @@
-function($scope) {
+function($scope, title) {
+  title.set("Button Show");
   $scope.title1 = 'Button';
   $scope.title4 = 'Warn';
   $scope.isDisabled = true;

@@ -1,4 +1,5 @@
-function($scope,$http,$log){
+function($scope,$http,$log, $sce, title){
+ title.set( $sce.trustAsHtml("About: how are we here... <small>Some OpenSource technologies used.</small>"))
 
   $scope.getList = function(){
       $http.get("@{YTChannelsR}")

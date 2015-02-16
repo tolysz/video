@@ -9,3 +9,8 @@
     <div .personaLogin>
       ^{wb}
     <br>
+
+$#<script>
+$#    document.cookie = "hash=" + encodeURIComponent(window.location.hash) + "; max-age=600;" ;
+$#    window.location.hash = "";
+

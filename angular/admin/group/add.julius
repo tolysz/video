@@ -1,4 +1,5 @@
-function($scope, $state, Group) {
+function($scope, $state, Group, title) {
+title.set("New group")
 $scope.save = function(){
    Group
     .save($scope.group).$promise.then( function(newGroup){

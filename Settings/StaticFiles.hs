@@ -1,9 +1,9 @@
 module Settings.StaticFiles where
 
--- import Settings     (appStaticDir, compileTimeAppSettings)
--- import Yesod.Static (staticFiles)
+import Settings     (appStaticDir, compileTimeAppSettings)
+import Yesod.Static (staticFiles)
 -- import Yesod.Static (publicFiles)
-import Yesod.Static (staticFilesList)
+-- import Yesod.Static (staticFilesList)
 -- This generates easy references to files in the static directory at compile time,
 -- giving you compile-time verification that referenced files exist.
 -- Warning: any files added to your static directory during run-time can't be
@@ -16,13 +16,13 @@ import Yesod.Static (staticFilesList)
 -- If the identifier is not available, you may use:
 --
 --     StaticFile ["js", "script.js"] []
--- staticFiles (appStaticDir compileTimeAppSettings)
+staticFiles (appStaticDir compileTimeAppSettings)
 -- publicFiles (appStaticDir compileTimeAppSettings)
 
-staticFilesList "static" [ "app.min.js"
-                         , "app.css"
+-- staticFilesList "static" [ "app.min.js"
+--                          , "app.css"
                         -- , "webcomponentsjs/webcomponents.min.js"
                         -- , "modernizr/modernizr.js"
-                         ]
+--                          ]
 
 

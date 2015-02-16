@@ -1,0 +1,10 @@
+function($log, $cookieStore,$window, $http){
+
+    $log.debug("Logging out");
+
+    $http.post("@{AuthR LogoutR}",{}).then(function(){
+        $log.debug("success");
+        $cookieStore.remove("_SESSION");
+        $window.location.href = "@{HomeR}";
+    })
+}
