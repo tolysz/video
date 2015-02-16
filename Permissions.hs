@@ -29,10 +29,10 @@ userPerms = do
 
 requirePerms _ = return ()
 
-restPermsM :: (FromJSON i, ToJSON o) => Permssions -> (i -> AppM (Maybe o)) -> AppM Value
+restPermsM :: (FromJSON i, ToJSON o) => Permssions -> (i -> AppM (Maybe o)) -> AppM o
 restPermsM p f = hasPerm p >> restOpenM f
 
-restOpenM :: (FromJSON i, ToJSON o) => (i -> AppM (Maybe o)) -> AppM Value
+restOpenM :: (FromJSON i, ToJSON o) => (i -> AppM (Maybe o)) -> AppM o
 restOpenM f = requireJsonBody >>= f >>= \case
          Just output -> returnJson output >>= sendResponse
          Nothing -> notFound

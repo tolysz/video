@@ -17,7 +17,7 @@ import qualified Data.Text as T
 import Control.Lens
 {--
  -- see how new imports will looks like
-import Data (Time.Clock ( diffUTCTime ), Possible, Text qualified as T)
+import Data {Time.Clock (diffUTCTime), Possible, Text qualified as T}
 -}
 
 import Network.HTTP.OAuth2

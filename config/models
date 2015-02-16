@@ -68,11 +68,12 @@ ChannelMember
 
 -- Let start the other end
 SiteGroupMember
-  user          UserId
   group         SiteGroupId
+  user          UserId
   fullMember    Bool
   userAdmin     Bool
   videoAdmin    Bool
+  UniqueSiteGroupMember group user
   deriving Show Typeable Generic
 
 SiteGroup

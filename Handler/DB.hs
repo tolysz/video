@@ -29,64 +29,101 @@ liftJust :: (MonadPlus m) => a -> m a
 liftJust = return
 -- Insert New user-- post
 
-getSiteGroupR      = listsOfAll :: ApiReq [   SiteGroup   ]
--- postSiteGroupR :: AppM Value
+-- | REST For Group
+getSiteGroupR :: ApiReq [   SiteGroup   ]
+getSiteGroupR = listsOfAll
+
+postSiteGroupR :: ApiReq SiteGroup
 postSiteGroupR = do
         guardAllAdmin
         restOpenM $ \(v :: Value) -> runMaybeT $ do
-            siteGroupName   <-          liftMaybe (v ^? key "name"   . _String )
-            siteGroupShort  <-          liftMaybe (v ^? key "short"  . _String )
-            siteGroupNotes  <-          liftJust  (v ^? key "notes"  . _String )
-            siteGroupPublic <-          liftJust  (v ^? key "public" . _Bool   ^. non False)
-            siteGroupUrl    <-          liftJust  (v ^? key "url"    . _String )
+            siteGroupName   <- liftMaybe (v ^? key "name"   . _String )
+            siteGroupShort  <- liftMaybe (v ^? key "short"  . _String )
+            siteGroupNotes  <- liftJust  (v ^? key "notes"  . _String )
+            siteGroupPublic <- liftJust  (v ^? key "public" . _Bool   ^. non False)
+            siteGroupUrl    <- liftJust  (v ^? key "url"    . _String )
             let sg = SiteGroup {..}
             MaybeT $ runDB $ getBy (UniqueSiteGroup siteGroupShort) >>= \case
                 Just (Entity uid _) -> replace uid sg >> return (Just $ TC sg)
                 Nothing -> insert sg >> return (Just $ TC sg)
 
-oneOr404 [a] = return a
-oneOr404 _ = notFound
-
 getSiteGroup1R :: ShortName -> ApiReq SiteGroup
 getSiteGroup1R = jsonDB1 . getBy404 . UniqueSiteGroup
 
 deleteSiteGroup1R :: ShortName -> ApiReq SiteGroup
-deleteSiteGroup1R u1 =
- jsonDB1 $ do
-   u@(Entity k _) <- getBy404 (UniqueSiteGroup u1)
-   delete k
-   return u
+deleteSiteGroup1R = deleteReturn UniqueSiteGroup
 
-getUserR = listsOfAll :: ApiReq [     User      ]
--- postUserR :: AppM Value
--- postUserR :: ApiReq User
+-- | REST For User
+getUserR :: ApiReq [ User ]
+getUserR = listsOfAll
+
+postUserR :: ApiReq User
 postUserR = do
         guardAllAdmin
         restOpenM $ \(v :: Value) -> runMaybeT $ do
             userIdent     <- liftMaybe (v ^? key "ident"    . _String )
             userName      <- liftJust  (v ^? key "name"     . _String )
             userFriendly  <- liftJust  (v ^? key "friendly" . _String )
-            userSiteAdmin <- liftJust  False -- (v ^? key "siteAdmin" . _String )
+            userSiteAdmin <- liftJust  False -- (v ^? key "siteAdmin" . _Bool )
             userAvatar    <- liftJust  (v ^? key "avatar"   . _String )
             let us = User {..}
             MaybeT $ runDB $ getBy (UniqueUser userIdent) >>= \case
                  -- keep the old admin privs
                 Just (Entity uid old) -> let nx = us{userSiteAdmin = Import.userSiteAdmin old} in replace uid nx >> return (Just $ TC nx)
                 Nothing -> insert us >> return (Just $ TC us)
+
 getUser1R :: EmailQuery -> ApiReq User
 getUser1R = jsonDB1 . getBy404 . UniqueUser
 
 deleteUser1R :: EmailQuery -> ApiReq User
-deleteUser1R u1 =
- jsonDB1 $ do
-   u@(Entity k _) <- getBy404 (UniqueUser u1)
-   delete k
-   return u
+deleteUser1R = deleteReturn UniqueUser
 
+-- | REST For Group membreship
+
+-- postSiteGroupUserR :: ShortName -> ApiReq [SiteGroupMember]
+postSiteGroupUserR gid = do
+   guardAllAdmin
+
+   restOpenM $ \(v :: Value) -> runMaybeT $ do
+       textGroup <- liftMaybe (v ^? key "group"      . _String )
+       guard (textGroup == gid)
+       textUser  <- liftMaybe  (v ^? key "user"       . _String )
+       siteGroupMemberFullMember <- liftJust  (v ^? key "fullMember" . _Bool ^. non False)
+       siteGroupMemberUserAdmin  <- liftJust  (v ^? key "userAdmin"  . _Bool ^. non False)
+       siteGroupMemberVideoAdmin <- liftJust  (v ^? key "videoAdmin" . _Bool ^. non False)
+       Just (siteGroupMemberGroup, siteGroupMemberUser) <- MaybeT $ runDB $ return . Just <$> (
+              (,) <$> getDBKey (UniqueSiteGroup textGroup)
+                  <*> getDBKey (UniqueUser textUser)
+                  )
+
+       let us = SiteGroupMember {..}
+       MaybeT $ runDB $ do
+         getBy (UniqueSiteGroupMember siteGroupMemberGroup siteGroupMemberUser) >>= \case
+           Just (Entity uid _) -> replace uid us
+           Nothing             -> void $ insert us
+         return (Just $ TC us)
+
+--    jsonDB $ do
+--      ent <- getDBKey (UniqueSiteGroup gid)
+--      selectList [SiteGroupMemberGroup ==. ent] []
+
+getSiteGroupUserR :: ShortName -> ApiReq [SiteGroupMember]
 getSiteGroupUserR gid =
    jsonDB $ do
-     Entity ent _ <- getBy404 (UniqueSiteGroup gid)
-     selectList [SiteGroupMemberGroup ==. ent] []
+     groupKey <- getDBKey (UniqueSiteGroup gid)
+     selectList [SiteGroupMemberGroup ==. groupKey] []
+
+getSiteGroupUser1R :: ShortName -> EmailQuery -> ApiReq SiteGroupMember
+getSiteGroupUser1R gid e = do
+  (groupKey, userKey) <- runDB $ (,) <$> getDBKey (UniqueSiteGroup gid)
+                                     <*> getDBKey (UniqueUser e)
+  jsonDB1 . getBy404 $ UniqueSiteGroupMember groupKey userKey
+
+deleteSiteGroupUser1R :: ShortName -> EmailQuery -> ApiReq SiteGroupMember
+deleteSiteGroupUser1R gid e = do
+  (groupKey, userKey) <- runDB $ (,) <$> getDBKey (UniqueSiteGroup gid)
+                                     <*> getDBKey (UniqueUser e)
+  deleteReturn (UniqueSiteGroupMember groupKey) userKey
 
 -- | todo: find out how to cut this boilerplate!
 --   force compiler not to disply signature missing if the type is fully defined otherwise
@@ -108,7 +145,8 @@ getAllPlaylistEvent   = listsOfAll :: ApiReq [ PlaylistEvent ]
 -- | type magic
 --   convert any list of all into a respoce; too many things to import
 --   just to make this line a happy line
-listsOfAll = jsonDB (selectList [] [])
+
+listsOfAll = jsonDB $ selectList [] []
 
 jsonDB q = do
   guardAllAdmin
@@ -118,7 +156,21 @@ jsonDB1 q = do
   guardAllAdmin
   TC . (\(Entity _ v) -> v) <$> runDB q
 
+deleteReturn f u1 = jsonDB1 $ do
+   u@(Entity k _) <- getBy404 (f u1)
+   delete k
+   return u
+
+getDBKey f = do
+  Entity ent _ <- getBy404 f
+  return ent
+
 eToTC (Entity _ v) = TC v
+
+
+oneOr404 [a] = return a
+oneOr404 _ = notFound
+
 
 -- | Add some anonymous user, without adding her to any group
 

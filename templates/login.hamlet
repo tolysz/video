@@ -1,0 +1,11 @@
+<div .loginbox>
+    <h3>Login using:
+    <a href="@{AuthR facebookLogin}" .facebookLogin>
+        Facebook
+    <h3>&mdash; OR &mdash;
+    <a href="@{AuthR GId.forwardUrl}" .googleLogin>
+        Google+
+    <h3>&mdash; OR &mdash;
+    <div .personaLogin>
+      ^{wb}
+    <br>

@@ -1,0 +1,9 @@
+
+<a ui-sref="admin.group.edit({short:group.short})">
+   Edit
+<pre>
+    {{ group | json }}
+
+Add user
+<pre>
+    {{ members | json}}

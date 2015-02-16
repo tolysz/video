@@ -1,4 +1,4 @@
-function (youtubeEmbedUtils, $window,$log) {
+function (youtubeEmbedUtils, $window) {
     var uniqId = 1;
 
     // from YT.PlayerState
@@ -12,9 +12,6 @@ function (youtubeEmbedUtils, $window,$log) {
     };
 
     var eventPrefix = 'youtube.player.';
-
-    // var win = angular.element($window)[0];
-
 
     return {
         restrict: 'EA',
@@ -137,7 +134,6 @@ function (youtubeEmbedUtils, $window,$log) {
                         }
                     }
             });
-
 
             win.bind('resize', function () {
                 scope.$apply();

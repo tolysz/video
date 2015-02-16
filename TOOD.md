@@ -2,6 +2,7 @@
 
 Fix: websocket:
   * it dies at time
+  * it does not reconnect
   * does not work on firefox
 
 Implement:

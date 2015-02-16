@@ -26,7 +26,7 @@ function($scope, $state, $stateParams, Group) {
            { $scope.groups = Group.query();
            }
 
-          $state.go('admin.group');
+          $state.go('admin.group.user',{short:$stateParams.short});
       })
     }
 }

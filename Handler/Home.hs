@@ -26,12 +26,12 @@ handleHomeR =  do
            devel <- appDevelopment . appSettings <$> getYesod
            {-- ap :: AuthPerms  <- queryDB sadasd -}
            {- conf <- liftIO getIt -}
-           
+
            ch <- userChannels <$> getYesod
-           
+
            webSockets ( chatApp ch maid)
 --            create websocket
-           
+
            genAngularBind maid devel {- -> ap-> conf -> -} (\y x ->
                  angularUILayout y $ do
                    setTitle "Video Selector" -- "Welcome To Yesod!"
@@ -88,6 +88,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "admin.group"      "/group"          ) -- require special permissions
     $(addStateJ     "admin.group.add"  "/add"            ) -- require special permissions
     $(addStateJ     "admin.group.edit" "/edit/:short"         ) -- require special permissions
+    $(addStateJ     "admin.group.user" "/user/:short"         ) -- require special permissions
     $(addStateJ     "admin.user"       "/user"           ) -- require special permissions
     $(addStateJ     "admin.user.add"   "/add"            ) -- require special permissions
     $(addStateJ     "admin.user.edit"  "/edit/:ident"         ) -- require special permissions
@@ -114,10 +115,9 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
 
     } |]
 
-
-    addFactory "Group"     [js| function($resource) { var Group = $resource("@{SiteGroupR}/:short"); return Group; }|]
-    addFactory "User"      [js| function($resource) { var User  = $resource(     "@{UserR}/:ident"); return User;  }|]
-    addFactory "GroupUser" [js| function($resource) { var GroupUser = $resource("@{SiteGroupR}/:short/user"); return GroupUser; }|]
+    addFactory "User"      [js| function($resource) { var User      = $resource(                 "@{UserR}/:ident"); return User;      }|]
+    addFactory "Group"     [js| function($resource) { var Group     = $resource("@{SiteGroupR}/:short");             return Group;     }|]
+    addFactory "GroupUser" [js| function($resource) { var GroupUser = $resource("@{SiteGroupR}/:short/user/:ident"); return GroupUser; }|]
 
     addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid) {
       // Open a WebSocket connection
@@ -125,7 +125,6 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
       var collection = [];
       try{
       var dataStream = $websocket('@{HomeR}'.replace("http:", "ws:").replace("https:", "wss:"));
-
 
       dataStream.onMessage(function(message) {
       $log.debug(message);

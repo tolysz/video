@@ -14,9 +14,11 @@ import Data.Maybe (fromJust)
 import Types
 
 import Yesod.Auth.BrowserId           (authBrowserId)
+import qualified Yesod.Auth.BrowserId as BId (forwardUrl)
 import Yesod.Auth.GoogleEmail3        (authGoogleEmail, YesodGoogleAuth(..))
+import qualified Yesod.Auth.GoogleEmail3        as GId( forwardUrl )
 import Yesod.Facebook
-import Yesod.Auth.Facebook2           (authFacebook)
+import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -166,11 +168,52 @@ instance YesodAuth App where
 
     authHttpManager = getHttpManager
 
---     loginHandler = lift $ defaultLayout $ [whamlet|<div style="width:500px;margin:0 auto">^{login}|]
+    loginHandler = do
+        tp <- getRouteToParent
+        lift $ authLayout $ do
+            master <- getYesod
+            let [b,g,f] = authPlugins master
+            let render = flip apLogin tp
+                wb = render b
+                wg = render g
+                wf = render f
+            toWidget $(widgetFile "login")
+--             [whamlet|
+-- <div style="width:500px;margin:0 auto">
+--   <div >
+--       <h3>Login using:
+--       <a href="@{AuthR facebookLogin}" .facebookLogin>
+--           Facebook
+--       <h3>&mdash; OR &mdash;
+--       <a href="@{AuthR GId.forwardUrl}" .googleLogin>
+--           Google+
+--       <h3>&mdash; OR &mdash;
+--       ^{wb}
+--       <br>
+--             |]
+--
+--             return ()
 
+--     loginHandler = do
+--       return
+--         tp <- getRouteToParent
+--         master <- lift $ getYesod
+--         [b,g,f] <- mapM (flip apLogin tp) (authPlugins master)
+--         lift $ authLayout $ do
+--           [whamlet|<div style="width:500px;margin:0 auto">|]
 
--- login :: Widget
--- login = toWidget $ {-addCassius $(cassiusFile "login") >> -}$(hamletFile "templates/login.hamlet")
+--     loginHandler = do
+--       tp <- getRouteToParent
+--
+--       plug <- do
+--            master <- getYesod
+--            map (\a -> (apLogin a) tp) (authPlugins master)
+--       lift $ defaultLayout $ [whamlet|<div style="width:500px;margin:0 auto">^{login plug}|]
+
+semicolon = ";" :: Text
+
+-- login :: [Widget] -> Widget
+-- login plug = toWidget $(widgetFile "login")
 
 instance YesodAuthPersist App
 
@@ -240,7 +283,7 @@ angularUILayout ngApp widget = do
         master <- getYesod
         pc <- widgetToPageContent $ do
             addStylesheet $ StaticR app_css
-            $(widgetFile "login-layout")
+            $(widgetFile "empty-layout")
         withUrlRenderer $(hamletFile "templates/angular-layout-wrapper.hamlet")
 
 -- instance IsString ((Route App -> [(Text, Text)] -> Text) -> Javascript) where
