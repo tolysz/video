@@ -101,8 +101,8 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     $(addStateJ     "admin.group.edit" "/edit/:short"         ) -- require special permissions
     $(addStateJ     "admin.group.user" "/user/:short"         ) -- require special permissions
     $(addStateJ     "admin.user"       "/user"           ) -- require special permissions
-    $(addStateJ     "admin.user.add"   "/add"            ) -- require special permissions
-    $(addStateJ     "admin.user.edit"  "/edit/:ident"         ) -- require special permissions
+    $(addStateV     "admin.user.add"   "@" "/add"            ) -- require special permissions
+    $(addStateV     "admin.user.edit"  "@" "/edit/:ident"         ) -- require special permissions
 
     $(addStateJ     "site"             "/site"           ) -- will be per user
 

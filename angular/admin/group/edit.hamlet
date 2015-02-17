@@ -19,5 +19,5 @@
          <md-button .md-raised .md-warn ng-click=delete()>
             <span .fa .times>
             Delete
-<pre>
+<pre ng-show=debug>
   {{ group | json }}

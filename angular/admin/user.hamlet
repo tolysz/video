@@ -1,9 +1,8 @@
-<div ui-view>
- <a ui-sref="admin.user.add">
+<a ui-sref="admin.user.add">
     <md-button .md-raised .md-primary>
        <span .fa .user-plus>
        And new user
- <md-list>
+<md-list>
    <md-item ng-repeat="user in users">
      <md-item-content>
        <div class="md-tile-left">
@@ -18,7 +17,7 @@
          <p ng-show=debug>
            <pre>
               {{ user | json }}
- <code ng-show=debug>
+<code ng-show=debug>
    \ SiteGroupMember
    \   user          UserId
    \   group         SiteGroupId

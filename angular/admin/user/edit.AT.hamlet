@@ -1,20 +1,19 @@
-<md-content .md-padding>
-  <md-input-container>
+<md-input-container>
     <label>Email
     <input ng-model=user.ident disabled>
-  <md-input-container>
+<md-input-container>
     <label>Name
     <input ng-model=user.name>
-  <md-input-container>
+<md-input-container>
     <label>Friendly
     <input ng-model=user.friendly>
-  <md-checkbox ng-model=user.siteAdmin aria-label="site admin" disabled>
+<md-checkbox ng-model=user.siteAdmin aria-label="site admin" disabled>
      site admin
-  <md-input-container>
+<md-input-container>
      <label>Avatar
      <input ng-model=user.avatar type=url>
-<section >
-    <div layout=row layout-sm=column layout-align="space-between center">
+
+<div layout=row layout-sm=column layout-align="space-between center">
         <md-button .md-raised .md-warn ng-click=save()>
             <span .fa .floppy-o>
             Save
