@@ -1,0 +1,5 @@
+function($scope, $mdSidenav, title){
+    $scope.toggleLeft  = function() { $mdSidenav('left').toggle() };
+    $scope.toggleRight = function() { $mdSidenav('right').toggle() };
+    $scope.title = title.get;
+}

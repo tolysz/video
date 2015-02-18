@@ -1,0 +1,12 @@
+function($scope, $mdSidenav, $log, maid, sections) {
+      $scope.curr_vars = { videoId: 'qdsTUfDTEhQ'};
+      //$scope.sections = sections;
+      //$scope.maid = maid;
+
+      $scope.open   = function() { $mdSidenav('right').open()};
+      $scope.close  = function() { $mdSidenav('right').close()};
+      //$scope.goHome  = function () {$log.debug("Yupi")};
+
+      //$scope.unselect  = function(s){ _.map( $scope.sections , function(s1){ s1.visible = (s1 == s) ? !s1.visible : false }) }
+
+}

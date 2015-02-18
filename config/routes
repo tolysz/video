@@ -31,6 +31,7 @@
 
 
 -- REST access 2 urls per resource
+/api/login                            LoginCheckR  GET
 /api/admin/user                       UserR  GET POST
 /api/admin/user/#EmailQuery           User1R GET DELETE
 

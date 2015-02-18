@@ -4,7 +4,7 @@ function($log, $cookieStore,$window, $http){
 
     $http.post("@{AuthR LogoutR}",{}).then(function(){
         $log.debug("success");
-        $cookieStore.remove("_SESSION");
+        //$cookieStore.remove("_SESSION");
         $window.location.href = "@{HomeR}";
     })
 }

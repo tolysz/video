@@ -13,7 +13,7 @@
   
   $scope.player = "Test";
 
-  $scope.toggleLeft = () -> $mdSidenav('left') .toggle()
+#  $scope.toggleLeft = () -> $mdSidenav('left') .toggle()
   $scope.openLeft   = () -> $mdSidenav('left') .open()
   $scope.closeLeft  = () -> $mdSidenav('left') .close()
   $scope.goHome     = () -> $log.debug "Yupi we are here"

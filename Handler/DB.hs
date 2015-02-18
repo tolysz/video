@@ -80,10 +80,9 @@ deleteUser1R = deleteReturn UniqueUser
 
 -- | REST For Group membreship
 
--- postSiteGroupUserR :: ShortName -> ApiReq [SiteGroupMember]
+postSiteGroupUserR :: ShortName -> ApiReq SiteGroupMember
 postSiteGroupUserR gid = do
    guardAllAdmin
-
    restOpenM $ \(v :: Value) -> runMaybeT $ do
        textGroup <- liftMaybe (v ^? key "group"      . _String )
        guard (textGroup == gid)
@@ -103,15 +102,28 @@ postSiteGroupUserR gid = do
            Nothing             -> void $ insert us
          return (Just $ TC us)
 
---    jsonDB $ do
---      ent <- getDBKey (UniqueSiteGroup gid)
---      selectList [SiteGroupMemberGroup ==. ent] []
-
-getSiteGroupUserR :: ShortName -> ApiReq [SiteGroupMember]
+getSiteGroupUserR :: ShortName -> ApiReq [SiteGroupMemberResolved]
 getSiteGroupUserR gid =
-   jsonDB $ do
+   jsonDBNaked $ do
      groupKey <- getDBKey (UniqueSiteGroup gid)
-     selectList [SiteGroupMemberGroup ==. groupKey] []
+     memberList <- selectList [SiteGroupMemberGroup ==. groupKey] []
+     forM memberList $ \m@(Entity k SiteGroupMember{..}) -> do
+          us <- fmap userIdent <$> get (siteGroupMemberUser)
+          return (SiteGroupMemberResolved (Just gid) us siteGroupMemberFullMember siteGroupMemberUserAdmin siteGroupMemberVideoAdmin)
+
+{-
+     rawrecs <- runDB $ find (select
+     ["loc" =: [
+       "$near" =: [
+         "$geometry" =: [
+           "type" =: ("Point"::String),
+           "coordinates" =: [ (28.483334::Double),(49.233334::Double) ]
+         ],
+         "$maxDistance" =: (1000::Int)
+       ]
+     ]] "points") { limit = 10 } >>= rest
+     mapM_ (liftIO . putStrLn . show) rawrecs
+-}
 
 getSiteGroupUser1R :: ShortName -> EmailQuery -> ApiReq SiteGroupMember
 getSiteGroupUser1R gid e = do
@@ -151,6 +163,11 @@ listsOfAll = jsonDB $ selectList [] []
 jsonDB q = do
   guardAllAdmin
   TC . map (\(Entity _ v) -> v) <$> runDB q
+
+jsonDBNaked q = do
+  guardAllAdmin
+  TC <$> runDB q
+
 
 jsonDB1 q = do
   guardAllAdmin

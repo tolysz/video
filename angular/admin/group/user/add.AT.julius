@@ -1,0 +1,44 @@
+function($scope, $state, $stateParams, Group, User, GroupUser, title, $log) {
+    $scope.member = {};
+    $scope.group = Group.get({short: $stateParams.short});
+    $scope.member.group = $stateParams.short;
+
+    User.query({},function(users){
+        $scope.usersEmails = _.map( users,function(u){
+            return {
+                value: u.ident.toLowerCase(),
+                display: u.ident
+            };});
+    });
+
+    // $scope.members = GroupUser.query({short: $stateParams.short});
+    title.set("New group member");
+    $scope.save = function () {
+        GroupUser
+            .save({short: $stateParams.short}, $scope.member, function (newMember) {
+                if(angular.isDefined($scope.members))
+                     $scope.members.push(newMember);
+                $state.go('admin.group.user', {short:$stateParams.short});
+            })
+    };
+
+    $scope.querySearch  = function(query) {
+        return $scope.usersEmails.filter( createFilterFor(query) ) || []
+    };
+
+function createFilterFor(query) {
+    var lowercaseQuery = angular.lowercase(query);
+    return function filterFn(user) {
+        $log.debug(user);
+        return (user.value.indexOf(lowercaseQuery) === 0);
+    };
+}
+
+$scope.$watch('select', function(val){
+
+    if (angular.isDefined(val))
+       $scope.member.user = val.value;
+})
+
+}
+

@@ -7,7 +7,6 @@
          <button .fa .sort-up ng-hide=sort ng-click=flipSort()>
     <div flex>
 
-
 <md-content>
     <div layout="row">
        <md-content layout=column style="overflow-y: auto; overflow-x:hidden; height:100vh; width:130px;" >

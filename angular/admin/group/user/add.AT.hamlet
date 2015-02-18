@@ -1,0 +1,29 @@
+<md-input-container>
+    <label>Group
+    <input ng-model="member.group" disabled>
+<md-autocomplete
+        md-selected-item="select"
+        md-search-text="searchText"
+        md-item-text="display"
+        md-items="user in querySearch(searchText)"
+        placeholder="Email address">
+      <span md-highlight-text="searchText">{{user.display}}
+<md-checkbox ng-model="member.fullMember" aria-label="full group member">
+     full group member
+<md-checkbox ng-model="member.userAdmin" aria-label="member is videoAdmin">
+     member ia user admin
+<md-checkbox ng-model="member.videoAdmin" aria-label="member is videoAdmin">
+     member ia video admin
+
+<md-button .md-raised .md-warn ng-click=save()>Create
+<pre>
+  {{ group | json }}
+<pre>
+  {{ member | json }}
+
+<pre>
+    \  group         SiteGroupId
+    \  user          UserId
+    \  fullMember    Bool
+    \  userAdmin     Bool
+    \  videoAdmin    Bool

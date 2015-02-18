@@ -22,6 +22,17 @@ let mongoSettings = mkPersistSettings (ConT ''MongoContext)
 instance FromJSON YTChannel
 instance ToJSON   YTChannel
 
-deriveJSON optsL4  ''User
-deriveJSON optsL9  ''SiteGroup
-deriveJSON optsL15 ''SiteGroupMember
+deriveJSON (optsL 4)  ''User
+deriveJSON (optsL 9)  ''SiteGroup
+deriveJSON (optsL 15) ''SiteGroupMember
+
+data SiteGroupMemberResolved =
+   SiteGroupMemberResolved
+     { siteGroupMemberResolvedGroup       :: Maybe ShortName
+     , siteGroupMemberResolvedUser        :: Maybe Text
+     , siteGroupMemberResolvedFullMember  :: Bool
+     , siteGroupMemberResolvedUserAdmin   :: Bool
+     , siteGroupMemberResolvedVideoAdmin  :: Bool
+     }
+
+deriveJSON (optsL 23) ''SiteGroupMemberResolved

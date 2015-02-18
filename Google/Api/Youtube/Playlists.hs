@@ -21,7 +21,7 @@ import Data.Time.Clock     (UTCTime(..))
 import Data.HashMap.Strict (HashMap)
 import Control.Lens        (makeLenses)
 import GHC.Generics        (Generic)
-import Google.Api.Utils    (optsL3, optsL4, optsL5)
+import Google.Api.Utils    (optsL)
 import Google.Api.Kinds    (AsStr, ListResponse, ApiKind)
 import Google.Api.Youtube.Common
 
@@ -51,8 +51,8 @@ type YPStatus         = Value
 type YPContentDetails = Value
 type YPPlayer         = Value
 
-deriveJSON optsL5 ''YPSnippet
-makeLenses        ''YPSnippet
+deriveJSON (optsL 5) ''YPSnippet
+makeLenses           ''YPSnippet
 
-deriveJSON optsL3 ''YoutubePlaylist
-makeLenses        ''YoutubePlaylist
+deriveJSON (optsL 3) ''YoutubePlaylist
+makeLenses           ''YoutubePlaylist

@@ -1,0 +1,12 @@
+.text-danger-blur {
+  color: red;
+  opacity: 0.4;
+}
+.fix-users {
+  left: -0.2em !important;
+  top: -0.1em;
+}
+
+.text-white {
+  color: white
+}

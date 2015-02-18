@@ -1,7 +1,0 @@
-
-<pre>
-    \  group         SiteGroupId
-    \  user          UserId
-    \  fullMember    Bool
-    \  userAdmin     Bool
-    \  videoAdmin    Bool

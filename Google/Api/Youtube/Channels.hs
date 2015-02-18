@@ -20,7 +20,7 @@ import Data.Time.Clock     (UTCTime(..))
 import Data.HashMap.Strict (HashMap)
 import Control.Lens        (makeLenses)
 import GHC.Generics        (Generic)
-import Google.Api.Utils    (optsL3, optsL4, optsL5)
+import Google.Api.Utils    (optsL)
 import Google.Api.Kinds    (AsStr, ListResponse, ApiKind)
 import Google.Api.Youtube.Common
 
@@ -92,26 +92,26 @@ type YCBrandingSettings = Value
 type YCInvideoPromotion = Value
 
 -- Borring TH stuff
-deriveJSON optsL5 ''YCSnippet
-makeLenses        ''YCSnippet
+deriveJSON (optsL 5) ''YCSnippet
+makeLenses           ''YCSnippet
 
-deriveJSON optsL4 ''YCStatus
-makeLenses        ''YCStatus
+deriveJSON (optsL 4) ''YCStatus
+makeLenses           ''YCStatus
 
-deriveJSON optsL5 ''YCTopicDetails
-makeLenses        ''YCTopicDetails
+deriveJSON (optsL 5) ''YCTopicDetails
+makeLenses           ''YCTopicDetails
 
-deriveJSON optsL5 ''YCStatistics
-makeLenses        ''YCStatistics
+deriveJSON (optsL 5) ''YCStatistics
+makeLenses           ''YCStatistics
 
-deriveJSON optsL5 ''YCContentDetails
-makeLenses        ''YCContentDetails
+deriveJSON (optsL 5) ''YCContentDetails
+makeLenses           ''YCContentDetails
 
-deriveJSON optsL4 ''YCAuditDetails
-makeLenses        ''YCAuditDetails
+deriveJSON (optsL 4) ''YCAuditDetails
+makeLenses           ''YCAuditDetails
 
-deriveJSON optsL5 ''YCContentOwnerDetails
-makeLenses        ''YCContentOwnerDetails
+deriveJSON (optsL 5) ''YCContentOwnerDetails
+makeLenses           ''YCContentOwnerDetails
 
-deriveJSON optsL3 ''YoutubeChannel
-makeLenses        ''YoutubeChannel
+deriveJSON (optsL 3) ''YoutubeChannel
+makeLenses           ''YoutubeChannel

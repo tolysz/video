@@ -1,4 +1,4 @@
-<div .sliderdemoBasicUsage>
+<md-content .sliderdemoBasicUsage .md-padding>
     <h3>
       RGB
       <span ng-attr-style="border: 1px solid #333; background: rgb({{color.red}},{{color.green}},{{color.blue}})"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

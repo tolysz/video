@@ -83,14 +83,16 @@ instance Yesod App where
     authRoute _ = Just $ AuthR LoginR
 
     -- Routes not requiring authentication.
-    isAuthorized (AuthR _) _ = return Authorized
-    isAuthorized FaviconR _ = return Authorized
-    isAuthorized RobotsR _ = return Authorized
+    isAuthorized (AuthR _)  _ = return Authorized
+--     isAuthorized (AuthR LoginR)  _ = return . maybe Authorized (const AuthenticationRequired) =<< maybeAuthId
+    isAuthorized (AuthR LogoutR) _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
+    isAuthorized FaviconR        _ = return Authorized
+    isAuthorized RobotsR         _ = return Authorized
     -- isAuthorized GoogleVerifyR _ = return Authorized
     -- Default to Authorized for now.
-    isAuthorized (RedirHashR _) _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
-    isAuthorized (HomeR)        _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
-    isAuthorized _ _ = return Authorized
+    isAuthorized (RedirHashR _)  _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
+    isAuthorized (HomeR)         _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
+    isAuthorized _               _ = return Authorized
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows

@@ -28,7 +28,7 @@ import Data.Typeable       (Typeable)
 import Data.HashMap.Strict (HashMap)
 import Control.Lens        (makeLenses)
 import GHC.Generics        (Generic)
-import Google.Api.Utils    (optsL3, optsL4, optsL5)
+import Google.Api.Utils    (optsL)
 import Google.Api.Kinds    (AsStr, ListResponse, ApiKind)
 
 
@@ -49,6 +49,6 @@ data YThumbnail = YThumbnail
 -- deriveJSON optsL4 ''YCSnippet
 -- makeLenses        ''YCSnippet
 
-deriveJSON optsL3 ''YThumbnail
+deriveJSON (optsL 3) ''YThumbnail
 makeLenses        ''YThumbnail
 

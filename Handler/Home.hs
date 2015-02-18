@@ -23,6 +23,13 @@ import Debug.Trace
 -- functions. You can spread them across multiple files if you are so
 -- inclined, or create a single monolithic file.
 
+getLoginCheckR :: Handler Html
+getLoginCheckR = do
+   maybeAuthId >>= \case
+     Just a -> redirect HomeR
+     Nothing -> redirect $ AuthR LoginR
+
+
 getRedirHashR :: [Text] -> Handler Html
 getRedirHashR [] = redirect HomeR
 --    cJar <- reqCookies <$> getRequest
@@ -61,11 +68,8 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     addConfig "$log"      [js|debugEnabled(#{development})|]
     addConfig "$compile"  [js|debugInfoEnabled(#{development})|]
     addConfig "$http"     [js|useApplyAsync(true)|]
---     addConfig "$location" [js|html5Mode({rewriteLinks:true, requireBase:false, enabled: false})|]
---     addConfig "$location" [js|html5Mode({rewriteLinks:false, requireBase:false, enabled: false})|]
     addConfig "$location" [js|html5Mode({rewriteLinks:true, requireBase:true, enabled: true})|]
---     addConfig "$location" [js|html5Mode(true)|]
---
+
     addModules [ "ui.router"
                , "ngSanitize"
                , "ngAnimate"
@@ -76,50 +80,51 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                , "ngResource"
                ]
 
-    $(addStateJ     "demos"            "/demos"          ) -- could work without passwords
-    $(addStateJ     "demos.empty"      "/empty"          )
-    $(addStateJ     "demos.panel"      "/panel"          )
-    $(addStateJ     "demos.button"     "/button"         )
-    $(addStateJ     "demos.checkbox"   "/checkbox"       )
-    $(addStateJ     "demos.content"    "/content"        )
-    $(addStateJ     "demos.dialog"     "/dialog"         )
-    $(addStateJ     "demos.slider"     "/slider"         )
-    $(addStateJ     "demos.textfield"  "/textfield"      )
-    $(addStateJ     "demos.youtube"    "/youtube"        )
-    $(addStateJ     "demos.about"      "/about"          )
+    $(addStateJ     "demos"                "/demos"          ) -- could work without passwords
+    $(addStateJ     "demos.empty"          "/empty"          )
+    $(addStateJ     "demos.panel"          "/panel"          )
+    $(addStateJ     "demos.button"         "/button"         )
+    $(addStateJ     "demos.checkbox"       "/checkbox"       )
+    $(addStateJ     "demos.content"        "/content"        )
+    $(addStateJ     "demos.dialog"         "/dialog"         )
+    $(addStateJ     "demos.slider"         "/slider"         )
+    $(addStateJ     "demos.textfield"      "/textfield"      )
+    $(addStateJ     "demos.youtube"        "/youtube"        )
+    $(addStateJ     "demos.about"          "/about"          )
 
-    $(addStateJ     "oauth2"           "/oauth2"         )  -- show only to channel admin who autenticated oauth
+    $(addStateJ     "oauth2"               "/oauth2"         )  -- show only to channel admin who autenticated oauth
     $(addStateV     "oauth2.channels"  "@" "/channels"       )
     $(addStateV     "oauth2.playlists" "@" "/playlists/:cid" )
     $(addStateV     "oauth2.playlist"  "@" "/playlist/:pid"  )
     $(addStateV     "oauth2.video"     "@" "/video/:vid"     )
 
-    $(addStateJ     "admin"            "/admin"          ) -- only channel admin
-    $(addStateJ     "admin.video"      "/video"          )
-    $(addStateJ     "admin.group"      "/group"          ) -- require special permissions
-    $(addStateJ     "admin.group.add"  "/add"            ) -- require special permissions
-    $(addStateJ     "admin.group.edit" "/edit/:short"         ) -- require special permissions
-    $(addStateJ     "admin.group.user" "/user/:short"         ) -- require special permissions
-    $(addStateJ     "admin.user"       "/user"           ) -- require special permissions
+    $(addStateJ     "admin"                "/admin"          ) -- only channel admin
+    $(addStateJ     "admin.video"          "/video"          )
+    $(addStateJ     "admin.group"          "/group"          ) -- require special permissions
+    $(addStateJ     "admin.group.add"      "/add"            ) -- require special permissions
+    $(addStateJ     "admin.group.edit"     "/:short/edit"    ) -- require special permissions
+    $(addStateJ     "admin.group.user"     "/:short/user"    ) -- require special permissions
+    $(addStateV     "admin.group.user.add" "@" "/add"            )
+    $(addStateJ     "admin.user"           "/user"           ) -- require special permissions
     $(addStateV     "admin.user.add"   "@" "/add"            ) -- require special permissions
-    $(addStateV     "admin.user.edit"  "@" "/edit/:ident"         ) -- require special permissions
+    $(addStateV     "admin.user.edit"  "@" "/edit/:ident"    ) -- require special permissions
 
-    $(addStateJ     "site"             "/site"           ) -- will be per user
+    $(addStateJ     "site"                 "/site"           ) -- will be per user
 
-    $(addStateJ     "chat"             "/chat"           ) -- will be per user
+    $(addStateJ     "chat"                 "/chat"           ) -- will be per user
 
-    $(addStateJ     "logout"           "/auth/logout")
+    $(addStateJ     "logout"               "/auth/logout"    )
 
     setDefaultRoute "/demos/about"
 
 --     addController "LeftCtrl"   $(juliusFile "angular/_lib/Controlers/LeftCtrl.julius")
     addController "LeftCtrl"          $(ncoffeeFile "angular/_lib/Controlers/LeftCtrl.coffee")
+    addController "RightCtrl"         $(juliusFile  "angular/_lib/Controlers/RightCtrl.julius")
+    addController "AppCtrl"           $(juliusFile  "angular/_lib/Controlers/AppCtrl.julius")
     addFilter     "splitChars"        $(juliusFile  "angular/_lib/Filters/splitChars.julius")
     addFilter     "splitChars2"       $(ncoffeeFile "angular/_lib/Filters/splitChars2.coffee")
     addService    "youtubeEmbedUtils" $(juliusFile  "angular/_lib/Service/youtubeEmbedUtils.julius")
     addDirective  "youtubeVideo"      $(juliusFile  "angular/_lib/Directive/youtubeVideo.julius")
---     addDirective  "resize"            $(juliusFile  "angular/_lib/Directive/resize.julius")
-  -- ^ empty
     addFactory "ytPlayer" [js| function (){
       var player, curr_vars;
 
@@ -128,7 +133,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
 
     } |]
 
-    addFactory "User"      [js| function($resource) { var User      = $resource(                 "@{UserR}/:ident"); return User;      }|]
+    addFactory "User"      [js| function($resource) { var User      = $resource("@{UserR}/:ident");                  return User;      }|]
     addFactory "Group"     [js| function($resource) { var Group     = $resource("@{SiteGroupR}/:short");             return Group;     }|]
     addFactory "GroupUser" [js| function($resource) { var GroupUser = $resource("@{SiteGroupR}/:short/user/:ident"); return GroupUser; }|]
 
@@ -172,15 +177,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     }|]
     addFactory "title" [js| function($log, $timeout){
        return { get: ""
-              , set: function (nt){
-                   var self = this;
-                   $timeout(
-                      function(){
-                          $log.debug("setTitle " + nt);
-                          self.get = nt;
-                          }
-                   , 0);
-                   }
+              , set: function (nt){ this.get = nt; }
               }
      }
     |]

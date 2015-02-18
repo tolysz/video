@@ -1,9 +1,18 @@
 
 <a ui-sref="admin.group.edit({short:group.short})">
-   Edit
+    <md-button .md-raised .md-primary>
+       <span .font-stack>
+          <span .fa .pencil-square-o  .font-stack-2x .text-danger-blur>
+          <span .fa .users .fix-users .font-stack-1x .text-white>
+
+       Edit
 <pre>
     {{ group | json }}
-
-Add user
+<a ui-sref="admin.group.user.add({short:group.short})">
+    <md-button .md-raised .md-primary>
+       <span .font-stack>
+          <span .fa .users     .font-stack-2x .text-danger-blur>
+          <span .fa .user-plus .font-stack-2x .text-white>
+       Add user to this group
 <pre>
     {{ members | json}}

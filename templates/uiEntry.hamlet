@@ -22,13 +22,24 @@ $newline never
       <a .menu-item .md-menu-item .menu-title  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
          <span .glyphicon .log-out>
          Logout
-<div layout=column layout-fill ng-cloak tabindex="-1" role=main style="height: 100vh; overflow-y: scroll;" md-scroll-y>
+<div layout=column layout-fill ng-cloak tabindex="-1" role=main style="height: 100vh; overflow-y: auto; overflow-x: hide;" md-scroll-y>
    <section  >
       <md-toolbar md-default-theme md-scroll-shrink .md-accent ng-controller=LeftCtrl>
-         <div class="md-toolbar-tools" ng-click="toggleLeft()" tabindex="0" >
-            <md-button .md-primary .menu-icon aria-label="Toggle Menu" hide-gt-md>
+         <div .md-toolbar-tools tabindex="0" >
+            <md-button .md-primary .menu-icon aria-label="Toggle Menu" hide-gt-md  ng-click="toggleLeft()">
                <span .fa .font-2x .indent >
-            <div layout=row flex .fill-height>
+            <div layout=row flex .fill-height  ng-click="toggleLeft()">
                <div .md-toolbar-item .md-breadcrumb>
                   <span style="display: inline-block;" ng-bind-html="title.get">
+            <div ng-click="toggleRight()" tabindex="1" hide-gt-lg>
+               <md-button .md-primary .menu-icon aria-label="Toggle Video Menu">
+                  <span .fa .font-2x .indent .font-rotate-180>
       <md-content data-ui-view flex .md-default-theme>
+
+<md-sidenav .site-sidenav .md-sidenav-right .md-whiteframe-z2 md-is-locked-open="$media('gt-lg')" md-component-id="right" style="width:250px;" tabindex="-1" >
+   <section ng-controller="RightCtrl" style="height: 100vh;">
+      <md-toolbar .md-theme-light>
+        <h1 .md-toolbar-tools>Sidenav Right
+      <div>
+        <md-button ng-click="close()" .md-primary>
+          Close Sidenav Right

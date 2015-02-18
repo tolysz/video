@@ -6,21 +6,8 @@ import Data.Char (toLower, isUpper)
 import Data.Bool
 import Data.Aeson.Types
 
-
-optsL3 :: Options
-optsL3 = defaultOptions { fieldLabelModifier = dropL 3 }
-
-optsL4 :: Options
-optsL4 = defaultOptions { fieldLabelModifier = dropL 4 }
-
-optsL5 :: Options
-optsL5 = defaultOptions { fieldLabelModifier = dropL 5 }
-
-optsL9 :: Options
-optsL9 = defaultOptions { fieldLabelModifier = dropL 9 }
-
-optsL15 :: Options
-optsL15 = defaultOptions { fieldLabelModifier = dropL 9 }
+optsL :: Int -> Options
+optsL i = defaultOptions { fieldLabelModifier = dropL i }
 
 fromCamel :: Int -> String -> String
 fromCamel n = worker True . drop n

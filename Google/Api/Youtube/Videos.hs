@@ -11,7 +11,7 @@ module Google.Api.Youtube.Videos where
 
  -- https://developers.google.com/youtube/v3/docs/#Videos
 
-import Prelude             (Bool, Integer, Int, Show(..))
+import Prelude             (Show(..))
 import Data.Aeson          (Value)
 import Data.Aeson.TH       (deriveJSON)
 import Data.Text           (Text)
@@ -21,7 +21,7 @@ import Data.Time.Clock     (UTCTime(..))
 import Data.HashMap.Strict (HashMap)
 import Control.Lens        (makeLenses)
 import GHC.Generics        (Generic)
-import Google.Api.Utils    (optsL3, optsL4, optsL5)
+import Google.Api.Utils    (optsL)
 import Google.Api.Kinds    (ListResponse, ApiKind)
 import Google.Api.Youtube.Common
 
@@ -68,8 +68,8 @@ type YVProcessingDetails    = Value
 type YVSuggestions          = Value
 type YVLiveStreamingDetails = Value
 
-deriveJSON optsL3 ''YoutubeVideo
-makeLenses        ''YoutubeVideo
+deriveJSON (optsL 3) ''YoutubeVideo
+makeLenses           ''YoutubeVideo
 
-deriveJSON optsL5 ''YVSnippet
-makeLenses        ''YVSnippet
+deriveJSON (optsL 5) ''YVSnippet
+makeLenses           ''YVSnippet
