@@ -1,5 +1,5 @@
 function($scope, title){
-  title.set("Video")
+  title.set("Video");
     //$scope.shareName = "";
   $scope.share = 2;
         $scope.$watch('share', function() {
@@ -10,10 +10,8 @@ function($scope, title){
                 , ["channel members", "all members and friends (i.e. guests)"]
                 , ["site members", "all other Toastmaster groups"]
                 , ["the youtube", "Everyone! this is going into the public playlist viewable by everyone"]
-                ]
-        $scope.shareName = r[$scope.share][0]
+                ];
+        $scope.shareName = r[$scope.share][0];
         $scope.longDesc  = r[$scope.share][1]
-        
         })
-    
 }

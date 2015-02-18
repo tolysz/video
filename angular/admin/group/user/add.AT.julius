@@ -34,10 +34,13 @@ function createFilterFor(query) {
     };
 }
 
-$scope.$watch('select', function(val){
+$scope.$watchGroup(['select', 'searchText'], function(val){
 
-    if (angular.isDefined(val))
-       $scope.member.user = val.value;
+    if (angular.isDefined(val[0]) && angular.isDefined(val[0].value)) {
+        $scope.searchText = val[0].value;
+        $scope.member.user = val[0].value;
+    } else
+      delete ($scope.member.user);
 })
 
 }

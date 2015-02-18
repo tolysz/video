@@ -25,7 +25,8 @@
     "angular-websocket": "tolysz/angular-websocket#master",
     "angular-resource": "master",
     "angular-animate": "master",
-    "angular-aria": "master"
+    "angular-aria": "master",
+    "angulartics": "master"
   },
   "resolutions": {
     "angular": "master"

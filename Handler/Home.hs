@@ -78,6 +78,8 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                , "ngMaterial"
                , "ngWebSocket"
                , "ngResource"
+               , "angulartics"
+               , "angulartics.google.analytics"
                ]
 
     $(addStateJ     "demos"                "/demos"          ) -- could work without passwords
