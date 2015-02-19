@@ -8,10 +8,11 @@ import Text.Naked.Coffee
 
 import Yesod.AngularUI
 import Yesod.WebSockets
-
+import Yesod.WebSockets.Extra
 -- import Data.Time
 
 import qualified Data.Text as T
+import Data.Bool
 
 import Debug.Trace
 
@@ -119,7 +120,6 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
 
     setDefaultRoute "/demos/about"
 
---     addController "LeftCtrl"   $(juliusFile "angular/_lib/Controlers/LeftCtrl.julius")
     addController "LeftCtrl"          $(ncoffeeFile "angular/_lib/Controlers/LeftCtrl.coffee")
     addController "RightCtrl"         $(juliusFile  "angular/_lib/Controlers/RightCtrl.julius")
     addController "AppCtrl"           $(juliusFile  "angular/_lib/Controlers/AppCtrl.julius")
@@ -139,12 +139,31 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     addFactory "Group"     [js| function($resource) { var Group     = $resource("@{SiteGroupR}/:short");             return Group;     }|]
     addFactory "GroupUser" [js| function($resource) { var GroupUser = $resource("@{SiteGroupR}/:short/user/:ident"); return GroupUser; }|]
 
-    addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid, $mdToast) {
+    addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid, $mdToast, $timeout, $interval) {
       // Open a WebSocket connection
       var methods = {};
       var collection = [];
-      try{
-      var dataStream = $websocket('@{HomeR}'.replace("http:", "ws:").replace("https:", "wss:"));
+      url = '@{HomeR}'.replace("http:", "ws:").replace("https:", "wss:");
+      var dataStream = {};
+
+      function toast(m, d){
+         $mdToast.show(
+            $mdToast.simple()
+               .content(m)
+               .position("top left right")
+               .hideDelay( d || 3000)
+             );
+      }
+
+      function open (){
+      dataStream = $websocket(url);
+
+      dataStream.onOpen(function(){ toast("Chat server connected"); });
+      dataStream.onClose(function(){ toast("Chat server Disconnected"); });
+      dataStream.onError(function(){
+        toast("Reconnection");
+        $timeout ( open, 5000);
+        });
 
       dataStream.onMessage(function(message) {
       $log.debug(message);
@@ -159,16 +178,14 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                 collection.unshift({tag:buffer.tag, cont:buffer.contents});
 
                 if (buffer.tag == 'Shout')
-                    $mdToast.show(
-                       $mdToast.simple()
-                          .content(buffer.contents[0] + " -> " + buffer.contents[2])
-                          .position("top left right")
-                          .hideDelay(3000)
-                        );
+                  toast(buffer.contents[0] + " -> " + buffer.contents[2]);
               })
             });
-      });
+      })
+      };
 
+      try{
+         open();
       methods = { collection: collection
                     , get: function(s) {
                              dataStream.send(JSON.stringify({ action: 'get', value: s }));
@@ -178,6 +195,10 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                             }
                     };
       }  catch(e) {
+
+      toast("error... retry", 1000);
+      $timeout ( open, 5000);
+
          methods = { collection: collection
                    , get: function(s){}
                    , shout: function(s){}
@@ -245,15 +266,39 @@ chatApp chans name = do
     sendBinaryData (MsgInfo now1 $ "Welcome to the chat server, please enter your name.")
     sendBinaryData $ MsgInfo now1 $ "Welcome, " <> name
 
-    rChan <- atomically $ do
-        adjustFilter (\_ -> [\ k u _ -> if (trace (show k) k) == name then (trace "N" HaveNull) else (trace "M" MissingData) ]) name chans
-        broadcastChan (SystemInfo now1 $ name <> " has joined the chat") name chans
-        getChan name chans
-    race_
-        (forever $ atomically (readTChan rChan) >>= sendBinaryData)
-        (sourceWS $$ mapM_C (\(msg :: MsgBus)-> do
-          now <- upTime' <$> liftIO getCurrentTime
-          atomically $ do
-            maybe noop (sendSendChan False chans name) (toEcho $ now msg)
-            broadcastChan (now msg) name chans
-            ))
+    (rChan, keepWS) <- atomically $ do
+        adjustFilter (\_ -> [ -- \ k u _ -> if k == name then HaveNull else MissingData
+                            -- ,\ k u ( Shout _ _ _)  -> if k == u then HaveNull else MissingData
+                            \ k u t -> if k == u
+                               then
+                                 HaveNull
+                               else
+                                 case t of
+                                   _ -> MissingData
+                            ]) name chans
+        broadcastChan (Enter name now1) name chans
+        (,) <$> getChan name chans <*> newEmptyTMVar
+    let
+      cleanup _ = void $ liftIO $ do
+         void $ atomically . tryPutTMVar keepWS $ False
+
+      writeWS = do
+       nowTime <- liftIO getCurrentTime
+       atomically (readTChan rChan) >>= sendBinaryDataE >>= either cleanup return
+       atomically (isEmptyTMVar keepWS) >>= bool
+            ((atomically $ broadcastChan (Close name nowTime) name chans) >> sendClose ("closing" :: Text))
+            writeWS
+
+      readWS = do
+       nowTime <- liftIO getCurrentTime
+       let now = upTime' nowTime
+       msg <-  either (\a -> cleanup a >> return (Close name nowTime)) (return . now )=<< receiveDataE
+       atomically (do
+          maybe noop (sendSendChan False chans name) (toEcho msg)
+          broadcastChan msg name chans
+          isEmptyTMVar keepWS)
+       >>= bool
+           (sendClose ("closing" :: Text))
+           readWS
+
+    concurrently_ readWS writeWS

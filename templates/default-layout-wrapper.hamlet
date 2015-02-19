@@ -14,6 +14,8 @@ $newline never
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="mobile-web-app-capable" content="yes">
+        $maybe siteVerification <- appSiteVerification $ appSettings master
+             <meta name="google-site-verification" content="#{siteVerification}" />
         ^{pageHead pc}
         \<!--[if lt IE 9]>
         \<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>

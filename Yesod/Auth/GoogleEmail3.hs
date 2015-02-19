@@ -213,7 +213,8 @@ authGoogleEmail =
 
     dispatch _ _ = notFound
 
-semicolon = ";" :: Text
+semicolon :: Text
+semicolon = ";"
 
 data Tokens = Tokens Text Text
 instance FromJSON Tokens where

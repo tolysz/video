@@ -23,7 +23,7 @@
        (s1) -> 
           if (s1 == s)
             s1.visible =  ! s1.visible
-            wsLink.get(s)
+#            wsLink.get(s)
           else
             s1.visible = false
        )

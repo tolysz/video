@@ -9,8 +9,11 @@ import qualified ListT
 import qualified Focus
 import qualified STMContainers.Map as STMMap
 
-type Mask a = (Text -> Text -> a -> Possible ())
--- ^          sender mapuser value
+type Mask a = Text        -- ^ sender
+           -> Text        -- ^ mapuser
+           -> a           -- ^ value
+           -> Possible () -- ^ decision
+
 newtype CMap a = CMap (STMMap.Map Text ([Mask a], TChan a))
 -- ^   We send 'a' based on user 'Text' filtered by masks
 
@@ -36,9 +39,9 @@ broadcastChan msg k (CMap x) = mapM_ (uncurry (writeFiltered msg k)) =<< ListT.t
 -- | filter messages as we write them to the channels, so maybe we do not need to write anything !!!
 writeFiltered msg _ _ ( []  , c) = writeTChan c msg
 writeFiltered msg k u ( f:fs, c) = case f k u msg of
-          HaveData _  -> writeTChan c msg              -- we accept it for sure
-          MissingData -> writeFiltered msg k u (fs,c)    -- we just do not know
-          HaveNull    -> return ()                     -- we know we failed
+          HaveData _  -> writeTChan  c msg               -- ^ we accept it for sure
+          MissingData -> writeFiltered msg k u (fs,c)    -- ^ we just do not know
+          HaveNull    -> return ()                       -- ^ we know we failed
 
 adjustFilter :: ([Mask a] -> [Mask a]) -> Text -> CMap a -> STM ()
 -- ^ modify filters ideally we just set them

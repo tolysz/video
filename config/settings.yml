@@ -30,6 +30,7 @@ analytics: "_env:GOOGLE_ANALYTICS"
 
 google-api-server: "_env:GOOGLE_API_SERVER"
 google-api-browser: "_env:GOOGLE_API_BROWSER"
+google-site-verification: "_env:GOOGLE_SITE_VERIFICATION"
 
 google-oauth:
 #  auth_uri: "https://accounts.google.com/o/oauth2/auth"

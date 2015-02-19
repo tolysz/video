@@ -137,7 +137,9 @@ authFacebook perms = AuthPlugin "fb" dispatch login
            }
         |]
 
-semicolon = ";" :: Text
+semicolon :: Text
+semicolon = ";"
+
 -- | Create an @yesod-auth@'s 'Creds' for a given
 -- @'FB.UserAccessToken'@.
 createCreds :: FB.UserAccessToken -> FB.User -> Maybe (Creds m)

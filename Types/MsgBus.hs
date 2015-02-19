@@ -45,6 +45,8 @@ data MsgBus
     | SystemInfo  !UTCTime !Text
     | MsgInfo     !UTCTime !Text
     | SelfEcho    !UTCTime !Text
+    | Close  !Who !UTCTime
+    | Enter  !Who !UTCTime
         deriving (Show, Eq, Typeable, Generic)
 
 singletons [d|
@@ -85,6 +87,8 @@ upTime' n ( Shout    w _ t ) = Shout    w n t
 upTime' n ( SystemInfo _ t ) = SystemInfo n t
 upTime' n ( MsgInfo    _ t ) = MsgInfo    n t
 upTime' n ( SelfEcho   _ t ) = SelfEcho   n t
+upTime' n ( Close    w _   ) = Close    w n
+upTime' n ( Enter    w _   ) = Enter    w n
 
 toEcho (Shout _ t m) = Just (SelfEcho t m)
 toEcho _ = Nothing

@@ -63,6 +63,8 @@ data AppSettings = AppSettings
     -- ^ Google Api Browser Key
     , appGoogleWebAppOAuth       :: Maybe OAuth2Google
     -- ^ OAuth2 config
+    , appSiteVerification        :: Maybe Text
+    -- ^ google site verification for push messages
     , appFbCredentials           :: FB.Credentials
     -- ^ Facebook creds
     , appDevelopment             :: Bool
@@ -97,6 +99,8 @@ instance FromJSON AppSettings where
         appGoogleServerKey        <- o .:? "google-api-server"
         appGoogleBrowserKey       <- o .:? "google-api-browser"
         appGoogleWebAppOAuth      <- o .:? "google-oauth"
+        appSiteVerification       <- o .:? "google-site-verification"
+
         appDevelopment            <- pure defaultDev
 
         fbId                      <- o .:? "facebook-app-id"     .!= ""

@@ -68,6 +68,8 @@ library
                   -- patch yesod google auth
                      Yesod.Auth.GoogleEmail3
                      Yesod.Auth.Facebook2
+                  -- wait pull -- https://github.com/yesodweb/yesod/pull/772
+                     Yesod.WebSockets.Extra
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -173,6 +175,8 @@ library
                -- yesod google auth
                  , mime-mail
                  , conduit-extra
+               -- wait pull -- https://github.com/yesodweb/yesod/pull/772
+                 , enclosed-exceptions
 
 executable         video
     if flag(library-only)
