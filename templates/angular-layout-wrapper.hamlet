@@ -7,8 +7,7 @@ $newline never
 <html class="no-js" data-ng-app=#{ngApp} data-ng-controller=AppCtrl lang="en" ng-cloak> <!--<![endif]-->
     <head>
         <meta charset="UTF-8">
-        <!-- <script type="text/javascript" src="static/webcomponentsjs/webcomponents.js"></script> -->
-        <title ng-html-bing=title>
+        <title ng-bind-html=title.get>
            #{pageTitle pc}
         <meta name="description" content="">
         <meta name="author" content="#{appCopyright $ appSettings master}">

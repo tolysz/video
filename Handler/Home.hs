@@ -139,7 +139,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
     addFactory "Group"     [js| function($resource) { var Group     = $resource("@{SiteGroupR}/:short");             return Group;     }|]
     addFactory "GroupUser" [js| function($resource) { var GroupUser = $resource("@{SiteGroupR}/:short/user/:ident"); return GroupUser; }|]
 
-    addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid) {
+    addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid, $mdToast) {
       // Open a WebSocket connection
       var methods = {};
       var collection = [];
@@ -157,6 +157,14 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                 $log.debug(buffer);
                 // if (_.isUndefined (collection[buffer.tag])) collection[buffer.tag] = [];
                 collection.unshift({tag:buffer.tag, cont:buffer.contents});
+
+                if (buffer.tag == 'Shout')
+                    $mdToast.show(
+                       $mdToast.simple()
+                          .content(buffer.contents[0] + " -> " + buffer.contents[2])
+                          .position("top left right")
+                          .hideDelay(3000)
+                        );
               })
             });
       });
