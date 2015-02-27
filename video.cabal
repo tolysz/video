@@ -145,6 +145,7 @@ library
                  , yesod-fb
                  , yesod-auth-fb
                  , wai
+                 , utf8-string
 
 
                -- deps for oauth

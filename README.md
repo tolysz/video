@@ -4,11 +4,13 @@
 Sample Webap
 ============
 
-Sample website using Haskell/Yesod/Angular/Polymer/WebComponents...
-  Google APIs and so on... [Demo website running this code!](https://video.kio.sx/) uses persona for auth
-     This is still in development... all OAath2 might be insecure at times (might use secure session, to not to store anything)
+Sample website using Haskell/Yesod/AngularJS/Angular-Material
+  Angular apps are generated on-the-fly depending on user and auths they have.
+  Google APIs and so on... [Demo website running this code!](https://video.kio.sx/) uses facebook/google+/persona for auth
+     This is still in development... all OAath2 might be insecure at times ( be sure, to logout via OAuth2 menu; might use secure session, to not to store anything)
 
-Currently it only stores email, all other stuff will be per user.
+Currently it only stores email, so your login will be recorded as user, and currently you will not see much;
+But You could go to OAuth2 menu and login again to have access to your youtube channel (only you will have access to it)/ you can remove credential from the same manu.
 
 OR just look at the code:
  Main is [Handler/Main.hs](https://github.com/tolysz/video/blob/master/Handler/Home.hs)
@@ -48,8 +50,7 @@ Running
 ======
 You need to create a site admin, this will be the user who can create new sites, or even create new admins? (well let's not go this far)
 one can run the command bellow for any user on a server which hosts your database
-    
-    
+
     mongo
     use somedatabase
     db.User.update({ident: "tolysz@gmail.com"},{$set:{siteAdmin:true}},{})

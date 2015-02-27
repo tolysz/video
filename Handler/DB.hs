@@ -7,6 +7,8 @@ import Data.Aeson.Lens
 import Data.Aeson.Types
 import Control.Lens ((^?) , (^.))
 import Control.Lens.Iso (non)
+import Database.Persist.MongoDB
+import Data.ByteString.UTF8 (toString)
 
 -- import Database.MongoDB.Query (MongoContext(..))
 -- import Data.Aeson.Types (emptyObject)
@@ -51,7 +53,7 @@ getSiteGroup1R :: ShortName -> ApiReq SiteGroup
 getSiteGroup1R = jsonDB1 . getBy404 . UniqueSiteGroup
 
 deleteSiteGroup1R :: ShortName -> ApiReq SiteGroup
-deleteSiteGroup1R = deleteReturn UniqueSiteGroup
+deleteSiteGroup1R = deleteByReturn UniqueSiteGroup
 
 -- | REST For User
 getUserR :: ApiReq [ User ]
@@ -76,10 +78,9 @@ getUser1R :: EmailQuery -> ApiReq User
 getUser1R = jsonDB1 . getBy404 . UniqueUser
 
 deleteUser1R :: EmailQuery -> ApiReq User
-deleteUser1R = deleteReturn UniqueUser
+deleteUser1R = deleteByReturn UniqueUser
 
 -- | REST For Group membreship
-
 postSiteGroupUserR :: ShortName -> ApiReq SiteGroupMember
 postSiteGroupUserR gid = do
    guardAllAdmin
@@ -94,7 +95,6 @@ postSiteGroupUserR gid = do
               (,) <$> getDBKey (UniqueSiteGroup textGroup)
                   <*> getDBKey (UniqueUser textUser)
                   )
-
        let us = SiteGroupMember {..}
        MaybeT $ runDB $ do
          getBy (UniqueSiteGroupMember siteGroupMemberGroup siteGroupMemberUser) >>= \case
@@ -110,7 +110,6 @@ getSiteGroupUserR gid =
      forM memberList $ \m@(Entity k SiteGroupMember{..}) -> do
           us <- fmap userIdent <$> get (siteGroupMemberUser)
           return (SiteGroupMemberResolved (Just gid) us siteGroupMemberFullMember siteGroupMemberUserAdmin siteGroupMemberVideoAdmin)
-
 {-
      rawrecs <- runDB $ find (select
      ["loc" =: [
@@ -135,7 +134,21 @@ deleteSiteGroupUser1R :: ShortName -> EmailQuery -> ApiReq SiteGroupMember
 deleteSiteGroupUser1R gid e = do
   (groupKey, userKey) <- runDB $ (,) <$> getDBKey (UniqueSiteGroup gid)
                                      <*> getDBKey (UniqueUser e)
-  deleteReturn (UniqueSiteGroupMember groupKey) userKey
+  deleteByReturn (UniqueSiteGroupMember groupKey) userKey
+
+-- REST for events
+postEventR :: ApiReq Event
+postEventR = badMethod
+
+getEventR :: ApiReq [ Event ]
+getEventR = listsOfAll
+
+getEvent1R :: ObjectId -> ApiReq Event
+getEvent1R (oidToKey -> eid) = runDB $ TC <$> get404 eid
+
+deleteEvent1R :: ObjectId -> ApiReq Event
+deleteEvent1R (oidToKey -> eid) = deleteReturn eid
+
 
 -- | todo: find out how to cut this boilerplate!
 --   force compiler not to disply signature missing if the type is fully defined otherwise
@@ -151,7 +164,6 @@ getAllChannelMember   = listsOfAll :: ApiReq [ ChannelMember ]
 getAllSiteGroupMember = listsOfAll :: ApiReq [SiteGroupMember]
 getAllSiteGroup       = listsOfAll :: ApiReq [   SiteGroup   ]
 getAllVirtualVideo    = listsOfAll :: ApiReq [ VirtualVideo  ]
-getAllEvent           = listsOfAll :: ApiReq [     Event     ]
 getAllPlaylistEvent   = listsOfAll :: ApiReq [ PlaylistEvent ]
 
 -- | type magic
@@ -168,13 +180,17 @@ jsonDBNaked q = do
   guardAllAdmin
   TC <$> runDB q
 
-
 jsonDB1 q = do
   guardAllAdmin
   TC . (\(Entity _ v) -> v) <$> runDB q
 
-deleteReturn f u1 = jsonDB1 $ do
+deleteByReturn f u1 = jsonDB1 $ do
    u@(Entity k _) <- getBy404 (f u1)
+   delete k
+   return u
+
+deleteReturn k = jsonDBNaked $ do
+   u <- get404 k
    delete k
    return u
 
@@ -184,10 +200,8 @@ getDBKey f = do
 
 eToTC (Entity _ v) = TC v
 
-
 oneOr404 [a] = return a
 oneOr404 _ = notFound
-
 
 -- | Add some anonymous user, without adding her to any group
 
@@ -199,3 +213,9 @@ patchValue t p = resultToEither . fromJSON $ toJSON t
 
 resultToEither (Error a) = Left a
 resultToEither (Success a) = Right a
+
+-- | Return a 405 method not supported page.
+-- notImplemented :: (RequestReader m, Failure ErrorResponse m) => m a
+-- notImplemented = do
+--     w <- waiRequest
+--     failure $ notImplemented501 $ toString $ requestMethod w

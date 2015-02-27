@@ -108,6 +108,27 @@ handleYTAllVideosR = TC <$> next HaveNull [] -- if there be 'null' in the result
 -- dd ^.. traverse .  ggrResults . traverse . ggrtGeometry . to ( \v -> ( v ^. gggLocation, v ^. gggLocationType  ))
 -- dd ^.. traverse .  ggrResults . traverse . ggrtGeometry . gggLocationType . to Prelude.show ^. to Data.List.sort
 
+{--
+ Events
+
+ Users
+   -- user all videos
+--}
+{--
+add Tags
+PUT https://www.googleapis.com/youtube/v3/playlists?part=snippet&key={YOUR_API_KEY}
+
+{
+ "snippet": {
+  "title": "Tim Minchin",
+  "tags": [
+   "RAW",
+   "SEXY"
+  ]
+ },
+ "id": "PLD1E5DFF19FF9C747"
+}
+--}
 
 {--
 id

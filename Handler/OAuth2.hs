@@ -155,4 +155,3 @@ handleGoogleDebugR :: Texts -> ApiReq Value
 handleGoogleDebugR v = do
   r <- T.intercalate "&" .  map (\(a,b)-> a <> "=" <> b ) . reqGetParams <$> getRequest
   fromString $ T.unpack $ T.intercalate "/"  ("https://www.googleapis.com" : v) <> "?" <> r
-

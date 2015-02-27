@@ -37,6 +37,10 @@
 /api/admin/group                      SiteGroupR  GET POST
 /api/admin/group/#ShortName           SiteGroup1R GET DELETE
 
+-- /api/event                            EventR  GET POST
+-- /api/event/#ObjectId                  Event1R GET DELETE
+
+
 /api/admin/group/#ShortName/user              SiteGroupUserR  GET POST
 /api/admin/group/#ShortName/user/#EmailQuery  SiteGroupUser1R GET DELETE
 
