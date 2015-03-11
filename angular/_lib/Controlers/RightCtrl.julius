@@ -1,4 +1,20 @@
-function($scope, $mdSidenav) {
-     $scope.open   = function() { $mdSidenav('right').open()};
-     $scope.close  = function() { $mdSidenav('right').close()};
+function($scope, $mdSidenav, $http, $window) {
+    $scope.open = function () { $mdSidenav('right').open()};
+    $scope.close = function () { $mdSidenav('right').close()};
+
+    $scope.changeLang = function () {
+        $http({ method: 'POST'
+              , url:        "@{LangR}"
+              , headers:    {'Content-Type': 'application/x-www-form-urlencoded'}
+              , transformRequest: function (obj) {
+                var str = [];
+                for (var p in obj)
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                return str.join("&");
+                }
+            , data: {'lang':$scope.lang}
+        }).success(function () {
+            $window.location.reload();
+        });
+    }
 }

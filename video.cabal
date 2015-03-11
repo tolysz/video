@@ -70,6 +70,14 @@ library
                      Yesod.Auth.Facebook2
                   -- wait pull -- https://github.com/yesodweb/yesod/pull/772
                      Yesod.WebSockets.Extra
+                  -- separare neo4j library
+                     Database.Neo.Monad
+--                     Database.Neo.Types
+                     Database.Neo.Rest
+                     Database.Neo.Utils
+                     Database.Neo.NeoNode
+                     Database.Neo.NeoResponse
+                     Database.Neo.Cypher
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -178,6 +186,8 @@ library
                  , conduit-extra
                -- wait pull -- https://github.com/yesodweb/yesod/pull/772
                  , enclosed-exceptions
+               -- neo4j
+                 , mtl
 
 executable         video
     if flag(library-only)

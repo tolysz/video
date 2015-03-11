@@ -18,6 +18,7 @@ $newline never
         <link rel="icon" href="/static/polish-your-polish-124.gif" sizes="124x141" type="image/gif">
         ^{pageHead pc}
         <script type="text/javascript" src="@{StaticR app_min_js}">
+        <script type="text/javascript" src="@{LangR}">
         \<!--[if lt IE 9]>
         \<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         \<![endif]-->

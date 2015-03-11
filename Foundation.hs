@@ -20,6 +20,8 @@ import qualified Yesod.Auth.GoogleEmail3        as GId( forwardUrl )
 import Yesod.Facebook
 import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
 import qualified Data.Text as T (split)
+import Control.Applicative
+import Data.Bool
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -60,9 +62,10 @@ instance Yesod App where
 
     -- Store session data on the client in encrypted cookies,
     -- default session idle timeout is 120 minutes
-    makeSessionBackend _ = fmap Just $ defaultClientSessionBackend
-        120    -- timeout in minutes
-        "config/client_session_key.aes"
+    makeSessionBackend _ = bool sslOnlySessions id compiledAsDevel $ Just <$> defaultClientSessionBackend
+                                                        120    -- timeout in minutes
+                                                        "config/client_session_key.aes"
+    yesodMiddleware = bool (sslOnlyMiddleware 240) id  compiledAsDevel . defaultYesodMiddleware
 
     defaultLayout widget = do
         master <- getYesod
@@ -160,8 +163,8 @@ instance YesodAuth App where
         x <- getBy $ UniqueUser $ credsIdent creds
         case x of
             Just (Entity uid _) -> return $ Just uid
-            Nothing -> do
-                fmap Just $ insert User
+            Nothing ->
+                Just <$> insert User
                     { userIdent = credsIdent creds
           --          , userPassword  = Nothing
                     , userName      = Nothing
@@ -233,6 +236,9 @@ mkMessage "App" "messages" "en"
 instance RenderMessage App FormMessage where
     renderMessage _ _ = defaultFormMessage
 
+-- instance RenderMessage App Message where
+--     renderMessage _ _ = defaultFormMessage
+
 -- Note: Some functionality previously pre
 -- -- --  sent in the scaffolding has been
 -- moved to documentation in the Wiki. Following are some hopefully helpful
@@ -251,6 +257,7 @@ instance RenderMessage App FormMessage where
 -- todo: find a way on how to add i18n to angular
 instance YesodAngular App where
 --   renderMessageAUI = Just renderMessage
+--    angularRM = renderMessage
    angularUIEntry = $(widgetFile "uiEntry")
 
 angularUILayout :: Text -> WidgetT App IO () ->  HandlerT App IO Html

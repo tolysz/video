@@ -18,6 +18,8 @@ import Yesod.Default.Config2       (applyEnvValue, configSettingsYml)
 import Yesod.Default.Util         --  (WidgetFileSettings, widgetFileNoReload,
                                    --  widgetFileReload)
 import qualified Facebook as FB
+import  Database.Neo.Rest (Neo4jConf)
+
 
 import Text.Coffee
 
@@ -69,24 +71,30 @@ data AppSettings = AppSettings
     -- ^ Facebook creds
     , appDevelopment             :: Bool
 
+    , appNeo4jConf               :: Neo4jConf
+    -- ^ creds for neo
+
     }
 
 
-instance FromJSON AppSettings where
-    parseJSON = withObject "AppSettings" $ \o -> do
-        let defaultDev =
+compiledAsDevel :: Bool
+compiledAsDevel =
 #if DEVELOPMENT
                 True
 #else
                 False
 #endif
 
-        appStaticDir              <- o .: "static-dir"
-        appDatabaseConf           <- o .: "database"
-        appRoot                   <- o .: "approot"
+instance FromJSON AppSettings where
+    parseJSON = withObject "AppSettings" $ \o -> do
+        let defaultDev = compiledAsDevel
+
+        appStaticDir              <- o .:  "static-dir"
+        appDatabaseConf           <- o .:  "database"
+        appRoot                   <- o .:  "approot"
         appHost                   <- fromString <$> o .: "host"
-        appPort                   <- o .: "port"
-        appIpFromHeader           <- o .: "ip-from-header"
+        appPort                   <- o .:  "port"
+        appIpFromHeader           <- o .:  "ip-from-header"
 
         appDetailedRequestLogging <- o .:? "detailed-logging" .!= defaultDev
         appShouldLogAll           <- o .:? "should-log-all"   .!= defaultDev
@@ -94,7 +102,7 @@ instance FromJSON AppSettings where
         appMutableStatic          <- o .:? "mutable-static"   .!= defaultDev
         appSkipCombining          <- o .:? "skip-combining"   .!= defaultDev
 
-        appCopyright              <- o .: "copyright"
+        appCopyright              <- o .:  "copyright"
         appAnalytics              <- o .:? "analytics"
         appGoogleServerKey        <- o .:? "google-api-server"
         appGoogleBrowserKey       <- o .:? "google-api-browser"
@@ -106,6 +114,9 @@ instance FromJSON AppSettings where
         fbId                      <- o .:? "facebook-app-id"     .!= ""
         fbApp                     <- o .:? "facebook-app-name"   .!= ""
         fbSecret                  <- o .:? "facebook-app-secret" .!= ""
+
+        appNeo4jConf              <- o .: "neo4j"
+
         let appFbCredentials = FB.Credentials fbApp fbId fbSecret
         return AppSettings {..}
 

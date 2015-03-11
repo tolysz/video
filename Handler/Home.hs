@@ -44,11 +44,19 @@ handleHomeR =  do
            {-- ap :: AuthPerms  <- queryDB sadasd -}
            {- conf <- liftIO getIt -}
            ch <- userChannels <$> getYesod
+           mrender <- getMessageRender
+           appLangs <- languages
+           let
+             jsi18n :: SomeMessage App -> RawJavascript
+             jsi18n m = rawJS $ mrender $ m
 
            webSockets ( chatApp ch maid)
 --            create websocket
 
-           genAngularBind maid devel {- -> ap-> conf -> -} (\y x ->
+           genAngularBind
+               jsi18n   -- ^ javascript convertor for messages
+               appLangs -- ^ user languages
+               maid devel {- -> ap-> conf -> -} (\y x ->
                  angularUILayout y $ do
                    setTitle "Video Selector" -- "Welcome To Yesod!"
                    -- addStylesheetRemote "//fonts.googleapis.com/css?family=Nothing+You+Could+Do"
@@ -57,14 +65,14 @@ handleHomeR =  do
                    x
                  )
 
-genAngularBind :: Text -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
+genAngularBind :: (SomeMessage App -> RawJavascript) -> [Text] -> Text -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
+genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -} = do
   -- canViewIt <- verifyBool permsViewSomething apSitePerms
-
   runAngularUI True {- <- maybe change it to debug? to have instant refreh -} (const $ return ()) $ do
 --     let angMenu =  $(hamletFile "angular/menu.hamlet")
 
-    addConstant "maid"    [js|#{rawJS $ show maid}|]
+    addConstant "maid"     [js|#{rawJS $ show maid}|]
+    addConstant "appLangs" [js|#{rawJS $ show appLangs}|]
 
     addConfig "$log"      [js|debugEnabled(#{development})|]
     addConfig "$compile"  [js|debugInfoEnabled(#{development})|]
@@ -79,6 +87,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
                , "ngMaterial"
                , "ngWebSocket"
                , "ngResource"
+               , "ngLocale"
                , "angulartics"
                , "angulartics.google.analytics"
                ]
@@ -135,9 +144,9 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
 
     } |]
 
-    addFactory "User"      [js| function($resource) { var User      = $resource("@{UserR}/:ident");                  return User;      }|]
-    addFactory "Group"     [js| function($resource) { var Group     = $resource("@{SiteGroupR}/:short");             return Group;     }|]
-    addFactory "GroupUser" [js| function($resource) { var GroupUser = $resource("@{SiteGroupR}/:short/user/:ident"); return GroupUser; }|]
+    addFactory "User"      [js| function($resource) { return $resource("@{UserR}/:ident"); }|]
+    addFactory "Group"     [js| function($resource) { return $resource("@{SiteGroupR}/:short"); }|]
+    addFactory "GroupUser" [js| function($resource) { return $resource("@{SiteGroupR}/:short/user/:ident"); }|]
 
     addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid, $mdToast, $timeout, $interval) {
       // Open a WebSocket connection
@@ -241,7 +250,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
       pages: []
     ,
       state : "demos"
-      name:   "Demos"
+      name:   "%{jsi18n (SomeMessage MsgDemos)}"
       visible : false
       pages: [ { state: "demos.panel",     name: "Pannel",     icon: "fa columns" }
              , { state: "demos.button",    name: "Button",     icon: "fa barcode" }
@@ -251,7 +260,7 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
              , { state: "demos.slider",    name: "Slider",     icon: "fa barcode" }
              , { state: "demos.textfield", name: "Text Field", icon: "fa barcode" }
              , { state: "demos.youtube",   name: "Youtube",    icon: "fa youtube" }
-             , { state: "demos.empty",     name: "Empty",      icon: "fa frown-o" }
+             , { state: "demos.empty",     name: "%{jsi18n (SomeMessage MsgHello)}",      icon: "fa frown-o" }
              , { state: "demos.about",     name: "About",      icon: "fa info" }
              ]
     ]
@@ -259,6 +268,22 @@ genAngularBind maid  development {- (AuthPerms{..}) something -} = -- do
 |]
 
 noop = return ()
+
+postLangR :: Handler ()
+postLangR = do
+    lang <- runInputPost $ ireq textField "lang"
+    setLanguage lang
+    redirect HomeR
+
+getLangR :: Handler ()
+getLangR = languages >>= redirect . work
+  where
+   work ((T.unpack -> "en"):_) = StaticR angular_i18n_angular_locale_en_js
+   work ((T.unpack -> "en-GB"):_) = StaticR angular_i18n_angular_locale_en_gb_js
+   work ((T.unpack -> "en-US"):_) = StaticR angular_i18n_angular_locale_en_us_js
+   work ((T.unpack -> "pl"):_) = StaticR angular_i18n_angular_locale_pl_js
+   work _ = StaticR angular_i18n_angular_locale_en_js
+--    work (_:as) = work as
 
 chatApp :: CMap MsgBus -> Text  -> WebSocketsT Handler ()
 chatApp chans name = do

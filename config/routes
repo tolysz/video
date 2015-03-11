@@ -4,6 +4,8 @@
 /favicon.ico                      FaviconR GET
 /robots.txt                       RobotsR GET
 / HomeR
+
+/lang LangR GET POST
 -- GET POST
 
 -- /oauth/ require additional authorization via @GoogleOAuthLoginR

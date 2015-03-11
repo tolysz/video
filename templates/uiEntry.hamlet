@@ -1,5 +1,5 @@
 $newline never
-<md-sidenav .site-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$media('gt-md')" md-component-id=left tabindex="-1" style="width:250px" >
+<md-sidenav .site-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$mdMedia('gt-md')" md-component-id=left tabindex="-1" style="width:250px" >
   <section md-scroll-y style="height: 100vh;" .md-default-theme ng-controller=LeftCtrl>
   $#<md-content style="overflow: auto;" .md-default-theme ng-controller=LeftCtrl>
       <md-toolbar style="min-height: 64px; max-height:64px;"  .md-default-theme>
@@ -23,7 +23,7 @@ $newline never
          <span .glyphicon .log-out>
          Logout
 <div layout=column layout-fill ng-cloak tabindex="-1" role=main style="height: 100vh; overflow-y: auto; overflow-x: hide;" md-scroll-y>
-   <section  >
+   <section>
       <md-toolbar md-default-theme md-scroll-shrink .md-accent ng-controller=LeftCtrl>
          <div .md-toolbar-tools tabindex="0" >
             <md-button .md-primary .menu-icon aria-label="Toggle Menu" hide-gt-md  ng-click="toggleLeft()">
@@ -43,3 +43,9 @@ $newline never
       <div>
         <md-button .md-primary>
           blbaasfas
+
+      _{SomeMessage MsgSwitchLanguage}
+      <md-select ng-model="lang">
+          <md-option value=en>English
+          <md-option value=pl>Polski
+      <md-button ng-click="changeLang()">_{SomeMessage MsgSwitch}

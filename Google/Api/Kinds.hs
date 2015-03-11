@@ -50,11 +50,8 @@ data PageInfo = PageInfo
  , _piResultsPerPage :: Int
  } deriving  (Show, Typeable, Generic)
 
-optsPI :: Options
-optsPI = defaultOptions { fieldLabelModifier = dropL 3 }
-
-instance FromJSON PageInfo where parseJSON = genericParseJSON optsPI
-instance ToJSON   PageInfo where toJSON    = genericToJSON    optsPI
+instance FromJSON PageInfo where parseJSON = genericParseJSON (optsL 3)
+instance ToJSON   PageInfo where toJSON    = genericToJSON    (optsL 3)
 makeLenses ''PageInfo
 
 data  ListResponse a sym = ListResponse
@@ -66,17 +63,14 @@ data  ListResponse a sym = ListResponse
  , _lrItems         :: [a]
  } deriving  (Show, Typeable, Generic)
 
-optsLR = defaultOptions { fieldLabelModifier = dropL 3 }
-
-
 -- instance type ListBase
 
 -- class ChunkedList a where
 --   type typ = ListResponse a sym
 --   getList a
 
-instance (FromJSON a, KnownSymbol s) => FromJSON (ListResponse a s) where parseJSON = genericParseJSON optsLR
-instance (ToJSON a  , KnownSymbol s) => ToJSON   (ListResponse a s) where toJSON    = genericToJSON    optsLR
+instance (FromJSON a, KnownSymbol s) => FromJSON (ListResponse a s) where parseJSON = genericParseJSON (optsL 3)
+instance (ToJSON   a, KnownSymbol s) => ToJSON   (ListResponse a s) where toJSON    = genericToJSON    (optsL 3)
 makeLenses ''ListResponse
 
 -- instance Default YoutubeChannelLR where

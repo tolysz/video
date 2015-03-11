@@ -1,5 +1,5 @@
-[![Coverage Status](https://img.shields.io/coveralls/tolysz/video.svg)](https://coveralls.io/r/tolysz/video)
-[![Build Status](https://travis-ci.org/tolysz/video.svg?branch=master)](https://travis-ci.org/tolysz/video)
+[![Coverage Status](https://img.shields.io/coveralls/tolysz/video.png)](https://coveralls.io/r/tolysz/video)
+[![Build Status](https://travis-ci.org/tolysz/video.png?branch=master)](https://travis-ci.org/tolysz/video)
 
 Sample Webap
 ============

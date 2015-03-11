@@ -19,16 +19,19 @@
     "angular": "master",
     "web-fonts-collection": "tolysz/web-fonts-collection",
     "angular-ui-router": "master",
-    "angular-sanitize": "master",
+    "angular-sanitize": ">=1.4",
     "material-design-icons": "master",
-    "angular-cookies": "master",
+    "angular-cookies": ">=1.4",
     "angular-websocket": "tolysz/angular-websocket#master",
-    "angular-resource": "master",
-    "angular-animate": "master",
-    "angular-aria": "master",
+    "angular-resource": ">=1.4",
+    "angular-animate": ">=1.4",
+    "angular-aria": ">=1.4",
+    "angular-i18n": ">=1.4",
     "angulartics": "master"
   },
   "resolutions": {
-    "angular": "master"
+    "angular": ">=1.4",
+    "angular-aria": ">=1.4",
+    "angular-animate": ">=1.4"
   }
 }

@@ -1,1 +1,2 @@
 <div ui-view>
+  _{SomeMessage MsgDemos}

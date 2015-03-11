@@ -76,6 +76,9 @@ makeApplication foundation = do
     appPlain <- toWaiAppPlain foundation
     return $ logWare $ defaultMiddlewaresNoLogging appPlain
 
+-- defaultMiddlewaresNoLoggingCache :: W.Middleware
+-- defaultMiddlewaresNoLoggingCache staticCache = acceptOverride . autohead . gzip { gzipFiles = GzipCacheFolder staticCache } . methodOverride
+
 -- | Warp settings for the given foundation value.
 warpSettings :: App -> Settings
 warpSettings foundation =

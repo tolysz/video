@@ -17,3 +17,5 @@ cabal.sandbox.config
 run.sh
 extra-bower
 bower_components
+why.md
+case.md
