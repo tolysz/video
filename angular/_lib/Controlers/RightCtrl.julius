@@ -1,6 +1,21 @@
-function($scope, $mdSidenav, $http, $window) {
+function($scope, $mdSidenav, $http, $window, appLangs, $log) {
     $scope.open = function () { $mdSidenav('right').open()};
     $scope.close = function () { $mdSidenav('right').close()};
+
+    $scope.lang = appLangs[0] ? appLangs[0] : "en";
+
+    $scope.$on('$mdSideNavOpen', function(e, navname){
+
+        $log.debug('broadcast for open on: ' +navname);
+
+    });
+
+    $scope.$on('$mdSideNavClose', function(e, navname){
+
+        $log.debug('broadcast for close on: ' +navname);
+
+
+    });
 
     $scope.changeLang = function () {
         $http({ method: 'POST'

@@ -226,17 +226,17 @@ genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -}
   sections =
     [
       state: "site"
-      name: "site"
+      name: "%{jsi18n (SomeMessage MsgMenuSite)}"
       visible: false
       pages: []
     ,
       state: "admin"
-      name: "admin"
+      name: "%{jsi18n (SomeMessage MsgMenuAdmin)}"
       visible: false
-      pages: [ { state:"admin.video", name: "video", icon: "fa video-camera"}
-             , { state:"admin.group", name: "group", icon: "fa group font-spin"}
+      pages: [ { state:"admin.video", name: "%{jsi18n (SomeMessage MsgMenuAdminVideo)}", icon: "fa video-camera"}
+             , { state:"admin.group", name: "%{jsi18n (SomeMessage MsgMenuAdminGroup)}", icon: "fa group font-spin"}
              #, { state:"admin.group.add", name: "group add", icon: "fa group font-spin"}
-             , { state:"admin.user", name: "users", icon: "fa users"}
+             , { state:"admin.user", name: "%{jsi18n (SomeMessage MsgMenuAdminUsers)}", icon: "fa users"}
              ]
     ,
       state: "oauth2"
@@ -245,7 +245,7 @@ genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -}
       pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt" }]
     ,
       state: "chat"
-      name:  "chat"
+      name:  "%{jsi18n (SomeMessage MsgMenuChat)}"
       visible : false
       pages: []
     ,
@@ -288,7 +288,7 @@ getLangR = languages >>= redirect . work
 chatApp :: CMap MsgBus -> Text  -> WebSocketsT Handler ()
 chatApp chans name = do
     now1 <- liftIO getCurrentTime
-    sendBinaryData (MsgInfo now1 $ "Welcome to the chat server, please enter your name.")
+--     sendBinaryData (MsgInfo now1 $ "Welcome to the chat server, please enter your name.")
     sendBinaryData $ MsgInfo now1 $ "Welcome, " <> name
 
     (rChan, keepWS) <- atomically $ do

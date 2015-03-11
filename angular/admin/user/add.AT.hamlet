@@ -1,18 +1,18 @@
 <md-content .md-padding>
   <md-input-container>
-    <label>Email
+    <label>_{SomeMessage MsgUserEmail}
     <input ng-model=user.ident>
   <md-input-container>
-    <label>Name
+    <label>_{SomeMessage MsgUserName}
     <input ng-model=user.name>
   <md-input-container>
-    <label>Friendly
+    <label>_{SomeMessage MsgUserFriendly}
     <input ng-model=user.friendly>
   <md-checkbox ng-model=user.siteAdmin aria-label="site admin" disabled>
-     site admin
+     _{SomeMessage MsgUserSiteAdmin}
   <md-input-container>
-     <label>Avatar
+     <label>_{SomeMessage MsgUserAvatar}
      <input ng-model=user.avatar type=url>
-<md-button .md-raised .md-warn ng-click=save()>Create
+<md-button .md-raised .md-warn ng-click=save()>_{SomeMessage MsgCreate}
 <pre ng-show=debug>
   {{ user | json }}

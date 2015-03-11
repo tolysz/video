@@ -7,6 +7,9 @@ $newline never
           <a href="" ng-click="toggleFullScreen()" tabindex=0>
                 <span .glyphicon .fullscreen >
                 Video Selector
+      <div hide-gt-sm>
+        <md-button .md-primary ng-click="closeLeft()">
+          _{SomeMessage MsgClosePanel}
       <div ng-repeat="section in sections">
         <a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >
           {{section.name}}
@@ -21,12 +24,12 @@ $newline never
          {{page.name}}
       <a .menu-item .md-menu-item .menu-title  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
          <span .glyphicon .log-out>
-         Logout
+         _{SomeMessage MsgLogout}
 <div layout=column layout-fill ng-cloak tabindex="-1" role=main style="height: 100vh; overflow-y: auto; overflow-x: hide;" md-scroll-y>
    <section>
       <md-toolbar md-default-theme md-scroll-shrink .md-accent ng-controller=LeftCtrl>
          <div .md-toolbar-tools tabindex="0" >
-            <md-button .md-primary .menu-icon aria-label="Toggle Menu" hide-gt-md  ng-click="toggleLeft()">
+            <md-button .md-primary .menu-icon aria-label="Toggle Menu" hide-gt-md ng-click="toggleLeft()">
                <span .fa .font-2x .indent >
             <div layout=row flex .fill-height  ng-click="toggleLeft()">
                <div .md-toolbar-item .md-breadcrumb>
@@ -38,14 +41,14 @@ $newline never
 
 <md-sidenav .site-sidenav .md-sidenav-right .md-whiteframe-z2 md-component-id="right" style="width:250px;" tabindex="-1" >
    <section ng-controller="RightCtrl" style="height: 100vh;">
-      <md-toolbar .md-theme-light ng-click="close()">
+      <md-toolbar .md-theme-light>
         <h1 .md-toolbar-tools>Sidenav Right
       <div>
-        <md-button .md-primary>
-          blbaasfas
-
-      _{SomeMessage MsgSwitchLanguage}
-      <md-select ng-model="lang">
-          <md-option value=en>English
-          <md-option value=pl>Polski
-      <md-button ng-click="changeLang()">_{SomeMessage MsgSwitch}
+        <md-button .md-primary ng-click="close()">
+          _{SomeMessage MsgClosePanel}
+      <div>
+          _{SomeMessage MsgSwitchLanguage}
+          <md-select ng-model="lang">
+              <md-option value=en>English
+              <md-option value=pl>Polski
+          <md-button ng-click="changeLang()">_{SomeMessage MsgSwitch}

@@ -1,8 +1,8 @@
 
 <md-input-container .pad20>
-  <label>Shout
+  <label>_{SomeMessage MsgChatShout}
   <input ng-model=inp.shout ng-keyup="$event.keyCode == 13 ? send(inp.shout) : null">
-<md-button ng-click=send(inp.shout)>Send
+<md-button ng-click=send(inp.shout)>_{SomeMessage MsgChatSend}
 
 <md-list>
    <md-item ng-repeat="line in wsLink.collection" ng-switch=line.tag>

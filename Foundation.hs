@@ -3,7 +3,7 @@ module Foundation where
 
 import Database.Persist.MongoDB hiding (master)
 import Import.NoFoundation
-import Text.Hamlet              (hamletFile)
+import Text.Hamlet              (hamletFile, ihamletFile)
 -- import Text.Julius              (Javascript,js)
 import Text.Jasmine             (minifym)
 import Yesod.Core.Types         (Logger)
@@ -50,6 +50,13 @@ instance HasHttpManager App where
 -- explanation for this split.
 mkYesodData "App" $(parseRoutesFile "config/routes")
 
+-- This instance is required to use forms. You can modify renderMessage to
+-- achieve customized and internationalized form validation messages.
+mkMessage "App" "messages" "en"
+instance RenderMessage App FormMessage where
+    renderMessage _ _ = defaultFormMessage
+
+
 -- | A convenient synonym for creating forms.
 type Form x = Html -> MForm (HandlerT App IO) (FormResult x, Widget)
 
@@ -70,6 +77,8 @@ instance Yesod App where
     defaultLayout widget = do
         master <- getYesod
         mmsg <- getMessage
+--         urender <- getUrlRenderParams
+        mrender <- getMessageRender
 
         -- We break up the default layout into two components:
         -- default-layout is the contents of the body tag, and
@@ -80,7 +89,7 @@ instance Yesod App where
         pc <- widgetToPageContent $ do
             addStylesheet $ StaticR app_css
             $(widgetFile "default-layout")
-        withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")
+        withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet") -- ) mrender urender
 
     -- The page to be redirected to when authentication is required.
     authRoute _ = Just $ AuthR LoginR
@@ -230,12 +239,6 @@ semicolon = ";" :: Text
 
 instance YesodAuthPersist App
 
--- This instance is required to use forms. You can modify renderMessage to
--- achieve customized and internationalized form validation messages.
-mkMessage "App" "messages" "en"
-instance RenderMessage App FormMessage where
-    renderMessage _ _ = defaultFormMessage
-
 -- instance RenderMessage App Message where
 --     renderMessage _ _ = defaultFormMessage
 
@@ -264,6 +267,7 @@ angularUILayout :: Text -> WidgetT App IO () ->  HandlerT App IO Html
 angularUILayout ngApp widget = do
         void requireAuthId
         master <- getYesod
+        mrender <- getMessageRender
         pc <- widgetToPageContent $ do
             addStylesheet $ StaticR app_min_css
             $(widgetFile "empty-layout")

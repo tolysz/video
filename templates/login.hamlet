@@ -1,11 +1,11 @@
 <div .loginbox>
-    <h3>Login using:
+    <h3>_{SomeMessage MsgLoginUsing}
     <a href="@{AuthR facebookLogin}" .facebookLogin>
         Facebook
-    <h3>&mdash; OR &mdash;
+    <h3>&mdash; _{SomeMessage MsgLoginOr} &mdash;
     <a href="@{AuthR GId.forwardUrl}" .googleLogin>
         Google+
-    <h3>&mdash; OR &mdash;
+    <h3>&mdash; _{SomeMessage MsgLoginOr} &mdash;
     <div .personaLogin>
       ^{wb}
     <br>

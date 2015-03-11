@@ -1,5 +1,5 @@
 function($scope, $state, $stateParams, Group, title) {
-    title.set("Edit group")
+    title.set("#{jsi18n (SomeMessage MsgEditGroup)}")
 
     $scope.group = Group.get({short:$stateParams.short});
 

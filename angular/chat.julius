@@ -1,5 +1,5 @@
 function($scope, maid, wsLink, $log, title){
-    title.set( "Chat " + maid);
+    title.set( "#{jsi18n (SomeMessage MsgMenuChat)}" + " " + maid);
     $scope.wsLink = wsLink;
     $scope.inp = {};
     //$scope.shout = "";

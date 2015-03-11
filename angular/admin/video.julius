@@ -1,15 +1,15 @@
 function($scope, title){
-  title.set("Video");
+  title.set("#{jsi18n (SomeMessage MsgMenuAdminVideo)}");
     //$scope.shareName = "";
   $scope.share = 2;
         $scope.$watch('share', function() {
         var r = [ ["",""]
-                , ["me", "only you"]
-                , ["people from meeting", "all people who seen it anyway"]
-                , ["only members", "people who are members of your Toastmaster"]
-                , ["channel members", "all members and friends (i.e. guests)"]
-                , ["site members", "all other Toastmaster groups"]
-                , ["the youtube", "Everyone! this is going into the public playlist viewable by everyone"]
+                , ["#{jsi18n (SomeMessage MsgS1Short)}","#{jsi18n (SomeMessage MsgS1Long)}"]
+                , ["#{jsi18n (SomeMessage MsgS2Short)}","#{jsi18n (SomeMessage MsgS2Long)}"]
+                , ["#{jsi18n (SomeMessage MsgS3Short)}","#{jsi18n (SomeMessage MsgS3Long)}"]
+                , ["#{jsi18n (SomeMessage MsgS4Short)}","#{jsi18n (SomeMessage MsgS4Long)}"]
+                , ["#{jsi18n (SomeMessage MsgS5Short)}","#{jsi18n (SomeMessage MsgS5Long)}"]
+                , ["#{jsi18n (SomeMessage MsgS6Short)}","#{jsi18n (SomeMessage MsgS6Long)}"]
                 ];
         $scope.shareName = r[$scope.share][0];
         $scope.longDesc  = r[$scope.share][1]

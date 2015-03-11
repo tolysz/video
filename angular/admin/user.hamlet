@@ -1,7 +1,7 @@
 <a ui-sref="admin.user.add">
     <md-button .md-raised .md-primary>
        <span .fa .user-plus>
-       And new user
+       _{SomeMessage MsgAddNewUser}
 <md-list>
    <md-item ng-repeat="user in users">
      <md-item-content>

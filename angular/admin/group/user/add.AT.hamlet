@@ -1,21 +1,21 @@
 <md-input-container>
-    <label>Group
+    <label>_{SomeMessage MsgGroup}
     <input ng-model="member.group" disabled>
 <md-autocomplete
         md-selected-item="select"
         md-search-text="searchText"
         md-item-text="display"
         md-items="user in querySearch(searchText)"
-        placeholder="Email address">
+        placeholder="_{SomeMessage MsgEmailLong}">
       <span md-highlight-text="searchText">{{user.display}}
 <md-checkbox ng-model="member.fullMember" aria-label="full group member">
-     full group member
+     _{SomeMessage MsgFullMember}
 <md-checkbox ng-model="member.userAdmin" aria-label="member is videoAdmin">
-     member ia user admin
+     _{SomeMessage MsgUserAdmin}
 <md-checkbox ng-model="member.videoAdmin" aria-label="member is videoAdmin">
-     member ia video admin
+     _{SomeMessage MsgVideoAdmin}
 
-<md-button .md-raised .md-warn ng-click=save()>Create
+<md-button .md-raised .md-warn ng-click=save()>_{SomeMessage MsgAdd}
 <pre>
   {{ group | json }}
 <pre>

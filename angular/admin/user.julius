@@ -1,5 +1,5 @@
 function($scope, User, title){
     //$log.debug($scope);
-    title.set("All Users")
+    title.set("#{jsi18n (SomeMessage MsgAllUsers)}")
     $scope.users = User.query();
 }

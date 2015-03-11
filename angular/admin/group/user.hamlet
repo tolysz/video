@@ -5,7 +5,7 @@
           <span .fa .pencil-square-o  .font-stack-2x .text-danger-blur>
           <span .fa .users .fix-users .font-stack-1x .text-white>
 
-       Edit
+       _{SomeMessage MsgEditGroup}
 <pre>
     {{ group | json }}
 <a ui-sref="admin.group.user.add({short:group.short})">
@@ -13,6 +13,6 @@
        <span .font-stack>
           <span .fa .users     .font-stack-2x .text-danger-blur>
           <span .fa .user-plus .font-stack-2x .text-white>
-       Add user to this group
+       _{SomeMessage MsgAddUserToGroup}
 <pre>
     {{ members | json}}

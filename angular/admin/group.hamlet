@@ -1,6 +1,6 @@
 <div ui-view>
    <a ui-sref="admin.group.add">
-      <md-button .md-raised .md-primary>Add new group
+      <md-button .md-raised .md-primary>_{SomeMessage MsgAddNewGroup}
    <md-list>
       <md-item ng-repeat="group in groups">
         <md-item-content>

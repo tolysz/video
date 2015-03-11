@@ -4,7 +4,7 @@ $newline never
 \<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
 \<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
 \<!--[if gt IE 8]><!-->
-<html class="no-js" data-ng-app=#{ngApp} data-ng-controller=AppCtrl lang="en" ng-cloak> <!--<![endif]-->
+<html class="no-js" data-ng-app=#{ngApp} data-ng-controller=AppCtrl lang="#{mrender MsgLangId}" ng-cloak> <!--<![endif]-->
     <head>
         <meta charset="UTF-8">
         <title ng-bind-html=title.get>

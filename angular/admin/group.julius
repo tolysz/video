@@ -1,3 +1,4 @@
-function($scope, Group){
+function($scope, Group, title){
+    title.set("#{jsi18n (SomeMessage MsgMenuAdminGroup)}")
     $scope.groups = Group.query();
 }
