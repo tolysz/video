@@ -6,7 +6,6 @@
 / HomeR
 
 /lang LangR GET POST
--- GET POST
 
 -- /oauth/ require additional authorization via @GoogleOAuthLoginR
 /api/oauth2/                          RootOAuth2R

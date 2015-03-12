@@ -159,7 +159,7 @@ genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -}
          $mdToast.show(
             $mdToast.simple()
                .content(m)
-               .position("top left right")
+               .position("bottom left right")
                .hideDelay( d || 3000)
              );
       }
