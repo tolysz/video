@@ -4,7 +4,7 @@
     <md-item ng-repeat="site in sites">
       <md-item-content>
         <div class="md-tile-left">
-              <img ng-src="{{site.logo}}" class="logo" alt="{{site.who}}">
+              <img ng-src="{{site.logo}}" .logo alt="{{site.who}}">
         <div class="md-tile-content">
             
             <h3>{{site.name}}

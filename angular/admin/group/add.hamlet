@@ -1,17 +1,17 @@
 <md-input-container>
     <label>_{SomeMessage MsgFullName}
-    <input ng-model="group.name">
+    <input ng-model=group.name>
 <md-input-container>
     <label>_{SomeMessage MsgShortName}
-    <input ng-model="group.short">
+    <input ng-model=group.short>
 <md-input-container flex>
     <label>_{SomeMessage MsgNotes}
-    <textarea ng-model="group.notes" columns="1" md-maxlength="350">
-<md-checkbox ng-model="group.public" aria-label="group is public">
+    <textarea ng-model=group.notes columns=1 md-maxlength=350>
+<md-checkbox ng-model=group.public aria-label="group is public">
      _{SomeMessage MsgGroupIsPublic}
 <md-input-container>
      <label>_{SomeMessage MsgUrl}
-     <input ng-model="group.url" type="url">
+     <input ng-model=group.url type=url>
 <md-button .md-raised .md-warn ng-click=save()>_{SomeMessage MsgCreate}
 <pre>
   {{ group | json }}

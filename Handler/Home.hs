@@ -33,30 +33,38 @@ getLoginCheckR = do
 
 getRedirHashR :: [Text] -> Handler Html
 getRedirHashR [] = redirect HomeR
---    cJar <- reqCookies <$> getRequest
---    maybe (redirect HomeR) (\f -> redirect ( HomeR :#: f)) $ "hash" `lookup` cJar
 getRedirHashR pa = redirect $ HomeR :#: (T.intercalate "/" pa)
+
+
+-- newtype CachedBind val = CachedBind { unCachedBind :: val }
+--     deriving Typeable
+--
+-- cachedF
+--     = fmap unCachedBind
+--     . cached
+--     . fmap CachedBind
+
 
 handleHomeR :: Handler Html
 handleHomeR =  do
            maid <- maybe (permissionDenied "You need to have login") (return . userIdent) =<< runDB . get =<< requireAuthId
-           devel <- appDevelopment . appSettings <$> getYesod
+           ch <- userChannels <$> getYesod
+           webSockets ( chatApp ch maid)
+
            {-- ap :: AuthPerms  <- queryDB sadasd -}
            {- conf <- liftIO getIt -}
-           ch <- userChannels <$> getYesod
+--            devel <- appDevelopment . appSettings <$> getYesod
            mrender <- getMessageRender
            appLangs <- languages
            let
              jsi18n :: SomeMessage App -> RawJavascript
              jsi18n m = rawJS $ mrender $ m
 
-           webSockets ( chatApp ch maid)
 --            create websocket
-
            genAngularBind
                jsi18n   -- ^ javascript convertor for messages
                appLangs -- ^ user languages
-               maid devel {- -> ap-> conf -> -} (\y x ->
+               maid compiledAsDevel {- -> ap-> conf -> -} (\y x ->
                  angularUILayout y $ do
                    setTitle "Video Selector" -- "Welcome To Yesod!"
                    -- addStylesheetRemote "//fonts.googleapis.com/css?family=Nothing+You+Could+Do"
@@ -68,7 +76,7 @@ handleHomeR =  do
 genAngularBind :: (SomeMessage App -> RawJavascript) -> [Text] -> Text -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
 genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -} = do
   -- canViewIt <- verifyBool permsViewSomething apSitePerms
-  runAngularUI True {- <- maybe change it to debug? to have instant refreh -} (const $ return ()) $ do
+  runAngularUI True {- <- maybe change it to debug? to have instant refreh -} (const $ return ()) $ cached $ do
 --     let angMenu =  $(hamletFile "angular/menu.hamlet")
 
     addConstant "maid"     [js|#{rawJS $ show maid}|]
@@ -160,7 +168,7 @@ genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -}
             $mdToast.simple()
                .content(m)
                .position("bottom left right")
-               .hideDelay( d || 3000)
+               .hideDelay( d ? d : 3000 )
              );
       }
 
@@ -168,9 +176,10 @@ genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -}
       dataStream = $websocket(url);
 
       dataStream.onOpen(function(){ toast("Chat server connected"); });
-      dataStream.onClose(function(){ toast("Chat server Disconnected"); });
-      dataStream.onError(function(){
-        toast("Reconnection");
+//      dataStream.onClose(function(){ toast("Chat server Disconnected"); });
+      dataStream.onError(function(e){
+        $log.debug(e);
+//         toast("Reconnection");
         $timeout ( open, 5000);
         });
 
@@ -205,7 +214,7 @@ genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -}
                     };
       }  catch(e) {
 
-      toast("error... retry", 1000);
+//      toast("error... retry", 1000);
       $timeout ( open, 5000);
 
          methods = { collection: collection

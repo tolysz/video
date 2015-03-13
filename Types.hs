@@ -102,3 +102,4 @@ type EmailQuery = Text
 
 -- instance ToJSON ShortName
 -- instance FromJSON ShortName
+

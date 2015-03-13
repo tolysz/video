@@ -6,39 +6,39 @@
 
 <md-list>
    <md-item ng-repeat="line in wsLink.collection" ng-switch=line.tag>
-       <md-item-content ng-switch-when="MsgInfo">
+       <md-item-content ng-switch-when=MsgInfo>
          <div .md-tile-left>
              <span .fa .eye .font-3x >
          <div .md-tile-content>
              <h3>{{line.cont | json}}
-       <md-item-content ng-switch-when="Other">
+       <md-item-content ng-switch-when=Other>
          <div .md-tile-left>
              <span .fa .user .font-3x>
          <div .md-tile-content>
              <h3>{{line.cont | json}}
-       <md-item-content ng-switch-when="SystemInfo">
+       <md-item-content ng-switch-when=SystemInfo>
          <div .md-tile-left>
              <span .fa .exclamation-circle .font-3x>
          <div .md-tile-content>
              <h3>{{line.cont | json}}
-       <md-item-content ng-switch-when="SelfEcho">
+       <md-item-content ng-switch-when=SelfEcho>
          <div .md-tile-left>
              <span .fa .retweet .font-3x >
          <div .md-tile-content>
              <h3>{{line.cont | json}}
-       <md-item-content ng-switch-when="Shout">
+       <md-item-content ng-switch-when=Shout>
          <div .md-tile-left>
              <span .fa .bullhorn .font-3x >
          <div .md-tile-content>
              <h3>{{line.cont | json}}
 
-       <md-item-content ng-switch-when="Close">
+       <md-item-content ng-switch-when=Close>
          <div .md-tile-left>
              <span .glyphicon .log-out .font-3x >
          <div .md-tile-content>
              <h3>{{line.cont | json}}
 
-       <md-item-content ng-switch-when="Enter">
+       <md-item-content ng-switch-when=Enter>
          <div .md-tile-left>
              <span .glyphicon .log-in .font-3x >
          <div .md-tile-content>

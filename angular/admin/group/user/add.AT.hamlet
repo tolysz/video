@@ -2,12 +2,12 @@
     <label>_{SomeMessage MsgGroup}
     <input ng-model="member.group" disabled>
 <md-autocomplete
-        md-selected-item="select"
-        md-search-text="searchText"
-        md-item-text="display"
+        md-selected-item=select
+        md-search-text=searchText
+        md-item-text=display
         md-items="user in querySearch(searchText)"
         placeholder="_{SomeMessage MsgEmailLong}">
-      <span md-highlight-text="searchText">{{user.display}}
+      <span md-highlight-text=searchText >{{user.display}}
 <md-checkbox ng-model="member.fullMember" aria-label="full group member">
      _{SomeMessage MsgFullMember}
 <md-checkbox ng-model="member.userAdmin" aria-label="member is videoAdmin">

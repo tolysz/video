@@ -12,7 +12,7 @@
 <md-input-container>
      <label>_{SomeMessage MsgUrl}
      <input ng-model="group.url" type="url">
-<div layout=row layout-sm=column layout-align="space-between center">
+<div layout=row layout-align="space-between center">
          <md-button .md-raised .md-warn ng-click=save()>
             <span .fa .floppy-o>
             _{SomeMessage MsgSave}

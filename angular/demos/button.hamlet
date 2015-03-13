@@ -1,6 +1,6 @@
 <div .buttondemoBasicUsage>
     <section>
-      <div layout=column layout-gt-md="row" layout-align="center center">
+      <div layout=column layout-gt-md=row layout-align="center center">
          <div layout=row layout-sm=column layout-align="center center">
             <md-button>{{title1}}
             <md-button .md-primary md-no-ink >Primary (md-noink)
@@ -8,7 +8,7 @@
             <md-button .md-primary ng-disabled=true>Disabled
             <md-button .md-warn>{{title4}}
     <section>
-      <div layout=column layout-gt-md="row" layout-align="center center">
+      <div layout=column layout-gt-md=row layout-align="center center">
          <div layout=row layout-sm=column layout-align="center center">
             <md-button .md-raised >Button
             <md-button .md-raised .md-primary>Primary
@@ -27,12 +27,12 @@
          <md-icon icon="/static/material-design-icons/communication/svg/production/ic_comment_24px.svg" style="width: 24px; height: 24px;">
       <md-button .md-fab .md-primary md-theme="cyan" aria-label="Profile">
          <md-icon icon="/static/material-design-icons/social/svg/production/ic_people_24px.svg" style="width: 24px; height: 24px;">
-      <div class="label">FAB
-    <section layout="row" layout-sm="column" layout-align="center center">
+      <div .label>FAB
+    <section layout=row layout-sm=column layout-align="center center">
         <md-button ng-href="{{googleUrl}}" target="_blank">Go to Google
         <md-button>RSVP
     <section >
-      <div layout=column layout-gt-md="row" layout-align="center center">
+      <div layout=column layout-gt-md=row layout-align="center center">
          <div layout=row layout-sm=column layout-align="center center">
             <md-button .md-primary .md-hue-1>Primary Hue 1
             <md-button .md-warn .md-raised .md-hue-2>Warn Hue 2

@@ -154,12 +154,15 @@ authGoogleEmail =
         lift (getDest clientID tm) >>= redirect
 
     dispatch "GET" ["complete"] = do
+#if DEVELOPMENT
+#else
         mstate <- lookupGetParam "state"
         case mstate of
             Nothing -> invalidArgs ["CSRF state from Google is missing"]
             Just state -> do
                 mtoken <- getCsrfToken
                 unless (Just state == mtoken) $ invalidArgs ["Invalid CSRF token from Google"]
+#endif
         mcode <- lookupGetParam "code"
         code <-
             case mcode of

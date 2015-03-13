@@ -1,6 +1,6 @@
 <md-content .buttondemoBasicUsage>
    <section >
-     <div layout=column layout-gt-md="row" layout-align="center center">
+     <div layout=column layout-gt-md=row layout-align="center center">
        <md-button .md-warn .md-raised .md-hue-2 href=@{GoogleOAuthLogoutR}> Logout / remove Credentials
        <md-button .md-accent href=@{GoogleManageR} target="_blank" >Manage Credentials
        <md-button .md-accent .md-raised .md-hue-3 target="_blank" href=@{GoogleOAuthLoginR} >Login to Admin

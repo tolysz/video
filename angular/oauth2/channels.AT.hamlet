@@ -2,9 +2,9 @@
     <md-list>
       <md-item ng-repeat="chan in channels">
         <md-item-content>
-          <div class="md-tile-left">
-              <img ng-src={{chan.snippet.thumbnails.default.url}} class="cover" alt="{{chan.snippet.title}}">
-          <div class="md-tile-content">
+          <div .md-tile-left>
+              <img ng-src={{chan.snippet.thumbnails.default.url}} alt="{{chan.snippet.title}}" .cover>
+          <div .md-tile-content>
             <h3>
                <a ui-sref=oauth2.playlists({cid:chan.id})>
                       {{chan.snippet.title}}

@@ -2,13 +2,13 @@
     <div .md-toolbar-tools>
       <span .md-flex>
          Playlist: {{playlists[0].snippet.channelTitle}}
-         <md-switch ng-model="debug" aria-label="debug" style="float:left;">
+         <md-switch ng-model=debug aria-label=debug style="float:left;">
          <button .fa .sort-desc ng-show=sort ng-click=flipSort()>
          <button .fa .sort-up ng-hide=sort ng-click=flipSort()>
     <div flex>
 
 <md-content>
-    <div layout="row">
+    <div layout=row>
        <md-content layout=column style="overflow-y: auto; overflow-x:hidden; height:100vh; width:130px;" >
            <div ng-repeat="pl in playlist | orderBy:'snippet.title':sort " style="width:120px; min-height:90px; overflow: visible;">
                 <img ng-src={{pl.snippet.thumbnails.default.url}}  alt="{{pl.snippet.title}}" ng-click=setThose(pl) >

@@ -1,12 +1,12 @@
-<div .full layout="column" layout-margin>
+<div .full layout=column layout-margin>
     <p .inset>
       Open a dialog over the app's content. Press escape or click outside to close the dialog.
-    <div layout="column" layout-align="center">
-      <md-button class="md-primary" ng-click="showAlert($event)">
+    <div layout=column layout-align=center>
+      <md-button .md-primary ng-click="showAlert($event)">
         Alert Dialog
       <div .gap>
       <md-button .md-primary ng-click="showConfirm($event)">
         Confirm Dialog
     <br>
-    <b layout="row" layout-align="center center" layout-margin>
+    <b layout=row layout-align="center center" layout-margin>
       {{alert}}

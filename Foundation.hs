@@ -95,7 +95,8 @@ instance Yesod App where
     authRoute _ = Just $ AuthR LoginR
 
     -- Routes not requiring authentication.
-    isAuthorized (AuthR _)  _ = return Authorized
+    isAuthorized (AuthR _)       _ = return Authorized
+    isAuthorized (RedirHashR _)  _ = return Authorized
 --     isAuthorized (AuthR LoginR)  _ = return . maybe Authorized (const AuthenticationRequired) =<< maybeAuthId
     isAuthorized (AuthR LogoutR) _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
     isAuthorized FaviconR        _ = return Authorized
