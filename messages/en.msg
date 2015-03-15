@@ -1,4 +1,4 @@
-LangId: en
+LangId: en-GB
 Demos: Demos
 Hello: Hello
 FullName: Full name
@@ -21,6 +21,7 @@ UserAvatar: Avatar
 
 ClosePanel: Close Panel
 Logout: Logout
+Login: Login
 
 SwitchLanguage: Change Language to:
 Switch: Change

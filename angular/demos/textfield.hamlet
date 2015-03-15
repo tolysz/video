@@ -9,6 +9,9 @@
       <md-input-container>
         <label>Company
         <input ng-model=user.company disabled>
+      <md-input-container flex>
+        <label>Submission Date
+        <input type="date" ng-model="user.submissionDate">
 <md-content .md-padding layout=column layout-gt-sm=row layout-padding layout-margin layout-fill>
   <md-input-container .pad20>
           <label>FirstName

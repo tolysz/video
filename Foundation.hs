@@ -10,7 +10,7 @@ import Yesod.Core.Types         (Logger)
 import Yesod.Default.Util       (addStaticContentExternal)
 import Yesod.AngularUI
 -- import SubSite.Data
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, isJust)
 import Types
 
 import Yesod.Auth.BrowserId           (authBrowserId)
@@ -96,15 +96,17 @@ instance Yesod App where
 
     -- Routes not requiring authentication.
     isAuthorized (AuthR _)       _ = return Authorized
-    isAuthorized (RedirHashR _)  _ = return Authorized
+--     isAuthorized (RedirHashR _)  _ = return Authorized
 --     isAuthorized (AuthR LoginR)  _ = return . maybe Authorized (const AuthenticationRequired) =<< maybeAuthId
-    isAuthorized (AuthR LogoutR) _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
-    isAuthorized FaviconR        _ = return Authorized
-    isAuthorized RobotsR         _ = return Authorized
+--     isAuthorized (AuthR LogoutR) _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
+--     isAuthorized FaviconR        _ = return Authorized
+--     isAuthorized RobotsR         _ = return Authorized
     -- isAuthorized GoogleVerifyR _ = return Authorized
     -- Default to Authorized for now.
-    isAuthorized (RedirHashR _)  _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
-    isAuthorized (HomeR)         _ = return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
+--     isAuthorized (RedirHashR _)  _ = return Authorized
+--     return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
+--     isAuthorized (HomeR)         _ = return Authorized
+--     return . maybe AuthenticationRequired (const Authorized) =<< maybeAuthId
     isAuthorized _               _ = return Authorized
 
     -- This function creates static content files in the static folder
@@ -262,11 +264,14 @@ instance YesodAuthPersist App
 instance YesodAngular App where
 --   renderMessageAUI = Just renderMessage
 --    angularRM = renderMessage
-   angularUIEntry = $(widgetFile "uiEntry")
+   angularUIEntry = do
+     loggedIn <- isJust <$> handlerToWidget maybeAuthId
+     $(widgetFile "uiEntry")
 
 angularUILayout :: Text -> WidgetT App IO () ->  HandlerT App IO Html
 angularUILayout ngApp widget = do
-        void requireAuthId
+--         void requireAuthId
+
         master <- getYesod
         mrender <- getMessageRender
         pc <- widgetToPageContent $ do

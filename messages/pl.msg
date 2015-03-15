@@ -21,6 +21,7 @@ UserAvatar: Obrazek
 
 ClosePanel: Zamknij panel
 Logout: Wyloguj
+Login: Zaloguj się
 
 SwitchLanguage: Zmień język na:
 Switch: Zmień

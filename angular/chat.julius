@@ -1,8 +1,9 @@
-function($scope, maid, wsLink, $log, title){
+function($scope, maid, wsLink, $log, title, appLangs){
     title.set( "#{jsi18n (SomeMessage MsgMenuChat)}" + " " + maid);
     $scope.wsLink = wsLink;
     $scope.inp = {};
     //$scope.shout = "";
+
 
     $scope.send = function(s){
       //if(_.isString($scope.shout)) {
@@ -12,5 +13,33 @@ function($scope, maid, wsLink, $log, title){
               $scope.inp.shout = ""
           }
       //}
+    };
+
+    if(annyang) {
+        var commands = {
+            // '#{jsi18n (SomeMessage MsgChatShout)} *val': $scope.send
+            '*val': $scope.send
+        };
+
+        annyang.addCommands(commands);
+        annyang.debug(true);
+        annyang.setLanguage(appLangs[0] ? appLangs[0] : "en-GB");
+
+        $scope.sayIt=function(){
+            annyang.abort();
+            annyang.start({ autoRestart: false, continuous: false });
+        };
+        //annyang.start();
+
+        $scope.hasAnnyang = true;
+
+        $scope.$on('$destroy', function(){
+         annyang.removeCommands();
+         annyang.abort();
+         });
+    } else
+    {
+        $scope.hasAnnyang = false;
+        $scope.sayIt=function(){};
     }
 }

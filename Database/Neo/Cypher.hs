@@ -29,6 +29,9 @@ data Cypher = Cypher
       , params :: Map Text Value
       } deriving (Show, Generic)
 
+instance Default Cypher where
+  def = Cypher "" def
+
 instance Monoid Cypher where
   mempty = def
   Cypher q1 p1 `mappend` Cypher q2 p2 = Cypher {..}
@@ -50,9 +53,6 @@ addP (a,b) = def{ params = Map.fromList [(a, toJSON b)]}
 
 addT :: Text -> Text -> Cypher
 addT a b = def{ params = Map.fromList [(a, toJSON b)]}
-
-instance Default Cypher where
-  def = Cypher "" def
 
 instance ToJSON Cypher
 instance FromJSON Cypher

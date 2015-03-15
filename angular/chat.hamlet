@@ -2,7 +2,10 @@
 <md-input-container .pad20>
   <label>_{SomeMessage MsgChatShout}
   <input ng-model=inp.shout ng-keyup="$event.keyCode == 13 ? send(inp.shout) : null">
-<md-button ng-click=send(inp.shout)>_{SomeMessage MsgChatSend}
+<md-button .md-raised .md-primary ng-click=send(inp.shout)>_{SomeMessage MsgChatSend}
+
+<md-button ng-show=hasAnnyang ng-click=sayIt() .md-accent .md-fab .md-fab-top-right aria-label="say it">
+    <span .fa .font-3x .microphone>
 
 <md-list>
    <md-item ng-repeat="line in wsLink.collection" ng-switch=line.tag>

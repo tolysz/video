@@ -13,6 +13,7 @@ import Yesod.WebSockets.Extra
 
 import qualified Data.Text as T
 import Data.Bool
+import Network.Wai (remoteHost)
 
 import Debug.Trace
 
@@ -24,11 +25,11 @@ import Debug.Trace
 -- functions. You can spread them across multiple files if you are so
 -- inclined, or create a single monolithic file.
 
-getLoginCheckR :: Handler Html
-getLoginCheckR = do
-   maybeAuthId >>= \case
-     Just a -> redirect HomeR
-     Nothing -> redirect $ AuthR LoginR
+-- getLoginCheckR :: Handler Html
+-- getLoginCheckR = do
+--    maybeAuthId >>= \case
+--      Just a -> redirect HomeR
+--      Nothing -> redirect $ AuthR LoginR
 
 
 getRedirHashR :: [Text] -> Handler Html
@@ -47,7 +48,11 @@ getRedirHashR pa = redirect $ HomeR :#: (T.intercalate "/" pa)
 
 handleHomeR :: Handler Html
 handleHomeR =  do
-           maid <- maybe (permissionDenied "You need to have login") (return . userIdent) =<< runDB . get =<< requireAuthId
+           ip <- fmap (T.pack . show . remoteHost . reqWaiRequest) getRequest
+--            permissionDenied "You need to have login"
+           (maid, loggedIn) <- maybeAuthId >>= \case
+               Nothing -> return (ip, False)
+               Just n -> return . (,True) . maybe ip userIdent =<< (runDB . get $ n)
            ch <- userChannels <$> getYesod
            webSockets ( chatApp ch maid)
 
@@ -64,7 +69,8 @@ handleHomeR =  do
            genAngularBind
                jsi18n   -- ^ javascript convertor for messages
                appLangs -- ^ user languages
-               maid compiledAsDevel {- -> ap-> conf -> -} (\y x ->
+               maid loggedIn
+               compiledAsDevel {- -> ap-> conf -> -} (\y x ->
                  angularUILayout y $ do
                    setTitle "Video Selector" -- "Welcome To Yesod!"
                    -- addStylesheetRemote "//fonts.googleapis.com/css?family=Nothing+You+Could+Do"
@@ -73,8 +79,8 @@ handleHomeR =  do
                    x
                  )
 
-genAngularBind :: (SomeMessage App -> RawJavascript) -> [Text] -> Text -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -} = do
+genAngularBind :: (SomeMessage App -> RawJavascript) -> [Text] -> Text -> Bool -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
+genAngularBind jsi18n appLangs maid loggedIn development {- (AuthPerms{..}) something -} = do
   -- canViewIt <- verifyBool permsViewSomething apSitePerms
   runAngularUI True {- <- maybe change it to debug? to have instant refreh -} (const $ return ()) $ cached $ do
 --     let angMenu =  $(hamletFile "angular/menu.hamlet")
@@ -87,13 +93,14 @@ genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -}
     addConfig "$http"     [js|useApplyAsync(true)|]
     addConfig "$location" [js|html5Mode({rewriteLinks:true, requireBase:true, enabled: true})|]
 
+    addConfig "$mdTheming" [js|theme('default').primaryPalette('teal').accentPalette('pink').warnPalette('lime').backgroundPalette('amber')|]
+
     addModules [ "ui.router"
                , "ngSanitize"
                , "ngAnimate"
                , "ngAria"
                , "ngCookies"
                , "ngMaterial"
-               , "ngWebSocket"
                , "ngResource"
                , "ngLocale"
                , "angulartics"
@@ -134,6 +141,7 @@ genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -}
     $(addStateJ     "chat"                 "/chat"           ) -- will be per user
 
     $(addStateJ     "logout"               "/auth/logout"    )
+    $(addStateJ     "login"               "/auth/login"    )
 
     setDefaultRoute "/demos/about"
 
@@ -156,11 +164,11 @@ genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -}
     addFactory "Group"     [js| function($resource) { return $resource("@{SiteGroupR}/:short"); }|]
     addFactory "GroupUser" [js| function($resource) { return $resource("@{SiteGroupR}/:short/user/:ident"); }|]
 
-    addFactory "wsLink" [js| function($websocket, $rootScope, $log, maid, $mdToast, $timeout, $interval) {
+    addFactory "wsLink" [js| function($rootScope, $log, maid, $mdToast, $timeout, $interval) {
       // Open a WebSocket connection
       var methods = {};
       var collection = [];
-      url = '@{HomeR}'.replace("http:", "ws:").replace("https:", "wss:");
+      url = '@{HomeR}'.replace(/^http/, "ws");
       var dataStream = {};
 
       function toast(m, d){
@@ -173,33 +181,31 @@ genAngularBind jsi18n appLangs maid  development {- (AuthPerms{..}) something -}
       }
 
       function open (){
-      dataStream = $websocket(url);
+      dataStream = new WebSocket(url);
 
-      dataStream.onOpen(function(){ toast("Chat server connected"); });
-//      dataStream.onClose(function(){ toast("Chat server Disconnected"); });
-      dataStream.onError(function(e){
-        $log.debug(e);
-//         toast("Reconnection");
-        $timeout ( open, 5000);
-        });
+      dataStream.onerror = function(e) {
+             $log.debug(e);
+             $timeout ( open, 5000);
+             $log.debug("reconnecting");
+           };
 
-      dataStream.onMessage(function(message) {
-      $log.debug(message);
-      var myReader = new FileReader();
-        myReader.readAsText(message.data);
-        myReader.addEventListener("loadend", function(e)
-            {
+      dataStream.onmessage = function(message) {
+          $log.debug(message);
+          var myReader = new FileReader();
+          myReader.readAsText(message.data);
+          myReader.addEventListener("loadend", function(e){
               $rootScope.$apply( function() {
-                var buffer = JSON.parse(e.srcElement.result);
+                $log.debug(e);
+                var buffer = JSON.parse((e.srcElement ? e.srcElement : e.target).result); // e.srcElement
                 $log.debug(buffer);
-                // if (_.isUndefined (collection[buffer.tag])) collection[buffer.tag] = [];
                 collection.unshift({tag:buffer.tag, cont:buffer.contents});
 
                 if (buffer.tag == 'Shout')
                   toast(buffer.contents[0] + " -> " + buffer.contents[2]);
               })
             });
-      })
+      }
+
       };
 
       try{
@@ -287,9 +293,13 @@ postLangR = do
 getLangR :: Handler ()
 getLangR = languages >>= redirect . work
   where
-   work ((T.unpack -> "en"):_) = StaticR angular_i18n_angular_locale_en_js
    work ((T.unpack -> "en-GB"):_) = StaticR angular_i18n_angular_locale_en_gb_js
    work ((T.unpack -> "en-US"):_) = StaticR angular_i18n_angular_locale_en_us_js
+   work ((T.unpack -> "de-DE"):_) = StaticR angular_i18n_angular_locale_de_de_js
+   work ((T.unpack -> "fr-FR"):_) = StaticR angular_i18n_angular_locale_fr_fr_js
+   work ((T.unpack -> "en"):_) = StaticR angular_i18n_angular_locale_en_js
+   work ((T.unpack -> "de"):_) = StaticR angular_i18n_angular_locale_de_js
+   work ((T.unpack -> "fr"):_)    = StaticR angular_i18n_angular_locale_fr_js
    work ((T.unpack -> "pl"):_) = StaticR angular_i18n_angular_locale_pl_js
    work _ = StaticR angular_i18n_angular_locale_en_js
 --    work (_:as) = work as

@@ -1,0 +1,4 @@
+function($log, $window){
+    $log.debug("Logging in");
+    $window.location.href = "@{AuthR LoginR}";
+}

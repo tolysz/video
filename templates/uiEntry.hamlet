@@ -22,9 +22,15 @@ $newline never
            >
          <span ng-class=page.icon>
          {{page.name}}
-      <a .menu-item .md-menu-item .menu-title  href=@{AuthR LogoutR} md-ink-ripple="#bbb">
-         <span .glyphicon .log-out>
-         _{SomeMessage MsgLogout}
+      $if loggedIn
+         <a .menu-item .md-menu-item .menu-title  ui-sref="logout" md-ink-ripple="#bbb">
+            <span .glyphicon .log-out>
+            _{SomeMessage MsgLogout}
+      $else
+            <a .menu-item .md-menu-item .menu-title  ui-sref="login" md-ink-ripple="#bbb">
+               <span .glyphicon .log-in>
+               _{SomeMessage MsgLogin}
+
 <div layout=column layout-fill ng-cloak tabindex="-1" role=main style="height: 100vh; overflow-y: auto; overflow-x: hide;" md-scroll-y>
    <section>
       <md-toolbar md-default-theme md-scroll-shrink .md-accent ng-controller=LeftCtrl>
@@ -49,6 +55,8 @@ $newline never
       <div>
           _{SomeMessage MsgSwitchLanguage}
           <md-select ng-model="lang">
-              <md-option value=en>English
+              <md-option value=en-GB>English
               <md-option value=pl>Polski
+              <md-option value=de-DE>Deutsch
+              <md-option value=fr-FR>Français
           <md-button ng-click="changeLang()">_{SomeMessage MsgSwitch}
