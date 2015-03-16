@@ -12,8 +12,9 @@ import Yesod.WebSockets.Extra
 -- import Data.Time
 
 import qualified Data.Text as T
+import Data.Text.Encoding as E
 import Data.Bool
-import Network.Wai (remoteHost)
+import qualified Network.Wai as Wai (remoteHost, requestHeaders)
 
 import Debug.Trace
 
@@ -36,23 +37,15 @@ getRedirHashR :: [Text] -> Handler Html
 getRedirHashR [] = redirect HomeR
 getRedirHashR pa = redirect $ HomeR :#: (T.intercalate "/" pa)
 
-
--- newtype CachedBind val = CachedBind { unCachedBind :: val }
---     deriving Typeable
---
--- cachedF
---     = fmap unCachedBind
---     . cached
---     . fmap CachedBind
-
-
 handleHomeR :: Handler Html
 handleHomeR =  do
-           ip <- fmap (T.pack . show . remoteHost . reqWaiRequest) getRequest
+           req <- waiRequest
+           let ip = T.pack . show . Wai.remoteHost $ req
+               xip = maybe ip ( ( <> ip) . E.decodeUtf8) $ lookup "X-Real-IP" (Wai.requestHeaders req)
 --            permissionDenied "You need to have login"
            (maid, loggedIn) <- maybeAuthId >>= \case
-               Nothing -> return (ip, False)
-               Just n -> return . (,True) . maybe ip userIdent =<< (runDB . get $ n)
+               Nothing ->  return  ( xip , False)
+               Just n ->   return . (,True ) . maybe xip userIdent =<< (runDB . get $ n)
            ch <- userChannels <$> getYesod
            webSockets ( chatApp ch maid)
 
@@ -248,16 +241,16 @@ genAngularBind jsi18n appLangs maid loggedIn development {- (AuthPerms{..}) some
       state: "admin"
       name: "%{jsi18n (SomeMessage MsgMenuAdmin)}"
       visible: false
-      pages: [ { state:"admin.video", name: "%{jsi18n (SomeMessage MsgMenuAdminVideo)}", icon: "fa video-camera"}
-             , { state:"admin.group", name: "%{jsi18n (SomeMessage MsgMenuAdminGroup)}", icon: "fa group font-spin"}
-             #, { state:"admin.group.add", name: "group add", icon: "fa group font-spin"}
-             , { state:"admin.user", name: "%{jsi18n (SomeMessage MsgMenuAdminUsers)}", icon: "fa users"}
+      pages: [ { state:"admin.video", name: "%{jsi18n (SomeMessage MsgMenuAdminVideo)}", icon: "fa video-camera  font-menu-icon font-lg"}
+             , { state:"admin.group", name: "%{jsi18n (SomeMessage MsgMenuAdminGroup)}", icon: "fa group font-spin font-menu-icon font-lg"}
+             #, { state:"admin.group.add", name: "group add", icon: "fa group font-spin  font-menu-icon font-lg"}
+             , { state:"admin.user", name: "%{jsi18n (SomeMessage MsgMenuAdminUsers)}", icon: "fa users font-menu-icon font-lg"}
              ]
     ,
       state: "oauth2"
-      name:  "oauth2"
+      name:  "OAuth2"
       visible : false
-      pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt" }]
+      pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt font-menu-icon font-lg" }]
     ,
       state: "chat"
       name:  "%{jsi18n (SomeMessage MsgMenuChat)}"
@@ -267,16 +260,16 @@ genAngularBind jsi18n appLangs maid loggedIn development {- (AuthPerms{..}) some
       state : "demos"
       name:   "%{jsi18n (SomeMessage MsgDemos)}"
       visible : false
-      pages: [ { state: "demos.panel",     name: "Pannel",     icon: "fa columns" }
-             , { state: "demos.button",    name: "Button",     icon: "fa barcode" }
-             , { state: "demos.checkbox",  name: "Checkbox",   icon: "fa barcode" }
-             , { state: "demos.content",   name: "Content",    icon: "fa barcode" }
-             , { state: "demos.dialog",    name: "Dialog",     icon: "fa barcode" }
-             , { state: "demos.slider",    name: "Slider",     icon: "fa barcode" }
-             , { state: "demos.textfield", name: "Text Field", icon: "fa barcode" }
-             , { state: "demos.youtube",   name: "Youtube",    icon: "fa youtube" }
-             , { state: "demos.empty",     name: "%{jsi18n (SomeMessage MsgHello)}",      icon: "fa frown-o" }
-             , { state: "demos.about",     name: "About",      icon: "fa info" }
+      pages: [ { state: "demos.panel",     name: "Pannel",     icon: "fa columns font-menu-icon font-lg" }
+             , { state: "demos.button",    name: "Button",     icon: "fa barcode font-menu-icon font-lg" }
+             , { state: "demos.checkbox",  name: "Checkbox",   icon: "fa barcode font-menu-icon font-lg" }
+             , { state: "demos.content",   name: "Content",    icon: "fa barcode font-menu-icon font-lg" }
+             , { state: "demos.dialog",    name: "Dialog",     icon: "fa barcode font-menu-icon font-lg" }
+             , { state: "demos.slider",    name: "Slider",     icon: "fa barcode font-menu-icon font-lg" }
+             , { state: "demos.textfield", name: "Text Field", icon: "fa barcode font-menu-icon font-lg" }
+             , { state: "demos.youtube",   name: "Youtube",    icon: "fa youtube font-menu-icon font-lg" }
+             , { state: "demos.empty",     name: "%{jsi18n (SomeMessage MsgHello)}",      icon: "fa frown-o font-menu-icon font-lg" }
+             , { state: "demos.about",     name: "About",      icon: "fa info font-menu-icon font-lg" }
              ]
     ]
   return sections
@@ -286,9 +279,10 @@ noop = return ()
 
 postLangR :: Handler ()
 postLangR = do
+    setUltDestReferer
     lang <- runInputPost $ ireq textField "lang"
     setLanguage lang
-    redirect HomeR
+    redirectUltDest HomeR
 
 getLangR :: Handler ()
 getLangR = languages >>= redirect . work

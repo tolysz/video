@@ -5,9 +5,9 @@ $newline never
       <md-toolbar style="min-height: 64px; max-height:64px;"  .md-default-theme>
         <h1 .md-toolbar-tools .md-toolbar-tools-bottom flex layout=row>
           <a href="" ng-click="toggleFullScreen()" tabindex=0>
-                <span .glyphicon .fullscreen >
+                <span .glyphicon .fullscreen .font-menu-icon>
                 Video Selector
-      <div hide-gt-sm>
+      <div hide-gt-sm .menu-item .md-menu-item .menu-sub-item>
         <md-button .md-primary ng-click="closeLeft()">
           _{SomeMessage MsgClosePanel}
       <div ng-repeat="section in sections">
@@ -22,14 +22,6 @@ $newline never
            >
          <span ng-class=page.icon>
          {{page.name}}
-      $if loggedIn
-         <a .menu-item .md-menu-item .menu-title  ui-sref="logout" md-ink-ripple="#bbb">
-            <span .glyphicon .log-out>
-            _{SomeMessage MsgLogout}
-      $else
-            <a .menu-item .md-menu-item .menu-title  ui-sref="login" md-ink-ripple="#bbb">
-               <span .glyphicon .log-in>
-               _{SomeMessage MsgLogin}
 
 <div layout=column layout-fill ng-cloak tabindex="-1" role=main style="height: 100vh; overflow-y: auto; overflow-x: hide;" md-scroll-y>
    <section>
@@ -49,14 +41,22 @@ $newline never
    <section ng-controller="RightCtrl" style="height: 100vh;">
       <md-toolbar .md-theme-light>
         <h1 .md-toolbar-tools>Sidenav Right
-      <div>
-        <md-button .md-primary ng-click="close()">
-          _{SomeMessage MsgClosePanel}
-      <div>
-          _{SomeMessage MsgSwitchLanguage}
+          <div hide-gt-sm .md-menu-item .menu-sub-item>
+            <md-button .md-primary ng-click="close()">
+              _{SomeMessage MsgClosePanel}
+      <section .menu-item .md-menu-item .menu-sub-item>
+          <span .fa .language .font-lg .font-menu-icon>
           <md-select ng-model="lang">
               <md-option value=en-GB>English
               <md-option value=pl>Polski
               <md-option value=de-DE>Deutsch
               <md-option value=fr-FR>Français
           <md-button ng-click="changeLang()">_{SomeMessage MsgSwitch}
+      $if loggedIn
+         <a  ui-sref="logout" md-ink-ripple="#bbb" .menu-item .md-menu-item .menu-sub-item >
+            <span .glyphicon .log-out .font-lg .font-menu-icon >
+            _{SomeMessage MsgLogout}
+      $else
+         <a ui-sref="login" md-ink-ripple="#bbb" .menu-item .md-menu-item .menu-sub-item >
+            <span .glyphicon .log-in .font-lg .font-menu-icon>
+            _{SomeMessage MsgLogin}
