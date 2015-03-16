@@ -41,9 +41,9 @@ handleGoogleCallbackR = do
   errorMaybe <- lookupGetParam "error"
   case (codeMaybe, errorMaybe) of
     (Just c, _)       -> processTokenOU (fetchAccessToken c)
-                          >> redirect HomeR
+                          >> redirect (HomeR [])
     (_, Just e)       -> traceHTML e
-    (Nothing,Nothing) -> redirect HomeR
+    (Nothing,Nothing) -> redirect (HomeR [])
 
 handleGoogleManageR :: Handler ()
 handleGoogleManageR = redirect ("https://security.google.com/settings/security/permissions?pli=1" :: String)

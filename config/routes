@@ -3,9 +3,8 @@
 
 /favicon.ico                      FaviconR GET
 /robots.txt                       RobotsR GET
-/ HomeR
 
-/lang LangR GET POST
+/lang LangR POST
 
 -- /oauth/ require additional authorization via @GoogleOAuthLoginR
 /api/oauth2/                          RootOAuth2R
@@ -49,4 +48,6 @@
 -- /user
 -- /groups
 
-!/*Texts RedirHashR GET
+!/*Texts  HomeR
+
+-- !/*Texts RedirHashR GET

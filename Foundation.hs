@@ -160,7 +160,7 @@ instance YesodAuth App where
     type AuthId App = UserId
 
     -- Where to send a user after successful login
-    loginDest a = HomeR -- RedirHashR []
+    loginDest a = HomeR [] -- RedirHashR []
     --     do
 --       YesodRequest{..} <- getRequest <$> getYesod
 --       maybe HomeR (RedirHashR . T.split (== '/')) $ "hash" `lookup` reqCookies
@@ -169,7 +169,7 @@ instance YesodAuth App where
     -- Where to send a user after logout
     logoutDest _ = AuthR LoginR
     -- Override the above two destinations when a Referer: header is present
-    redirectToReferer _ = True
+    redirectToReferer _ = False
 
     getAuthId creds = runDB $ do
         x <- getBy $ UniqueUser $ credsIdent creds
@@ -268,12 +268,22 @@ instance YesodAngular App where
      loggedIn <- isJust <$> handlerToWidget maybeAuthId
      $(widgetFile "uiEntry")
 
+langIdLocale :: LangId -> Route App
+langIdLocale LangEnGB = StaticR angular_i18n_angular_locale_en_gb_js
+langIdLocale LangEnUs = StaticR angular_i18n_angular_locale_en_us_js
+langIdLocale LangPl   = StaticR angular_i18n_angular_locale_pl_js
+langIdLocale LangRu   = StaticR angular_i18n_angular_locale_ru_js
+langIdLocale LangFr   = StaticR angular_i18n_angular_locale_fr_js
+langIdLocale LangDe   = StaticR angular_i18n_angular_locale_de_js
+
+
 angularUILayout :: Text -> WidgetT App IO () ->  HandlerT App IO Html
 angularUILayout ngApp widget = do
 --         void requireAuthId
 
         master <- getYesod
         mrender <- getMessageRender
+        langI18Ang <- langIdLocale . readLang <$> languages
         pc <- widgetToPageContent $ do
             addStylesheet $ StaticR app_min_css
             $(widgetFile "empty-layout")

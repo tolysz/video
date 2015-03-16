@@ -15,11 +15,11 @@ $newline never
         <meta name="viewport" content="initial-scale=1,maximum-scale=1">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="mobile-web-app-capable" content="yes">
-        <base href="@{HomeR}" />
+        <base href="@{HomeR []}" />
         <link rel="icon" href="/static/polish-your-polish-124.gif" sizes="124x141" type="image/gif">
         ^{pageHead pc}
         <script type="text/javascript" src="@{StaticR app_min_js}">
-        <script type="text/javascript" src="@{LangR}">
+        <script type="text/javascript" src="@{langI18Ang}">
         \<!--[if lt IE 9]>
         \<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         \<![endif]-->

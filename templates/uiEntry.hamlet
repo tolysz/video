@@ -38,25 +38,30 @@ $newline never
       <md-content data-ui-view flex .md-default-theme>
 
 <md-sidenav .site-sidenav .md-sidenav-right .md-whiteframe-z2 md-component-id="right" style="width:250px;" tabindex="-1" >
-   <section ng-controller="RightCtrl" style="height: 100vh;">
+   <section ng-controller="RightCtrl" style="height: 100vh;" layout=column>
       <md-toolbar .md-theme-light>
         <h1 .md-toolbar-tools>Sidenav Right
-          <div hide-gt-sm .md-menu-item .menu-sub-item>
-            <md-button .md-primary ng-click="close()">
-              _{SomeMessage MsgClosePanel}
-      <section .menu-item .md-menu-item .menu-sub-item>
+      <div hide-gt-sm>
+        <md-button .md-primary .md-accent ng-click="close()">
+          _{SomeMessage MsgClosePanel}
+
+      <div>
           <span .fa .language .font-lg .font-menu-icon>
           <md-select ng-model="lang">
               <md-option value=en-GB>English
               <md-option value=pl>Polski
               <md-option value=de-DE>Deutsch
               <md-option value=fr-FR>Français
+              <md-option value=ru>Русский
           <md-button ng-click="changeLang()">_{SomeMessage MsgSwitch}
-      $if loggedIn
-         <a  ui-sref="logout" md-ink-ripple="#bbb" .menu-item .md-menu-item .menu-sub-item >
-            <span .glyphicon .log-out .font-lg .font-menu-icon >
-            _{SomeMessage MsgLogout}
-      $else
-         <a ui-sref="login" md-ink-ripple="#bbb" .menu-item .md-menu-item .menu-sub-item >
-            <span .glyphicon .log-in .font-lg .font-menu-icon>
-            _{SomeMessage MsgLogin}
+      <div>&nbsp;
+      <div>&nbsp;
+      <div>
+          $if loggedIn
+             <a  ui-sref="logout" md-ink-ripple="#bbb">
+                <span .glyphicon .log-out .font-lg .font-menu-icon >
+                _{SomeMessage MsgLogout}
+          $else
+             <a ui-sref="login" md-ink-ripple="#bbb" >
+                <span .glyphicon .log-in .font-lg .font-menu-icon>
+                _{SomeMessage MsgLogin}

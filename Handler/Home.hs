@@ -33,15 +33,15 @@ import Debug.Trace
 --      Nothing -> redirect $ AuthR LoginR
 
 
-getRedirHashR :: [Text] -> Handler Html
-getRedirHashR [] = redirect HomeR
-getRedirHashR pa = redirect $ HomeR :#: (T.intercalate "/" pa)
+-- getRedirHashR :: [Text] -> Handler Html
+-- getRedirHashR [] = redirect HomeR
+-- getRedirHashR pa = redirect $ HomeR :#: (T.intercalate "/" pa)
 
-handleHomeR :: Handler Html
-handleHomeR =  do
+handleHomeR :: [Text] ->  Handler Html
+handleHomeR _ =  do
            req <- waiRequest
            let ip = T.pack . show . Wai.remoteHost $ req
-               xip = maybe ip ( ( <> ip) . E.decodeUtf8) $ lookup "X-Real-IP" (Wai.requestHeaders req)
+               xip = maybe ip ( ( <> (T.drop 9 ip)) . E.decodeUtf8) $ lookup "X-Real-IP" (Wai.requestHeaders req)
 --            permissionDenied "You need to have login"
            (maid, loggedIn) <- maybeAuthId >>= \case
                Nothing ->  return  ( xip , False)
@@ -161,7 +161,7 @@ genAngularBind jsi18n appLangs maid loggedIn development {- (AuthPerms{..}) some
       // Open a WebSocket connection
       var methods = {};
       var collection = [];
-      url = '@{HomeR}'.replace(/^http/, "ws");
+      url = '@{HomeR []}'.replace(/^http/, "ws");
       var dataStream = {};
 
       function toast(m, d){
@@ -277,25 +277,15 @@ genAngularBind jsi18n appLangs maid loggedIn development {- (AuthPerms{..}) some
 
 noop = return ()
 
+-- langIdLocale :: LangId -
+
 postLangR :: Handler ()
 postLangR = do
     setUltDestReferer
     lang <- runInputPost $ ireq textField "lang"
     setLanguage lang
-    redirectUltDest HomeR
+    redirectUltDest (HomeR [])
 
-getLangR :: Handler ()
-getLangR = languages >>= redirect . work
-  where
-   work ((T.unpack -> "en-GB"):_) = StaticR angular_i18n_angular_locale_en_gb_js
-   work ((T.unpack -> "en-US"):_) = StaticR angular_i18n_angular_locale_en_us_js
-   work ((T.unpack -> "de-DE"):_) = StaticR angular_i18n_angular_locale_de_de_js
-   work ((T.unpack -> "fr-FR"):_) = StaticR angular_i18n_angular_locale_fr_fr_js
-   work ((T.unpack -> "en"):_) = StaticR angular_i18n_angular_locale_en_js
-   work ((T.unpack -> "de"):_) = StaticR angular_i18n_angular_locale_de_js
-   work ((T.unpack -> "fr"):_)    = StaticR angular_i18n_angular_locale_fr_js
-   work ((T.unpack -> "pl"):_) = StaticR angular_i18n_angular_locale_pl_js
-   work _ = StaticR angular_i18n_angular_locale_en_js
 --    work (_:as) = work as
 
 chatApp :: CMap MsgBus -> Text  -> WebSocketsT Handler ()
@@ -340,3 +330,7 @@ chatApp chans name = do
            readWS
 
     concurrently_ readWS writeWS
+
+
+--translate fromLang toLang cont
+--   'https://www.googleapis.com/language/translate/v2?key=&q=hello%20world&source=en&target=de' -O -

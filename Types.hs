@@ -6,7 +6,7 @@
 module Types where
 
 import Data.Text (Text)
--- import qualified Data.Text as T
+import qualified Data.Text as T
 
 import Data.Char (toLower, isUpper)
 import Data.Bool
@@ -98,8 +98,34 @@ type ShortName = Text
 type EmailQuery = Text
 
 
+
 --   deriving (Show, Read, Eq, Typeable, Generic)
 
 -- instance ToJSON ShortName
 -- instance FromJSON ShortName
+
+-- formal informal rude
+-- aerial diffusion
+data LangId
+   = LangEnGB
+   | LangEnUs
+   | LangPl
+   | LangRu
+   | LangFr
+   | LangDe
+
+readLang :: [Text] -> LangId
+readLang = work
+  where
+   work ((T.unpack -> "en-GB"):_) = LangEnGB
+   work ((T.unpack -> "en-US"):_) = LangEnUs
+   work ((T.unpack -> "de-DE"):_) = LangDe
+   work ((T.unpack -> "fr-FR"):_) = LangFr
+   work ((T.unpack -> "en"):_)    = LangEnGB
+   work ((T.unpack -> "de"):_)    = LangDe
+   work ((T.unpack -> "fr"):_)    = LangFr
+   work ((T.unpack -> "pl"):_)    = LangPl
+   work ((T.unpack -> "ru"):_)    = LangRu
+   work _ = LangEnGB
+
 
