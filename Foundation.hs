@@ -198,6 +198,7 @@ instance YesodAuth App where
                 wf = render f
             toWidget $(widgetFile "login")
 
+semicolon :: Text
 semicolon = ";" :: Text
 
 instance YesodAuthPersist App
@@ -232,7 +233,7 @@ angularUILayout :: Text -> WidgetT App IO () ->  HandlerT App IO Html
 angularUILayout ngApp widget = do
         master <- getYesod
         mrender <- getMessageRender
-        langI18Ang <- langIdLocale . readLang <$> languages
+        langI18Ang <- langIdLocale <$> getUserLang
         pc <- widgetToPageContent $ do
             addStylesheet $ StaticR app_min_css
             $(widgetFile "empty-layout")
@@ -256,3 +257,6 @@ getUserAdmin = do
   runDB $ do
      Just (Entity _ v) <- getBy $ UniqueUser aid
      return $ userSiteAdmin v
+
+getUserLang :: Handler LangId
+getUserLang = cached (readLang <$> languages)

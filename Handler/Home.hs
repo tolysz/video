@@ -26,17 +26,6 @@ import Debug.Trace
 -- functions. You can spread them across multiple files if you are so
 -- inclined, or create a single monolithic file.
 
--- getLoginCheckR :: Handler Html
--- getLoginCheckR = do
---    maybeAuthId >>= \case
---      Just a -> redirect HomeR
---      Nothing -> redirect $ AuthR LoginR
-
-
--- getRedirHashR :: [Text] -> Handler Html
--- getRedirHashR [] = redirect HomeR
--- getRedirHashR pa = redirect $ HomeR :#: (T.intercalate "/" pa)
-
 handleHomeR :: [Text] ->  Handler Html
 handleHomeR _ =  do
            req <- waiRequest
@@ -47,13 +36,14 @@ handleHomeR _ =  do
                Nothing ->  return  ( xip , False)
                Just n ->   return . (,True ) . maybe xip userIdent =<< (runDB . get $ n)
            ch <- userChannels <$> getYesod
-           webSockets ( chatApp ch maid)
+           langI18Ang <- getUserLang
+
+           webSockets ( chatApp ch maid langI18Ang)
 
            {-- ap :: AuthPerms  <- queryDB sadasd -}
            {- conf <- liftIO getIt -}
 --            devel <- appDevelopment . appSettings <$> getYesod
            mrender <- getMessageRender
-           appLangs <- languages
            let
              jsi18n :: SomeMessage App -> RawJavascript
              jsi18n m = rawJS $ mrender $ m
@@ -61,7 +51,7 @@ handleHomeR _ =  do
 --            create websocket
            genAngularBind
                jsi18n   -- ^ javascript convertor for messages
-               appLangs -- ^ user languages
+               langI18Ang -- ^ user languages
                maid loggedIn
                compiledAsDevel {- -> ap-> conf -> -} (\y x ->
                  angularUILayout y $ do
@@ -72,21 +62,29 @@ handleHomeR _ =  do
                    x
                  )
 
-genAngularBind :: (SomeMessage App -> RawJavascript) -> [Text] -> Text -> Bool -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind jsi18n appLangs maid loggedIn development {- (AuthPerms{..}) something -} = do
+genAngularBind :: (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
+genAngularBind jsi18n appLang maid loggedIn development {- (AuthPerms{..}) something -} = do
   -- canViewIt <- verifyBool permsViewSomething apSitePerms
-  runAngularUI True {- <- maybe change it to debug? to have instant refreh -} (const $ return ()) $ cached $ do
+  runAngularUI False {- <- maybe change it to debug? to have instant refreh -} (const $ return ()) $ cached $ do
 --     let angMenu =  $(hamletFile "angular/menu.hamlet")
 
-    addConstant "maid"     [js|#{rawJS $ show maid}|]
-    addConstant "appLangs" [js|#{rawJS $ show appLangs}|]
+    addConstant "maid"    [js|#{rawJS $ show maid}|]
+    addConstant "appLang" [js|#{toJSON appLang}|]
 
     addConfig "$log"      [js|debugEnabled(#{development})|]
     addConfig "$compile"  [js|debugInfoEnabled(#{development})|]
     addConfig "$http"     [js|useApplyAsync(true)|]
     addConfig "$location" [js|html5Mode({rewriteLinks:true, requireBase:true, enabled: true})|]
 
-    addConfig "$mdTheming" [js|theme('default').primaryPalette('teal').accentPalette('pink').warnPalette('lime').backgroundPalette('amber')|]
+    addConfig "$mdTheming"
+      [js|theme('default')
+         .primaryPalette('teal')
+         .accentPalette('pink')
+         .warnPalette('lime')
+         .backgroundPalette('amber')
+         |]
+    addConfig "$mdTheming" [js|theme('cyan')|]
+
 
     addModules [ "ui.router"
                , "ngSanitize"
@@ -134,7 +132,7 @@ genAngularBind jsi18n appLangs maid loggedIn development {- (AuthPerms{..}) some
     $(addStateJ     "chat"                 "/chat"           ) -- will be per user
 
     $(addStateJ     "logout"               "/auth/logout"    )
-    $(addStateJ     "login"               "/auth/login"    )
+    $(addStateJ     "login"                "/auth/login"     )
 
     setDefaultRoute "/demos/about"
 
@@ -157,7 +155,7 @@ genAngularBind jsi18n appLangs maid loggedIn development {- (AuthPerms{..}) some
     addFactory "Group"     [js| function($resource) { return $resource("@{SiteGroupR}/:short"); }|]
     addFactory "GroupUser" [js| function($resource) { return $resource("@{SiteGroupR}/:short/user/:ident"); }|]
 
-    addFactory "wsLink" [js| function($rootScope, $log, maid, $mdToast, $timeout, $interval) {
+    addFactory "wsLink" [js| function($rootScope, $log, maid, $mdToast, $timeout, $interval, appLang) {
       // Open a WebSocket connection
       var methods = {};
       var collection = [];
@@ -208,7 +206,7 @@ genAngularBind jsi18n appLangs maid loggedIn development {- (AuthPerms{..}) some
                              dataStream.send(JSON.stringify({ action: 'get', value: s }));
                             }
                     , shout: function(s){
-                               dataStream.send(JSON.stringify({ tag: 'Shout', contents: [maid, new Date() ,s] }));
+                               dataStream.send(JSON.stringify({ tag: 'Shout', contents: [maid, new Date(), s, appLang] }));
                             }
                     };
       }  catch(e) {
@@ -288,11 +286,11 @@ postLangR = do
 
 --    work (_:as) = work as
 
-chatApp :: CMap MsgBus -> Text  -> WebSocketsT Handler ()
-chatApp chans name = do
+chatApp :: CMap MsgBus -> Text  -> LangId -> WebSocketsT Handler ()
+chatApp chans name lid = do
     now1 <- liftIO getCurrentTime
 --     sendBinaryData (MsgInfo now1 $ "Welcome to the chat server, please enter your name.")
-    sendBinaryData $ MsgInfo now1 $ "Welcome, " <> name
+    sendBinaryData $ MsgInfo now1 ("Welcome, " <> name) lid
 
     (rChan, keepWS) <- atomically $ do
         adjustFilter (\_ -> [ -- \ k u _ -> if k == name then HaveNull else MissingData

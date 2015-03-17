@@ -1,5 +1,5 @@
-function(maid, title, $log, appLangs, $locale){
+function(maid, title, $log, appLang, $locale){
     title.set("Admin panel " + maid);
-    $log.debug(appLangs);
+    $log.debug(appLang);
     $log.debug($locale);
 }

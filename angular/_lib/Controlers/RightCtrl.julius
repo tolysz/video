@@ -1,8 +1,8 @@
-function($scope, $mdSidenav, $http, $window, appLangs, $log) {
+function($scope, $mdSidenav, $http, $window, appLang, $log) {
     $scope.open = function () { $mdSidenav('right').open()};
     $scope.close = function () { $mdSidenav('right').close()};
 
-    $scope.lang = appLangs[0] ? appLangs[0] : "en";
+    $scope.lang = appLang;
 
     $scope.$on('$mdSideNavOpen', function(e, navname){
 

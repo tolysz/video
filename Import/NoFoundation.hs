@@ -14,3 +14,4 @@ import Control.Monad.Trans.Maybe as Import
 import Data.Possible             as Import
 import Data.CMap                 as Import
 import Types.MsgBus              as Import
+import Types.Lang                as Import

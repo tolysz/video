@@ -1,4 +1,4 @@
-function($scope, maid, wsLink, $log, title, appLangs){
+function($scope, maid, wsLink, $log, title, appLang){
     title.set( "#{jsi18n (SomeMessage MsgMenuChat)}" + " " + maid);
     $scope.wsLink = wsLink;
     $scope.inp = {};
@@ -23,7 +23,7 @@ function($scope, maid, wsLink, $log, title, appLangs){
 
         annyang.addCommands(commands);
         annyang.debug(true);
-        annyang.setLanguage(appLangs[0] ? appLangs[0] : "en-GB");
+        annyang.setLanguage(appLang);
 
         $scope.sayIt=function(){
             annyang.abort();
