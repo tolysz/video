@@ -22,6 +22,7 @@ module Types.MsgBus where
 -- import Yesod.WebSockets
 import ClassyPrelude
 import Data.String
+
 import qualified Data.Aeson as DA
 import qualified Data.Binary as DB
 
@@ -34,6 +35,7 @@ import qualified Data.Time
 
 import qualified Network.WebSockets as WS
 import Data.Singletons.TH
+import Types.Lang
 
 time0 :: UTCTime
 time0 = UTCTime (ModifiedJulianDay 0) 0

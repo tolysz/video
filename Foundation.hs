@@ -160,14 +160,8 @@ instance YesodAuth App where
     type AuthId App = UserId
 
     -- Where to send a user after successful login
-    loginDest a = HomeR [] -- RedirHashR []
-    --     do
---       YesodRequest{..} <- getRequest <$> getYesod
---       maybe HomeR (RedirHashR . T.split (== '/')) $ "hash" `lookup` reqCookies
-    -- :#:
---     loginDest a =
-    -- Where to send a user after logout
-    logoutDest _ = AuthR LoginR
+    loginDest a = HomeR []
+    logoutDest _ = HomeR []
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer _ = False
 
@@ -203,47 +197,10 @@ instance YesodAuth App where
                 wg = render g
                 wf = render f
             toWidget $(widgetFile "login")
---             [whamlet|
--- <div style="width:500px;margin:0 auto">
---   <div >
---       <h3>Login using:
---       <a href="@{AuthR facebookLogin}" .facebookLogin>
---           Facebook
---       <h3>&mdash; OR &mdash;
---       <a href="@{AuthR GId.forwardUrl}" .googleLogin>
---           Google+
---       <h3>&mdash; OR &mdash;
---       ^{wb}
---       <br>
---             |]
---
---             return ()
-
---     loginHandler = do
---       return
---         tp <- getRouteToParent
---         master <- lift $ getYesod
---         [b,g,f] <- mapM (flip apLogin tp) (authPlugins master)
---         lift $ authLayout $ do
---           [whamlet|<div style="width:500px;margin:0 auto">|]
-
---     loginHandler = do
---       tp <- getRouteToParent
---
---       plug <- do
---            master <- getYesod
---            map (\a -> (apLogin a) tp) (authPlugins master)
---       lift $ defaultLayout $ [whamlet|<div style="width:500px;margin:0 auto">^{login plug}|]
 
 semicolon = ";" :: Text
 
--- login :: [Widget] -> Widget
--- login plug = toWidget $(widgetFile "login")
-
 instance YesodAuthPersist App
-
--- instance RenderMessage App Message where
---     renderMessage _ _ = defaultFormMessage
 
 -- Note: Some functionality previously pre
 -- -- --  sent in the scaffolding has been
@@ -254,16 +211,10 @@ instance YesodAuthPersist App
 -- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
 
--- instance (YesodAngular app ~ app, RenderMessage app m) => RenderMessage app m where
---   renderMessage  =  renderMessage
-
--- instance RenderMessage (YesodAngular ) FormMessage where
---    renderMessage _ _ = defaultFormMessage
 
 -- todo: find a way on how to add i18n to angular
+-- almost
 instance YesodAngular App where
---   renderMessageAUI = Just renderMessage
---    angularRM = renderMessage
    angularUIEntry = do
      loggedIn <- isJust <$> handlerToWidget maybeAuthId
      $(widgetFile "uiEntry")
@@ -279,8 +230,6 @@ langIdLocale LangDe   = StaticR angular_i18n_angular_locale_de_js
 
 angularUILayout :: Text -> WidgetT App IO () ->  HandlerT App IO Html
 angularUILayout ngApp widget = do
---         void requireAuthId
-
         master <- getYesod
         mrender <- getMessageRender
         langI18Ang <- langIdLocale . readLang <$> languages
@@ -289,6 +238,7 @@ angularUILayout ngApp widget = do
             $(widgetFile "empty-layout")
         withUrlRenderer $(hamletFile "templates/angular-layout-wrapper.hamlet")
 
+-- todo: convert route into javascript function
 -- instance IsString ((Route App -> [(Text, Text)] -> Text) -> Javascript) where
 --  fromString a = [js|^{rawJS a}|]
 

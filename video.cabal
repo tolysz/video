@@ -33,6 +33,7 @@ library
                 --  maybe a package
                      Data.CMap
                      Types.MsgBus
+                     Types.Lang
 
                 --  move to a separate module after testing or merge with http-client?
                      Network.HTTP.OAuth2.Types
