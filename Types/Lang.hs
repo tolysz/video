@@ -19,7 +19,7 @@ data LangId
    | LangRu
    | LangFr
    | LangDe
-    deriving (Show, Eq, Typeable, Generic)
+    deriving (Show, Eq, Ord, Typeable, Generic)
 instance DA.FromJSON LangId where
   parseJSON (DA.String a) = return $ readLang [a]
   parseJSON _             = mzero

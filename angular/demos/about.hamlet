@@ -58,3 +58,7 @@
           <a target="_blank" href=http://www.reddit.com/r/haskell >
              <span .fa .reddit>
              Reddit
+          <br>
+          <a target="_blank" href=http://www.haskellcast.com/ >
+             <span .fa .soundcloud>
+             The Haskell Cast

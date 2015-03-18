@@ -17,6 +17,10 @@ import Data.Bool
 import qualified Network.Wai as Wai (remoteHost, requestHeaders)
 
 import Debug.Trace
+import System.IO.Unsafe
+
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
 
 -- This is a handler function for the GET request method on the HomeR
 -- resource pattern. All of your resource patterns are defined in
@@ -26,6 +30,13 @@ import Debug.Trace
 -- functions. You can spread them across multiple files if you are so
 -- inclined, or create a single monolithic file.
 
+-- import Control.Concurrent.MVar
+type LangCache = Map LangId Html
+
+anonCache :: MVar LangCache
+anonCache = unsafePerformIO $ newMVar Map.empty
+{-# NOINLINE anonCache #-}
+
 handleHomeR :: [Text] ->  Handler Html
 handleHomeR _ =  do
            req <- waiRequest
@@ -33,34 +44,48 @@ handleHomeR _ =  do
                xip = maybe ip ( ( <> (T.drop 9 ip)) . E.decodeUtf8) $ lookup "X-Real-IP" (Wai.requestHeaders req)
 --            permissionDenied "You need to have login"
            (maid, loggedIn) <- maybeAuthId >>= \case
-               Nothing ->  return  ( xip , False)
+               Nothing ->  return  ( "not logged in" , False)
                Just n ->   return . (,True ) . maybe xip userIdent =<< (runDB . get $ n)
            ch <- userChannels <$> getYesod
            langI18Ang <- getUserLang
+           webSockets ( chatApp ch (bool xip maid loggedIn) langI18Ang)
 
-           webSockets ( chatApp ch maid langI18Ang)
+           hasCache <- isJust . join . fmap (Map.lookup langI18Ang) <$> tryReadMVar anonCache
 
-           {-- ap :: AuthPerms  <- queryDB sadasd -}
-           {- conf <- liftIO getIt -}
---            devel <- appDevelopment . appSettings <$> getYesod
-           mrender <- getMessageRender
-           let
-             jsi18n :: SomeMessage App -> RawJavascript
-             jsi18n m = rawJS $ mrender $ m
+--            (maid, loggedIn) <- maybeAuthId >>= \case
+           if ((not hasCache && not loggedIn) || loggedIn)
+               then do
+                   liftIO $ print "we have it here"
+                   {-- ap :: AuthPerms  <- queryDB sadasd -}
+                   {- conf <- liftIO getIt -}
+        --            devel <- appDevelopment . appSettings <$> getYesod
+                   mrender <- getMessageRender
+                   let
+                     jsi18n :: SomeMessage App -> RawJavascript
+                     jsi18n m = rawJS $ mrender $ m
 
---            create websocket
-           genAngularBind
-               jsi18n   -- ^ javascript convertor for messages
-               langI18Ang -- ^ user languages
-               maid loggedIn
-               compiledAsDevel {- -> ap-> conf -> -} (\y x ->
-                 angularUILayout y $ do
-                   setTitle "Video Selector" -- "Welcome To Yesod!"
-                   -- addStylesheetRemote "//fonts.googleapis.com/css?family=Nothing+You+Could+Do"
-                  -- toWidget $(juliusFile "angular/tools.julius")
-                   -- toWidget [julius| alert("Hello World!"); |]
-                   x
-                 )
+        --            create websocket
+                   res <- genAngularBind
+                       jsi18n   -- ^ javascript convertor for messages
+                       langI18Ang -- ^ user languages
+                       maid loggedIn
+                       compiledAsDevel {- -> ap-> conf -> -} (\y x ->
+                         angularUILayout y $ do
+                           setTitle "Video Selector" -- "Welcome To Yesod!"
+                           -- addStylesheetRemote "//fonts.googleapis.com/css?family=Nothing+You+Could+Do"
+                          -- toWidget $(juliusFile "angular/tools.julius")
+                           -- toWidget [julius| alert("Hello World!"); |]
+                           x
+                         )
+
+                   when (not hasCache && not loggedIn) $ void $ do
+                       m1 <- takeMVar anonCache
+                       tryPutMVar anonCache $ Map.insert langI18Ang res m1
+                   return res
+               else do
+                  liftIO $ print "asking for cache"
+                  m1 <- readMVar anonCache
+                  maybe (handleHomeR []) return $ Map.lookup langI18Ang m1
 
 genAngularBind :: (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
 genAngularBind jsi18n appLang maid loggedIn development {- (AuthPerms{..}) something -} = do
