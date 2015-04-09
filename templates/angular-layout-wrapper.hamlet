@@ -15,8 +15,10 @@ $newline never
         <meta name="viewport" content="initial-scale=1,maximum-scale=1">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="mobile-web-app-capable" content="yes">
+        $maybe siteVerification <- appSiteVerification $ appSettings master
+            <meta name="google-site-verification" content="#{siteVerification}" />
         <base href="@{HomeR []}" />
-        <link rel="icon" href="/static/polish-your-polish-124.gif" sizes="124x141" type="image/gif">
+        <link rel="icon" href="@{StaticR polish_your_polish_124_gif}" sizes="124x141" type="image/gif">
         ^{pageHead pc}
         <script type="text/javascript" src="@{StaticR app_min_js}">
         <script type="text/javascript" src="@{langI18Ang}">

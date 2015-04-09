@@ -53,6 +53,7 @@ $newline never
               <md-option value=de-DE>Deutsch
               <md-option value=fr-FR>Français
               <md-option value=ru>Русский
+              <md-option value=it>Italiano
               <md-option value=en-US>English (US)
           <md-button ng-click="changeLang()">_{SomeMessage MsgSwitch}
       <div>&nbsp;

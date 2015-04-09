@@ -30,6 +30,7 @@ library
                      Handler.User
                      Handler.OAuth2
                      Handler.DB
+                     Handler.Translate
                 --  maybe a package
                      Data.CMap
                      Types.MsgBus
@@ -155,6 +156,7 @@ library
                  , yesod-auth-fb
                  , wai
                  , utf8-string
+                 , async
 
 
                -- deps for oauth

@@ -18,8 +18,9 @@ data LangId
    | LangPl
    | LangRu
    | LangFr
+   | LangIt
    | LangDe
-    deriving (Show, Eq, Ord, Typeable, Generic)
+    deriving (Show, Eq, Ord, Enum, Typeable, Generic)
 instance DA.FromJSON LangId where
   parseJSON (DA.String a) = return $ readLang [a]
   parseJSON _             = mzero
@@ -29,6 +30,7 @@ instance DA.ToJSON LangId where
   toJSON LangEnUs = "en-US"
   toJSON LangPl   = "pl"
   toJSON LangRu   = "ru"
+  toJSON LangIt   = "it"
   toJSON LangFr   = "fr-FR"
   toJSON LangDe   = "de-DE"
 
@@ -42,6 +44,7 @@ readLang ((T.unpack . T.toLower -> a):_) = case a of
     "de"    -> LangDe
     "fr"    -> LangFr
     "pl"    -> LangPl
+    "it"    -> LangIt
     "ru"    -> LangRu
     _       -> LangEnGB
 readLang  _ = LangEnGB

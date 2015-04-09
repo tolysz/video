@@ -47,6 +47,12 @@
          <div .md-tile-content>
              <h3>{{line.cont | json}}
 
+       <md-item-content ng-switch-when=Transl>
+         <div .md-tile-left>
+             <span .fa .language .font-3x >
+         <div .md-tile-content>
+             <h3>{{line.cont | json}}
+
        <md-item-content ng-switch-default>
          <div .md-tile-left>
              <span .fa .bug .font-3x >

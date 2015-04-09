@@ -87,9 +87,9 @@ instance Yesod App where
         -- you to use normal widget features in default-layout.
 
         pc <- widgetToPageContent $ do
-            addStylesheet $ StaticR app_css
+            addStylesheet $ StaticR app_min_css
             $(widgetFile "default-layout")
-        withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet") -- ) mrender urender
+        withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")
 
     -- The page to be redirected to when authentication is required.
     authRoute _ = Just $ AuthR LoginR
@@ -113,6 +113,13 @@ instance Yesod App where
     -- and names them based on a hash of their content. This allows
     -- expiration dates to be set far in the future without worry of
     -- users receiving stale content.
+    urlRenderOverride a (StaticR s) = case staticRoot of
+              Just r -> Just $ uncurry (joinPath a r) $ renderRoute s
+              Nothing -> Nothing
+             where
+               staticRoot = appStaticRoot $ appSettings a
+    urlRenderOverride _ _ = Nothing
+
     addStaticContent ext mime content = do
         master <- getYesod
         let staticDir = appStaticDir $ appSettings master
@@ -227,6 +234,7 @@ langIdLocale LangPl   = StaticR angular_i18n_angular_locale_pl_js
 langIdLocale LangRu   = StaticR angular_i18n_angular_locale_ru_js
 langIdLocale LangFr   = StaticR angular_i18n_angular_locale_fr_js
 langIdLocale LangDe   = StaticR angular_i18n_angular_locale_de_js
+langIdLocale LangIt   = StaticR angular_i18n_angular_locale_it_js
 
 
 angularUILayout :: Text -> WidgetT App IO () ->  HandlerT App IO Html

@@ -47,6 +47,7 @@ data MsgBus
     | SystemInfo  !UTCTime !Text
     | MsgInfo     !UTCTime !Text !LangId
     | SelfEcho    !UTCTime !Text !LangId
+    | Transl      !UTCTime !Text !LangId
     | Close  !Who !UTCTime
     | Enter  !Who !UTCTime
         deriving (Show, Eq, Typeable, Generic)
@@ -89,6 +90,7 @@ upTime' n ( Shout    w _ t l ) = Shout    w n t l
 upTime' n ( SystemInfo _ t   ) = SystemInfo n t
 upTime' n ( MsgInfo    _ t l ) = MsgInfo    n t l
 upTime' n ( SelfEcho   _ t l ) = SelfEcho   n t l
+upTime' n ( Transl     _ t l ) = Transl     n t l
 upTime' n ( Close    w _     ) = Close    w n
 upTime' n ( Enter    w _     ) = Enter    w n
 

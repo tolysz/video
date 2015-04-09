@@ -2,25 +2,28 @@
 module Handler.Home where
 
 import Import
--- import Text.Hamlet
 import Text.Julius
 import Text.Naked.Coffee
 
 import Yesod.AngularUI
+-- import Yesod.AngularUI.TH
 import Yesod.WebSockets
 import Yesod.WebSockets.Extra
--- import Data.Time
 
 import qualified Data.Text as T
 import Data.Text.Encoding as E
 import Data.Bool
 import qualified Network.Wai as Wai (remoteHost, requestHeaders)
-
+import qualified Data.ByteString.Lazy as BSL
 import Debug.Trace
 import System.IO.Unsafe
 
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
+import Handler.Translate
+import Control.Lens as DA
+import Data.Aeson.Lens as DA
+import qualified Data.Aeson as DA
 
 -- This is a handler function for the GET request method on the HomeR
 -- resource pattern. All of your resource patterns are defined in
@@ -42,29 +45,23 @@ handleHomeR _ =  do
            req <- waiRequest
            let ip = T.pack . show . Wai.remoteHost $ req
                xip = maybe ip ( ( <> (T.drop 9 ip)) . E.decodeUtf8) $ lookup "X-Real-IP" (Wai.requestHeaders req)
---            permissionDenied "You need to have login"
            (maid, loggedIn) <- maybeAuthId >>= \case
                Nothing ->  return  ( "not logged in" , False)
                Just n ->   return . (,True ) . maybe xip userIdent =<< (runDB . get $ n)
-           ch <- userChannels <$> getYesod
            langI18Ang <- getUserLang
-           webSockets ( chatApp ch (bool xip maid loggedIn) langI18Ang)
+           webSockets ( chatApp (bool xip maid loggedIn))
 
            hasCache <- isJust . join . fmap (Map.lookup langI18Ang) <$> tryReadMVar anonCache
 
---            (maid, loggedIn) <- maybeAuthId >>= \case
            if ((not hasCache && not loggedIn) || loggedIn)
                then do
-                   liftIO $ print "we have it here"
                    {-- ap :: AuthPerms  <- queryDB sadasd -}
                    {- conf <- liftIO getIt -}
-        --            devel <- appDevelopment . appSettings <$> getYesod
                    mrender <- getMessageRender
                    let
                      jsi18n :: SomeMessage App -> RawJavascript
                      jsi18n m = rawJS $ mrender $ m
 
-        --            create websocket
                    res <- genAngularBind
                        jsi18n   -- ^ javascript convertor for messages
                        langI18Ang -- ^ user languages
@@ -83,14 +80,13 @@ handleHomeR _ =  do
                        tryPutMVar anonCache $ Map.insert langI18Ang res m1
                    return res
                else do
-                  liftIO $ print "asking for cache"
                   m1 <- readMVar anonCache
                   maybe (handleHomeR []) return $ Map.lookup langI18Ang m1
 
 genAngularBind :: (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
 genAngularBind jsi18n appLang maid loggedIn development {- (AuthPerms{..}) something -} = do
   -- canViewIt <- verifyBool permsViewSomething apSitePerms
-  runAngularUI False {- <- maybe change it to debug? to have instant refreh -} (const $ return ()) $ cached $ do
+  runAngularUI False {- <- maybe change it to debug? to have instant refreh -} {- (const $ return ()) -} $ cached $ do
 --     let angMenu =  $(hamletFile "angular/menu.hamlet")
 
     addConstant "maid"    [js|#{rawJS $ show maid}|]
@@ -123,41 +119,39 @@ genAngularBind jsi18n appLang maid loggedIn development {- (AuthPerms{..}) somet
                , "angulartics.google.analytics"
                ]
 
-    $(addStateJ     "demos"                "/demos"          ) -- could work without passwords
-    $(addStateJ     "demos.empty"          "/empty"          )
-    $(addStateJ     "demos.panel"          "/panel"          )
-    $(addStateJ     "demos.button"         "/button"         )
-    $(addStateJ     "demos.checkbox"       "/checkbox"       )
-    $(addStateJ     "demos.content"        "/content"        )
-    $(addStateJ     "demos.dialog"         "/dialog"         )
-    $(addStateJ     "demos.slider"         "/slider"         )
-    $(addStateJ     "demos.textfield"      "/textfield"      )
-    $(addStateJ     "demos.youtube"        "/youtube"        )
-    $(addStateJ     "demos.about"          "/about"          )
+    state $ $(tcFile  "demos")                 >> url "/demos"
+    state $ $(tcFile  "demos.empty")           >> url "/empty"
+    state $ $(tcFile  "demos.panel")           >> url "/panel"
+    state $ $(tcFile  "demos.button")          >> url "/button"
+    state $ $(tcFile  "demos.checkbox")        >> url "/checkbox"
+    state $ $(tcFile  "demos.content")         >> url "/content"
+    state $ $(tcFile  "demos.dialog")          >> url "/dialog"
+    state $ $(tcFile  "demos.slider")          >> url "/slider"
+    state $ $(tcFile  "demos.textfield")       >> url "/textfield"
+    state $ $(tcFile  "demos.youtube")         >> url "/youtube"
+    state $ $(tcFile  "demos.about")           >> url "/about"
 
-    $(addStateJ     "oauth2"               "/oauth2"         )  -- show only to channel admin who autenticated oauth
-    $(addStateV     "oauth2.channels"  "@" "/channels"       )
-    $(addStateV     "oauth2.playlists" "@" "/playlists/:cid" )
-    $(addStateV     "oauth2.playlist"  "@" "/playlist/:pid"  )
-    $(addStateV     "oauth2.video"     "@" "/video/:vid"     )
+    state $ $(tcFile  "oauth2")                >> url "/oauth2"         -- show only to channel admin who autenticated oauth
+    state $ $(tcVFile "oauth2.channels"   "@") >> url "/channels"
 
-    $(addStateJ     "admin"                "/admin"          ) -- only channel admin
-    $(addStateJ     "admin.video"          "/video"          )
-    $(addStateJ     "admin.group"          "/group"          ) -- require special permissions
-    $(addStateJ     "admin.group.add"      "/add"            ) -- require special permissions
-    $(addStateJ     "admin.group.edit"     "/:short/edit"    ) -- require special permissions
-    $(addStateJ     "admin.group.user"     "/:short/user"    ) -- require special permissions
-    $(addStateV     "admin.group.user.add" "@" "/add"            )
-    $(addStateJ     "admin.user"           "/user"           ) -- require special permissions
-    $(addStateV     "admin.user.add"   "@" "/add"            ) -- require special permissions
-    $(addStateV     "admin.user.edit"  "@" "/edit/:ident"    ) -- require special permissions
+    state $ $(tcVFile "oauth2.playlists"  "@") >> url "/playlists/:cid"
+    state $ $(tcVFile "oauth2.playlist"   "@") >> url "/playlist/:pid"
+    state $ $(tcVFile "oauth2.video"      "@") >> url "/video/:vid"
 
-    $(addStateJ     "site"                 "/site"           ) -- will be per user
-
-    $(addStateJ     "chat"                 "/chat"           ) -- will be per user
-
-    $(addStateJ     "logout"               "/auth/logout"    )
-    $(addStateJ     "login"                "/auth/login"     )
+    state $ $(tcFile  "admin")                 >> url "/admin"         -- only channel admin
+    state $ $(tcFile  "admin.video")           >> url "/video"
+    state $ $(tcFile  "admin.group")           >> url "/group"         -- require special permissions
+    state $ $(tcFile  "admin.group.add")       >> url "/add"           -- require special permissions
+    state $ $(tcFile  "admin.group.edit")      >> url "/:short/edit"   -- require special permissions
+    state $ $(tcFile  "admin.group.user")      >> url "/:short/user"   -- require special permissions
+    state $ $(tcVFile "admin.group.user.add" "@") >> url "/add"
+    state $ $(tcFile  "admin.user")            >> url "/user"          -- require special permissions
+    state $ $(tcVFile "admin.user.add"  "@")   >> url "/add"                -- require special permissions
+    state $ $(tcVFile "admin.user.edit" "@")   >> url "/edit/:ident"     -- require special permissions
+    state $ $(tcFile  "site")                  >> url "/site"                    -- will be per user
+    state $ $(tcFile  "chat")                  >> url "/chat"                    -- will be per user
+    state $ $(tcFile  "logout")                >> url "/auth/logout"
+    state $ $(tcFile  "login")                 >> url "/auth/login"
 
     setDefaultRoute "/demos/about"
 
@@ -168,7 +162,7 @@ genAngularBind jsi18n appLang maid loggedIn development {- (AuthPerms{..}) somet
     addFilter     "splitChars2"       $(ncoffeeFile "angular/_lib/Filters/splitChars2.coffee")
     addService    "youtubeEmbedUtils" $(juliusFile  "angular/_lib/Service/youtubeEmbedUtils.julius")
     addDirective  "youtubeVideo"      $(juliusFile  "angular/_lib/Directive/youtubeVideo.julius")
-    addFactory "ytPlayer" [js| function (){
+    addFactory    "ytPlayer" [js| function (){
       var player, curr_vars;
 
       var methods = { player: player, curr_vars: curr_vars};
@@ -309,23 +303,27 @@ postLangR = do
     setLanguage lang
     redirectUltDest (HomeR [])
 
---    work (_:as) = work as
 
-chatApp :: CMap MsgBus -> Text  -> LangId -> WebSocketsT Handler ()
-chatApp chans name lid = do
+acceptOwnLanguageTranslations lid k u ( Transl     _ t l) = if l == lid then HaveData () else HaveNull
+acceptOwnLanguageTranslations lid _ _ _ = MissingData
+
+chatApp :: Text  ->  WebSocketsT Handler ()
+chatApp name = do
+    lid <- lift getUserLang
+    chans <- userChannels <$> getYesod
     now1 <- liftIO getCurrentTime
---     sendBinaryData (MsgInfo now1 $ "Welcome to the chat server, please enter your name.")
+    runInnerHandler <- lift handlerToIO
     sendBinaryData $ MsgInfo now1 ("Welcome, " <> name) lid
 
     (rChan, keepWS) <- atomically $ do
-        adjustFilter (\_ -> [ -- \ k u _ -> if k == name then HaveNull else MissingData
-                            -- ,\ k u ( Shout _ _ _)  -> if k == u then HaveNull else MissingData
-                            \ k u t -> if k == u
+        adjustFilter (\_ -> [\ k u t -> if k == u
                                then
                                  HaveNull
                                else
                                  case t of
                                    _ -> MissingData
+                            , acceptOwnLanguageTranslations lid
+
                             ]) name chans
         broadcastChan (Enter name now1) name chans
         (,) <$> getChan name chans <*> newEmptyTMVar
@@ -344,16 +342,28 @@ chatApp chans name lid = do
        nowTime <- liftIO getCurrentTime
        let now = upTime' nowTime
        msg <-  either (\a -> cleanup a >> return (Close name nowTime)) (return . now )=<< receiveDataE
+       let ech = (toEcho msg)
+       case ech of
+         Just (SelfEcho t m l) -> do
+            b <- runInnerHandler $ translate lid m
+            atomically $ mapM (\(lang, jso) -> do
+                case DA.decode jso of
+                  Nothing -> return ()
+                  Just (v :: Value)  -> do -- {\n \"data\": {\n \"translations\": [\n {\n \"translatedText\": \"Testowanie aplikacji\"\n }\n ]\n }\n}\n
+                       let ll = v DA.^? DA.key "data" . DA.key "translations" . DA.nth 0 . DA.key "translatedText" . DA._String
+                       case ll of
+                         Just m -> broadcastChan (Transl t m lang) name chans
+                         _ -> return ()
+                ) b
+            print $ l `lookup` b
+         _ -> return ()
+
        atomically (do
-          maybe noop (sendSendChan False chans name) (toEcho msg)
+          maybe noop (sendSendChan False chans name) ech
           broadcastChan msg name chans
           isEmptyTMVar keepWS)
        >>= bool
            (sendClose ("closing" :: Text))
            readWS
-
     concurrently_ readWS writeWS
 
-
---translate fromLang toLang cont
---   'https://www.googleapis.com/language/translate/v2?key=&q=hello%20world&source=en&target=de' -O -
