@@ -78,7 +78,6 @@ data AppSettings = AppSettings
 
     }
 
-
 compiledAsDevel :: Bool
 compiledAsDevel =
 #if DEVELOPMENT

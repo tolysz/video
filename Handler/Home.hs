@@ -6,7 +6,6 @@ import Text.Julius
 import Text.Naked.Coffee
 
 import Yesod.AngularUI
--- import Yesod.AngularUI.TH
 import Yesod.WebSockets
 import Yesod.WebSockets.Extra
 
@@ -25,15 +24,6 @@ import Control.Lens as DA
 import Data.Aeson.Lens as DA
 import qualified Data.Aeson as DA
 
--- This is a handler function for the GET request method on the HomeR
--- resource pattern. All of your resource patterns are defined in
--- config/routes
---
--- The majority of the code you will write in Yesod lives in these handler
--- functions. You can spread them across multiple files if you are so
--- inclined, or create a single monolithic file.
-
--- import Control.Concurrent.MVar
 type LangCache = Map LangId Html
 
 anonCache :: MVar LangCache
@@ -69,9 +59,6 @@ handleHomeR _ =  do
                        compiledAsDevel {- -> ap-> conf -> -} (\y x ->
                          angularUILayout y $ do
                            setTitle "Video Selector" -- "Welcome To Yesod!"
-                           -- addStylesheetRemote "//fonts.googleapis.com/css?family=Nothing+You+Could+Do"
-                          -- toWidget $(juliusFile "angular/tools.julius")
-                           -- toWidget [julius| alert("Hello World!"); |]
                            x
                          )
 
@@ -85,10 +72,7 @@ handleHomeR _ =  do
 
 genAngularBind :: (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
 genAngularBind jsi18n appLang maid loggedIn development {- (AuthPerms{..}) something -} = do
-  -- canViewIt <- verifyBool permsViewSomething apSitePerms
-  runAngularUI False {- <- maybe change it to debug? to have instant refreh -} {- (const $ return ()) -} $ cached $ do
---     let angMenu =  $(hamletFile "angular/menu.hamlet")
-
+  runAngularUI $ cached $ do
     addConstant "maid"    [js|#{rawJS $ show maid}|]
     addConstant "appLang" [js|#{toJSON appLang}|]
 
@@ -119,49 +103,48 @@ genAngularBind jsi18n appLang maid loggedIn development {- (AuthPerms{..}) somet
                , "angulartics.google.analytics"
                ]
 
-    state $ $(tcFile  "demos")                 >> url "/demos"
-    state $ $(tcFile  "demos.empty")           >> url "/empty"
-    state $ $(tcFile  "demos.panel")           >> url "/panel"
-    state $ $(tcFile  "demos.button")          >> url "/button"
-    state $ $(tcFile  "demos.checkbox")        >> url "/checkbox"
-    state $ $(tcFile  "demos.content")         >> url "/content"
-    state $ $(tcFile  "demos.dialog")          >> url "/dialog"
-    state $ $(tcFile  "demos.slider")          >> url "/slider"
-    state $ $(tcFile  "demos.textfield")       >> url "/textfield"
-    state $ $(tcFile  "demos.youtube")         >> url "/youtube"
-    state $ $(tcFile  "demos.about")           >> url "/about"
+    state $(utcFile "/demos"           "demos"               )
+    state $(utcFile "/empty"           "demos.empty"         )
+    state $(utcFile "/panel"           "demos.panel"         )
+    state $(utcFile "/button"          "demos.button"        )
+    state $(utcFile "/checkbox"        "demos.checkbox"      )
+    state $(utcFile "/content"         "demos.content"       )
+    state $(utcFile "/dialog"          "demos.dialog"        )
+    state $(utcFile "/slider"          "demos.slider"        )
+    state $(utcFile "/textfield"       "demos.textfield"     )
+    state $(utcFile "/youtube"         "demos.youtube"       )
+    state $(utcFile "/about"           "demos.about"         )
 
-    state $ $(tcFile  "oauth2")                >> url "/oauth2"         -- show only to channel admin who autenticated oauth
-    state $ $(tcVFile "oauth2.channels"   "@") >> url "/channels"
+    state $(utcFile  "/oauth2"         "oauth2"              )  -- show only to channel admin who autenticated oauth
+    state $(utcVFile "/channels"       "oauth2.channels"  "@")
 
-    state $ $(tcVFile "oauth2.playlists"  "@") >> url "/playlists/:cid"
-    state $ $(tcVFile "oauth2.playlist"   "@") >> url "/playlist/:pid"
-    state $ $(tcVFile "oauth2.video"      "@") >> url "/video/:vid"
-
-    state $ $(tcFile  "admin")                 >> url "/admin"         -- only channel admin
-    state $ $(tcFile  "admin.video")           >> url "/video"
-    state $ $(tcFile  "admin.group")           >> url "/group"         -- require special permissions
-    state $ $(tcFile  "admin.group.add")       >> url "/add"           -- require special permissions
-    state $ $(tcFile  "admin.group.edit")      >> url "/:short/edit"   -- require special permissions
-    state $ $(tcFile  "admin.group.user")      >> url "/:short/user"   -- require special permissions
-    state $ $(tcVFile "admin.group.user.add" "@") >> url "/add"
-    state $ $(tcFile  "admin.user")            >> url "/user"          -- require special permissions
-    state $ $(tcVFile "admin.user.add"  "@")   >> url "/add"                -- require special permissions
-    state $ $(tcVFile "admin.user.edit" "@")   >> url "/edit/:ident"     -- require special permissions
-    state $ $(tcFile  "site")                  >> url "/site"                    -- will be per user
-    state $ $(tcFile  "chat")                  >> url "/chat"                    -- will be per user
-    state $ $(tcFile  "logout")                >> url "/auth/logout"
-    state $ $(tcFile  "login")                 >> url "/auth/login"
+    state $(utcVFile "/playlists/:cid" "oauth2.playlists" "@")
+    state $(utcVFile "/playlist/:pid"  "oauth2.playlist"  "@")
+    state $(utcVFile "/video/:vid"     "oauth2.video"     "@")
+    state $(utcFile  "/admin"          "admin"               )  -- only channel admin
+    state $(utcFile  "/video"          "admin.video"         )
+    state $(utcFile  "/group"          "admin.group"         )  -- require special permissions
+    state $(utcFile  "/add"            "admin.group.add"     )  -- require special permissions
+    state $(utcFile  "/:short/edit"    "admin.group.edit"    )  -- require special permissions
+    state $(utcFile  "/:short/user"    "admin.group.user"    )  -- require special permissions
+    state $(utcVFile "/add"            "admin.group.user.add" "@")
+    state $(utcFile  "/user"           "admin.user"          )  -- require special permissions
+    state $(utcVFile "/add"            "admin.user.add"  "@" )  -- require special permissions
+    state $(utcVFile "/edit/:ident"    "admin.user.edit" "@" )  -- require special permissions
+    state $(utcFile  "/site"           "site"                )  -- will be per user
+    state $(utcFile  "/chat"           "chat"                )  -- will be per user
+    state $(utcFile  "/auth/logout"    "logout"              )
+    state $(utcFile  "/auth/login"     "login"               )
 
     setDefaultRoute "/demos/about"
 
-    addController "LeftCtrl"          $(ncoffeeFile "angular/_lib/Controlers/LeftCtrl.coffee")
-    addController "RightCtrl"         $(juliusFile  "angular/_lib/Controlers/RightCtrl.julius")
-    addController "AppCtrl"           $(juliusFile  "angular/_lib/Controlers/AppCtrl.julius")
-    addFilter     "splitChars"        $(juliusFile  "angular/_lib/Filters/splitChars.julius")
-    addFilter     "splitChars2"       $(ncoffeeFile "angular/_lib/Filters/splitChars2.coffee")
+    addController "LeftCtrl"          $(ncoffeeFile "angular/_lib/Controlers/LeftCtrl.coffee"      )
+    addController "RightCtrl"         $(juliusFile  "angular/_lib/Controlers/RightCtrl.julius"     )
+    addController "AppCtrl"           $(juliusFile  "angular/_lib/Controlers/AppCtrl.julius"       )
+    addFilter     "splitChars"        $(juliusFile  "angular/_lib/Filters/splitChars.julius"       )
+    addFilter     "splitChars2"       $(ncoffeeFile "angular/_lib/Filters/splitChars2.coffee"      )
     addService    "youtubeEmbedUtils" $(juliusFile  "angular/_lib/Service/youtubeEmbedUtils.julius")
-    addDirective  "youtubeVideo"      $(juliusFile  "angular/_lib/Directive/youtubeVideo.julius")
+    addDirective  "youtubeVideo"      $(juliusFile  "angular/_lib/Directive/youtubeVideo.julius"   )
     addFactory    "ytPlayer" [js| function (){
       var player, curr_vars;
 

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#bower update
+
+../y-bower/.cabal-sandbox/bin/lsbow > test.sh
+
+rm -r static/*
+
+cd static
+bash ../test.sh
+cleancss app.css > app.min.css
+cd angular-i18n
+md5sum * > md5sum.list
+cd ../..
+
+cp extra-bower/PYP-brand/polish-your-polish-124.gif static/

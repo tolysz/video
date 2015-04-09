@@ -9,7 +9,7 @@ import Text.Jasmine             (minifym)
 import Yesod.Core.Types         (Logger)
 import Yesod.Default.Util       (addStaticContentExternal)
 import Yesod.AngularUI
--- import SubSite.Data
+
 import Data.Maybe (fromJust, isJust)
 import Types
 
@@ -34,7 +34,6 @@ data App = App
     , appHttpManager :: Manager
     , appLogger      :: Logger
     , userChannels   :: CMap MsgBus
-
 --     , appOAuth2      :: OAuth2App
     }
 
