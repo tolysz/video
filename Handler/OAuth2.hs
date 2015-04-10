@@ -22,7 +22,7 @@ import Data {Time.Clock (diffUTCTime), Possible, Text qualified as T}
 
 import Network.HTTP.OAuth2
 import Network.HTTP.OAuth2.Types
-import Google.Api.Kinds
+import Network.Google.Api.Kinds
 
 fetchNext :: ListResponse a sym -> Possible String
 fetchNext lr = lr ^. lrNextPageToken . to (fmap T.unpack) -- . to (possible Nothing Nothing (Just . T.unpack))

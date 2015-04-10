@@ -8,12 +8,12 @@ import Data.Possible
 import Data.String.QM
 import Control.Lens
 
-import Google.Api.Kinds
-import Google.Api.Types.GoogleUser
-import Google.Api.Youtube.Channels
-import Google.Api.Youtube.Playlists
-import Google.Api.Youtube.PlaylistItems
-import Google.Api.Youtube.Videos
+import Network.Google.Api.Kinds
+import Network.Google.Api.Types.GoogleUser
+import Network.Google.Api.Youtube.Channels
+import Network.Google.Api.Youtube.Playlists
+import Network.Google.Api.Youtube.PlaylistItems
+import Network.Google.Api.Youtube.Videos
 import Data.Text as T
 -- import qualified Data.List as DL (intercalate)
 {-

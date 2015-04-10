@@ -13,10 +13,10 @@ import Yesod.AngularUI
 import Data.Maybe (fromJust, isJust)
 import Types
 
-import Yesod.Auth.BrowserId           (authBrowserId)
+import           Yesod.Auth.BrowserId        (authBrowserId)
 import qualified Yesod.Auth.BrowserId as BId (forwardUrl)
-import Yesod.Auth.GoogleEmail3        (authGoogleEmail, YesodGoogleAuth(..))
-import qualified Yesod.Auth.GoogleEmail3        as GId( forwardUrl )
+import Yesod.Auth.GoogleEmail3                  (authGoogleEmail, YesodGoogleAuth(..))
+import qualified Yesod.Auth.GoogleEmail3  as GId( forwardUrl )
 import Yesod.Facebook
 import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
 import qualified Data.Text as T (split)

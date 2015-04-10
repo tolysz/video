@@ -37,32 +37,6 @@ library
                      Types.Lang
 
                 --  move to a separate module after testing or merge with http-client?
-                     Network.HTTP.OAuth2.Types
-                     Network.HTTP.OAuth2
-                     Network.HTTP.ClientExtra
-                     Network.HTTP.ClientExtra.Types
---                     Network.HTTP.ClientExtra.Class
-                     Network.HTTP.ClientExtra.Multipart
-                 -- google api module
-                     Google.Api.Kinds
-                     Google.Api.Utils
-                     Google.Api.Youtube.Common
-                     Google.Api.Youtube.Thumbnails
-                     Google.Api.Youtube.Search
-                     Google.Api.Youtube.Videos
-                     Google.Api.Youtube.Channels
-                     Google.Api.Youtube.ChannelSections
-                     Google.Api.Types.GoogleUser
-                     Google.Api.Youtube.Activities
-                     Google.Api.Youtube.ChannelBanners
-                     Google.Api.Youtube.GuideCategories
-                     Google.Api.Youtube.I18nLanguages
-                     Google.Api.Youtube.I18nRegions
-                     Google.Api.Youtube.PlaylistItems
-                     Google.Api.Youtube.Playlists
-                     Google.Api.Youtube.Subscriptions
-                     Google.Api.Youtube.VideoCategories
-                     Google.Api.Youtube.Watermarks
                   -- binary-js
                      Data.Binary.JS
                   -- binary-enum
@@ -151,27 +125,16 @@ library
                  , stm
                  , yesod-websockets
                  , websockets
+                 , transformers
                  , fb
                  , yesod-fb
                  , yesod-auth-fb
                  , wai
                  , utf8-string
                  , async
-
-
-               -- deps for oauth
-                 , case-insensitive
-                 , http-types
-                 , exceptions
-                 , transformers
-                 , http-client
-                 , base64-bytestring
-                 , array
-                 , random
-                 , blaze-builder
-               -- http-extra
-                 , case-insensitive
-                 
+                 , google-api
+                 , http-client-extra
+                 , http-client-extra-oauth2
                -- CMap
                  , stm-containers
                  , list-t
@@ -185,12 +148,17 @@ library
                -- binary-enum
                  , binary
                -- yesod google auth
+                 , random
+                 , http-types
                  , mime-mail
+                 , http-client
                  , conduit-extra
+                 , blaze-builder
                -- wait pull -- https://github.com/yesodweb/yesod/pull/772
                  , enclosed-exceptions
                -- neo4j
                  , mtl
+
 
 executable         video
     if flag(library-only)
