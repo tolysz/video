@@ -7,7 +7,7 @@ import Data.Aeson.Lens
 import Data.Aeson.Types
 import Control.Lens ((^?) , (^.))
 import Control.Lens.Iso (non)
-import Database.Persist.MongoDB
+-- import Database.Persist.MongoDB
 import Data.ByteString.UTF8 (toString)
 
 -- import Database.MongoDB.Query (MongoContext(..))
@@ -152,11 +152,13 @@ postEventR = badMethod
 getEventR :: ApiReq [ Event ]
 getEventR = listsOfAll
 
-getEvent1R :: ObjectId -> ApiReq Event
-getEvent1R (oidToKey -> eid) = runDB $ TC <$> get404 eid
+-- getEvent1R :: ObjectId -> ApiReq Event
+-- getEvent1R = undefined
+-- getEvent1R (oidToKey -> eid) = runDB $ TC <$> get404 eid
 
-deleteEvent1R :: ObjectId -> ApiReq Event
-deleteEvent1R (oidToKey -> eid) = deleteReturn eid
+-- deleteEvent1R :: ObjectId -> ApiReq Event
+-- deleteEvent1R = undefined
+-- deleteEvent1R (oidToKey -> eid) = deleteReturn eid
 
 
 -- | todo: find out how to cut this boilerplate!

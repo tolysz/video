@@ -19,11 +19,12 @@ mutable-static: false
 skip-combining: false
 
 database:
-  user:        "_env:DB_USER:video"
-  password:    "_env:DB_PASSWORD:video"
-  host:        "_env:DB_HOST:localhost"
-  database:    "_env:DB_DATABASE:video"
-  connections: "_env:DB_CONNECTIONS:50"
+  user:     "_env:PGUSER:video"
+  password: "_env:PGPASS:video"
+  host:     "_env:PGHOST:localhost"
+  port:     "_env:PGPORT:5432"
+  database: "_env:PGDATABASE:video"
+  poolsize: "_env:PGPOOLSIZE:10"
 
 neo4j:
   host: "_env:NEO_DB"

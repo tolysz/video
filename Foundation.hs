@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances, RecordWildCards #-}
 module Foundation where
 
-import Database.Persist.MongoDB hiding (master)
+import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Import.NoFoundation
 import Text.Hamlet              (hamletFile, ihamletFile)
 -- import Text.Julius              (Javascript,js)
@@ -145,13 +145,10 @@ instance Yesod App where
 
 -- How to run database actions.
 instance YesodPersist App where
-    type YesodPersistBackend App = MongoContext
+    type YesodPersistBackend App = SqlBackend
     runDB action = do
         master <- getYesod
-        runMongoDBPool
-            (mgAccessMode $ appDatabaseConf $ appSettings master)
-            action
-            (appConnPool master)
+        runSqlPool action $ appConnPool master
 
 instance YesodFacebook App where
  fbHttpManager = appHttpManager

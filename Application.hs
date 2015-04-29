@@ -6,7 +6,9 @@ module Application
     , makeFoundation
     ) where
 
-import Control.Monad.Logger                 (liftLoc)
+import Control.Monad.Logger                 (liftLoc, runLoggingT)
+import Database.Persist.Postgresql          (createPostgresqlPool, pgConnStr,
+                                             pgPoolSize, runSqlPool)
 import Import
 import Language.Haskell.TH.Syntax           (qLocation)
 import Network.Wai.Handler.Warp             (Settings, defaultSettings,
@@ -47,15 +49,31 @@ makeFoundation appSettings = do
         (if appMutableStatic appSettings then staticDevel else static)
         (appStaticDir appSettings)
 
-    -- Create the database connection pool
-    appConnPool <- createPoolConfig $ appDatabaseConf appSettings
---     runLoggingT (runSqlPool (runMigration migrateAll) appConnPool) logFunc
-
     -- My Specific ones
     userChannels <- newCMapIO
     -- add RabbitMQ Broadcast
 
-    return App {..}
+    -- We need a log function to create a connection pool. We need a connection
+    -- pool to create our foundation. And we need our foundation to get a
+    -- logging function. To get out of this loop, we initially create a
+    -- temporary foundation without a real connection pool, get a log function
+    -- from there, and then create the real foundation.
+
+    let mkFoundation appConnPool = App {..}
+        tempFoundation = mkFoundation $ error "connPool forced in tempFoundation"
+        logFunc = messageLoggerSource tempFoundation appLogger
+
+    -- Create the database connection pool
+    pool <- flip runLoggingT logFunc $ createPostgresqlPool
+        (pgConnStr  $ appDatabaseConf appSettings)
+        (pgPoolSize $ appDatabaseConf appSettings)
+
+    -- Perform database migration using our application's logging settings.
+    runLoggingT (runSqlPool (runMigration migrateAll) pool) logFunc
+
+    -- Return the foundation
+    return $ mkFoundation pool
+
 
 -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and
 -- applyng some additional middlewares.
