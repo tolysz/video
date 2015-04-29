@@ -36,3 +36,11 @@ data SiteGroupMemberResolved =
      }
 
 deriveJSON (optsL 23) ''SiteGroupMemberResolved
+
+data Backup = Backup
+  { bMembers         :: [User           ]
+  , bSiteGroup       :: [SiteGroup      ]
+  , bSiteGroupMember :: [SiteGroupMember]
+  }
+
+deriveJSON (optsL 1)  ''Backup

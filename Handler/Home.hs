@@ -70,8 +70,8 @@ handleHomeR _ =  do
                   m1 <- readMVar anonCache
                   maybe (handleHomeR []) return $ Map.lookup langI18Ang m1
 
-genAngularBind :: (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool -> Bool -> {- AuthPerms-> Value ->  -} ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind jsi18n appLang maid loggedIn development {- (AuthPerms{..}) something -} = do
+genAngularBind :: (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool -> Bool ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
+genAngularBind jsi18n appLang maid loggedIn development = do
   runAngularUI $ cached $ do
     addConstant "maid"    [js|#{rawJS $ show maid}|]
     addConstant "appLang" [js|#{toJSON appLang}|]

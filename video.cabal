@@ -45,7 +45,7 @@ library
                      Yesod.Auth.GoogleEmail3
                      Yesod.Auth.Facebook2
                   -- wait pull -- https://github.com/yesodweb/yesod/pull/772
-                     Yesod.WebSockets.Extra
+--                  transformers
                   -- separare neo4j library
                      Database.Neo.Monad
 --                     Database.Neo.Types
@@ -124,6 +124,7 @@ library
                  , lens-aeson
                  , stm
                  , yesod-websockets
+                 , yesod-websockets-extra
                  , websockets
                  , transformers
                  , fb

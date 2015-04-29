@@ -25,6 +25,15 @@ getUserChannelsR =
 -- liftMaybe :: Monad m => Maybe a -> MaybeT m a
 -- liftMaybe = MaybeT . return
 
+getBackupR :: ApiReq Backup
+getBackupR = TC <$> ( Backup <$> listsOfAllNaked
+                             <*> listsOfAllNaked
+                             <*> listsOfAllNaked
+                             )
+
+postBackupR :: ApiReq Bool
+postBackupR = undefined
+
 liftMaybe :: (MonadPlus m) => Maybe a -> m a
 liftMaybe = maybe mzero return
 liftJust :: (MonadPlus m) => a -> m a
@@ -153,28 +162,52 @@ deleteEvent1R (oidToKey -> eid) = deleteReturn eid
 -- | todo: find out how to cut this boilerplate!
 --   force compiler not to disply signature missing if the type is fully defined otherwise
 -- | debug stuff -- mongo admin?
-getAllOAuthAccess     = listsOfAll :: ApiReq [  OAuthAccess  ]
-getAllEmail           = listsOfAll :: ApiReq [     Email     ]
-getAllYTChannel       = listsOfAll :: ApiReq [   YTChannel   ]
-getAllYTPlaylist      = listsOfAll :: ApiReq [   YTPlaylist  ]
-getAllYTVideoPlaylist = listsOfAll :: ApiReq [YTVideoPlaylist]
-getAllYTVideo         = listsOfAll :: ApiReq [    YTVideo    ]
-getAllYTVideoUser     = listsOfAll :: ApiReq [  YTVideoUser  ]
-getAllChannelMember   = listsOfAll :: ApiReq [ ChannelMember ]
-getAllSiteGroupMember = listsOfAll :: ApiReq [SiteGroupMember]
-getAllSiteGroup       = listsOfAll :: ApiReq [   SiteGroup   ]
-getAllVirtualVideo    = listsOfAll :: ApiReq [ VirtualVideo  ]
-getAllPlaylistEvent   = listsOfAll :: ApiReq [ PlaylistEvent ]
+getAllOAuthAccess     :: ApiReq [  OAuthAccess  ]
+getAllOAuthAccess     = listsOfAll
+
+getAllEmail           :: ApiReq [     Email     ]
+getAllEmail           = listsOfAll
+
+getAllYTChannel       :: ApiReq [   YTChannel   ]
+getAllYTChannel       = listsOfAll
+
+getAllYTPlaylist      :: ApiReq [   YTPlaylist  ]
+getAllYTPlaylist      = listsOfAll
+
+getAllYTVideoPlaylist :: ApiReq [YTVideoPlaylist]
+getAllYTVideoPlaylist = listsOfAll
+
+getAllYTVideo         :: ApiReq [    YTVideo    ]
+getAllYTVideo         = listsOfAll
+
+getAllYTVideoUser     :: ApiReq [  YTVideoUser  ]
+getAllYTVideoUser     = listsOfAll
+
+getAllChannelMember   :: ApiReq [ ChannelMember ]
+getAllChannelMember   = listsOfAll
+
+getAllSiteGroupMember :: ApiReq [SiteGroupMember]
+getAllSiteGroupMember = listsOfAll
+
+getAllSiteGroup       :: ApiReq [   SiteGroup   ]
+getAllSiteGroup       = listsOfAll
+
+getAllVirtualVideo    :: ApiReq [ VirtualVideo  ]
+getAllVirtualVideo    = listsOfAll
+
+getAllPlaylistEvent   :: ApiReq [ PlaylistEvent ]
+getAllPlaylistEvent   = listsOfAll
 
 -- | type magic
 --   convert any list of all into a respoce; too many things to import
 --   just to make this line a happy line
 
-listsOfAll = jsonDB $ selectList [] []
+listsOfAllNaked = jsonDB $ selectList [] []
+listsOfAll = TC <$> listsOfAllNaked
 
 jsonDB q = do
   guardAllAdmin
-  TC . map (\(Entity _ v) -> v) <$> runDB q
+  map (\(Entity _ v) -> v) <$> runDB q
 
 jsonDBNaked q = do
   guardAllAdmin
