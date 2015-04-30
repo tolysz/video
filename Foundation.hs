@@ -172,6 +172,8 @@ instance YesodGoogleAuth App where
   googleClientSecret a = gaClientSecret <$> (appGoogleWebAppOAuth . appSettings) a
 
 
+newUUID = decodeUtf8 . UUID.toASCIIBytes <$> liftIO UUID.nextRandom
+
 instance YesodAuth App where
     type AuthId App = UserId
 
@@ -192,7 +194,7 @@ instance YesodAuth App where
         case x of
             [Entity uid _] -> return $ Just uid
             [] -> do
-                ruuid <- decodeUtf8 . UUID.toASCIIBytes <$> liftIO UUID.nextRandom
+                ruuid <- newUUID
                 Just <$> do
                   uu <- insert User
                     { userIdent = ruuid
