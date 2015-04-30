@@ -22,11 +22,17 @@ import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
 import qualified Data.Text as T (split)
 import Control.Applicative
 import Data.Bool
-
+import Control.Monad
 import Database.Persist.Postgresql          (pgConnStr)
 
 import qualified Database.PostgreSQL.Simple as PGS (connect)
 import qualified Database.PostgreSQL.Simple.Internal as PGS
+
+
+import qualified Database.Esqueleto as E
+
+import qualified Data.UUID.V4 as UUID
+import qualified Data.UUID    as UUID
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -176,18 +182,31 @@ instance YesodAuth App where
     redirectToReferer _ = False
 
     getAuthId creds = runDB $ do
-        x <- getBy $ UniqueUser $ credsIdent creds
+--         x <- getBy $ UniqueUser $ credsIdent creds
+        x <- E.select $
+             E.from $ \(p `E.LeftOuterJoin` e) -> do
+             E.on $ (p E.^. UserId) E.==. e E.^. EmailUser
+             E.where_ $ (e E.^. EmailEmail ) E.==. E.val (credsIdent creds)
+             return p
+
         case x of
-            Just (Entity uid _) -> return $ Just uid
-            Nothing ->
-                Just <$> insert User
-                    { userIdent = credsIdent creds
+            [Entity uid _] -> return $ Just uid
+            [] -> do
+                ruuid <- decodeUtf8 . UUID.toASCIIBytes <$> liftIO UUID.nextRandom
+                Just <$> do
+                  uu <- insert User
+                    { userIdent = ruuid
+--                     credsIdent creds
           --          , userPassword  = Nothing
                     , userName      = Nothing
                     , userFriendly  = Nothing
-                    , userSiteAdmin = False
                     , userAvatar    = Nothing
                     }
+                  insert Email
+                    { emailEmail = credsIdent creds
+                    , emailUser  = uu
+                    }
+                  return uu
 
     -- You can add other plugins like BrowserID, email or OAuth here
     authPlugins _ = [ authBrowserId def
@@ -264,10 +283,16 @@ getUserIdent = do
 
 getUserAdmin :: Handler Bool
 getUserAdmin = do
-  aid <- fmap (userIdent . fromJust) . runDB . get =<< requireAuthId
-  runDB $ do
-     Just (Entity _ v) <- getBy $ UniqueUser aid
-     return $ userSiteAdmin v
+  aid <- requireAuthId
+  runDB $
+     E.select (
+     E.from $ \(p `E.LeftOuterJoin` e) -> do
+     E.on $ (p E.^. UserId) E.==. e E.^. SiteAdminUser
+     E.where_ $ (p E.^. UserId ) E.==. E.val aid
+     return e)
+     >>= return . \case
+       [Entity _ v] -> siteAdminIsAdmin v
+       _ -> False
 
 getUserLang :: Handler LangId
 getUserLang = cached (readLang <$> languages)

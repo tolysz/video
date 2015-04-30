@@ -2,17 +2,20 @@ User
     ident         Text
     name          Text Maybe
     friendly      Text Maybe
- -- password      Text Maybe
-    siteAdmin     Bool
     avatar        Text Maybe
     UniqueUser    ident
     deriving Show Typeable Generic
 
 Email
     email         Text
-    user          UserId Maybe
-    verkey        Text Maybe
+    user          UserId
     UniqueEmail   email
+    deriving Show Typeable Generic
+
+SiteAdmin
+    user            UserId
+    isAdmin         Bool
+    UniqueSiteAdmin user
     deriving Show Typeable Generic
 
 OAuthAccess

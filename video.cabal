@@ -139,6 +139,7 @@ library
                  , google-api
                  , http-client-extra
                  , http-client-extra-oauth2
+                 , uuid
                -- CMap
                  , stm-containers
                  , list-t

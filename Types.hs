@@ -6,7 +6,7 @@
 module Types where
 
 import Data.Text (Text)
-import qualified Data.Text as T
+-- import qualified Data.Text as T
 
 import Data.Char (toLower, isUpper)
 import Data.Bool
@@ -19,12 +19,12 @@ import Yesod.Core.Content
 -- import Data.String
 import Database.Persist.TH
 
-import Control.Applicative ((<$>))
+-- import Control.Applicative ((<$>))
 
-import Types.MsgBus
-import Types.Lang
+-- import Types.MsgBus
+-- import Types.Lang
 
-import Data.Maybe (fromMaybe)
+-- import Data.Maybe (fromMaybe)
 
 
 data OAuth2Google = OAuth2Google

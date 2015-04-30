@@ -77,12 +77,12 @@ postUserR = do
             userIdent     <- liftMaybe (v ^? key "ident"    . _String )
             userName      <- liftJust  (v ^? key "name"     . _String )
             userFriendly  <- liftJust  (v ^? key "friendly" . _String )
-            userSiteAdmin <- liftJust  False -- (v ^? key "siteAdmin" . _Bool )
+--             userSiteAdmin <- liftJust  False -- (v ^? key "siteAdmin" . _Bool )
             userAvatar    <- liftJust  (v ^? key "avatar"   . _String )
             let us = User {..}
             MaybeT $ runDB $ getBy (UniqueUser userIdent) >>= \case
                  -- keep the old admin privs
-                Just (Entity uid old) -> let nx = us{userSiteAdmin = Import.userSiteAdmin old} in replace uid nx >> return (Just $ TC nx)
+                Just (Entity uid old) -> replace uid us >> return (Just $ TC us)
                 Nothing -> insert us >> return (Just $ TC us)
 
 getUser1R :: EmailQuery -> ApiReq User
