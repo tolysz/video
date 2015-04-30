@@ -10,6 +10,8 @@ import Control.Lens.Iso (non)
 -- import Database.Persist.MongoDB
 import Data.ByteString.UTF8 (toString)
 
+import qualified Database.Esqueleto as E
+
 -- import Database.MongoDB.Query (MongoContext(..))
 -- import Data.Aeson.Types (emptyObject)
 
@@ -117,7 +119,7 @@ getSiteGroupUserR gid =
      groupKey <- getDBKey (UniqueSiteGroup gid)
      memberList <- selectList [SiteGroupMemberGroup ==. groupKey] []
      forM memberList $ \m@(Entity k SiteGroupMember{..}) -> do
-          us <- fmap userIdent <$> get (siteGroupMemberUser)
+          us <- fmap userIdent <$> get siteGroupMemberUser
           return (SiteGroupMemberResolved (Just gid) us siteGroupMemberFullMember siteGroupMemberUserAdmin siteGroupMemberVideoAdmin)
 {-
      rawrecs <- runDB $ find (select

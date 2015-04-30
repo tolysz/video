@@ -23,6 +23,11 @@ import qualified Data.Text as T (split)
 import Control.Applicative
 import Data.Bool
 
+import Database.Persist.Postgresql          (pgConnStr)
+
+import qualified Database.PostgreSQL.Simple as PGS (connect)
+import qualified Database.PostgreSQL.Simple.Internal as PGS
+
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
 -- starts running, such as database connections. Every handler will have
@@ -149,6 +154,8 @@ instance YesodPersist App where
     runDB action = do
         master <- getYesod
         runSqlPool action $ appConnPool master
+
+getConn = liftIO . PGS.connectPostgreSQL =<< pgConnStr . appDatabaseConf . appSettings <$> getYesod
 
 instance YesodFacebook App where
  fbHttpManager = appHttpManager

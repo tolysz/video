@@ -92,6 +92,8 @@ library
                  , text                          >= 0.11       && < 2.0
                  , persistent                    >= 2.0        && < 2.2
                  , persistent-postgresql         >= 2.1.1      && < 2.2
+                 , esqueleto
+                 , postgresql-simple
                  , postgresql-simple-typed
                  , persistent-template           >= 2.0        && < 2.2
                  , template-haskell
