@@ -106,7 +106,7 @@ deleteUser1R :: EmailQuery -> ApiReq User
 deleteUser1R = deleteByReturn UniqueUser
 
 -- | REST For Group membreship
-postSiteGroupUserR :: ShortName -> ApiReq SiteGroupMember
+postSiteGroupUserR :: GUUID -> ApiReq SiteGroupMember
 postSiteGroupUserR gid = do
    guardAllAdmin
    restOpenM $ \(v :: Value) -> runMaybeT $ do
@@ -127,7 +127,7 @@ postSiteGroupUserR gid = do
            Nothing             -> void $ insert us
          return (Just $ TC us)
 
-getSiteGroupUserR :: ShortName -> ApiReq [SiteGroupMemberResolved]
+getSiteGroupUserR :: GUUID -> ApiReq [SiteGroupMemberResolved]
 getSiteGroupUserR gid =
    jsonDBNaked $ do
      groupKey <- getDBKey (UniqueSiteGroup gid)

@@ -3,7 +3,7 @@
     <input ng-model="group.name" disabled>
 <md-input-container>
     <label>_{SomeMessage MsgGroup}
-    <input ng-model="member.name" disabled>
+    <input ng-model="user.name" disabled>
 
 <md-checkbox ng-model="member.fullMember" aria-label="full group member">
      _{SomeMessage MsgFullMember}

@@ -82,9 +82,21 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
 
 --     addValue    "debug"   [js|false|]
 
-    addRun [js|function($rootScope){
+    addRun [js|function($rootScope,$state, $stateParams){
        $rootScope.appDebug = false;
        $rootScope.setDebug = function (x){$rootScope.appDebug = x;};
+
+       $rootScope.$state = $state;
+       $rootScope.$stateParams = $stateParams;
+       $rootScope.$on("$stateChangeSuccess",  function(event, toState, toParams, fromState, fromParams) {
+                // to be used for back button //won't work when page is reloaded.
+                $rootScope.previousState_name = fromState.name;
+                $rootScope.previousState_params = fromParams;
+        });
+            //back button function called from back button's ng-click="back()"
+        $rootScope.back = function() {
+                $state.go($rootScope.previousState_name,$rootScope.previousState_params);
+          };
      }|]
 
     addConfig "$log"      [js|debugEnabled(#{development})|]
