@@ -1,0 +1,41 @@
+function($scope, $state, $stateParams, Group, User, GroupUser, title, $log) {
+    $scope.member = {};
+    $scope.group = Group.get({uuid: $stateParams.uuid});
+    $scope.member.group = $stateParams.uuid;
+
+    $scope.user = User.get({uuid: $stateParams.uuuid});
+
+    // $scope.members = GroupUser.query({short: $stateParams.short});
+    title.set("#{jsi18n (SomeMessage MsgNewMember)}")
+    $scope.save = function () {
+        GroupUser
+            .save({uuid: $stateParams.uuid}, $scope.member, function (newMember) {
+                if(angular.isDefined($scope.members))
+                     $scope.members.push(newMember);
+                $state.go('admin.group.user', {uuid:$stateParams.uuid});
+            })
+    };
+
+    $scope.querySearch  = function(query) {
+        return $scope.usersEmails.filter( createFilterFor(query) ) || []
+    };
+
+function createFilterFor(query) {
+    var lowercaseQuery = angular.lowercase(query);
+    return function filterFn(user) {
+        $log.debug(user);
+        return (user.value.indexOf(lowercaseQuery) === 0);
+    };
+}
+
+$scope.$watchGroup(['select', 'searchText'], function(val){
+
+    if (angular.isDefined(val[0]) && angular.isDefined(val[0].value)) {
+        $scope.searchText = val[0].display;
+        $scope.member.user = val[0].uuid;
+    } else
+      delete ($scope.member.user);
+})
+
+}
+

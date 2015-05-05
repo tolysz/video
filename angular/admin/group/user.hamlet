@@ -14,6 +14,18 @@ $if (isAdmin perm)
           <span .fa .users     .font-stack-2x .text-danger-blur>
           <span .fa .user-plus .font-stack-2x .text-white>
        _{SomeMessage MsgAddUserToGroup}
+
+<md-list>
+  <md-item ng-repeat="memb in members">
+    <md-list-item .md-3-line>
+      <a ui-sref="admin.group.user.edit({uuid:group.uuid, uuid:memb.uuid})">
+        <div .md-avatar>
+           <img ng-show="memb.logo" ng-src="{{memb.logo}}" .logo alt="memb.who}}">
+           <span ng-hide="memb.logo" .fa .font-3x .group>
+      <div .md-list-item-text>
+          <h3>{{memb.name}} ({{memb.short}})
+          <pre>
+             {{memb | json }}
 $if (isAdmin perm)
     <pre ng-show=appDebug>
-     {{ members | json}}
+      {{ members | json}}

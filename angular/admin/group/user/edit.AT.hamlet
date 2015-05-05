@@ -1,0 +1,36 @@
+<md-input-container>
+    <label>_{SomeMessage MsgGroup}
+    <input ng-model="group.name" disabled>
+<md-input-container>
+    <label>_{SomeMessage MsgGroup}
+    <input ng-model="member.name" disabled>
+
+<md-checkbox ng-model="member.fullMember" aria-label="full group member">
+     _{SomeMessage MsgFullMember}
+$if (isAdmin perm)
+    <md-checkbox ng-model="member.userAdmin" aria-label="member is videoAdmin">
+         _{SomeMessage MsgUserAdmin}
+    <md-checkbox ng-model="member.videoAdmin" aria-label="member is videoAdmin">
+         _{SomeMessage MsgVideoAdmin}
+
+<div layout=row layout-align="space-between center">
+         <md-button .md-raised .md-warn ng-click=save()>
+            <span .fa .floppy-o>
+            _{SomeMessage MsgSave}
+         <md-button .md-raised .md-warn ng-click=delete()>
+            <span .fa .times>
+            _{SomeMessage MsgDelete}
+$if (isAdmin perm)
+    <pre ng-show=appDebug>
+      {{ group | json }}
+    <pre ng-show=appDebug>
+      {{ member | json }}
+    <pre ng-show=appDebug>
+      {{ user | json }}
+
+    <pre ng-show=appDebug>
+        \  group         SiteGroupId
+        \  user          UserId
+        \  fullMember    Bool
+        \  userAdmin     Bool
+        \  videoAdmin    Bool

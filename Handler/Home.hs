@@ -140,6 +140,7 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
     state $(utcFile  "/:uuid/edit"     "admin.group.edit"    )  -- require special permissions
     state $(utcFile  "/:uuid/user"     "admin.group.user"    )  -- require special permissions
     state $(utcVFile "/add"            "admin.group.user.add" "@")
+    state $(utcVFile "/:uuuid/edit"    "admin.group.user.edit" "@")
     state $(utcFile  "/user"           "admin.user"          )  -- require special permissions
     state $(utcVFile "/add"            "admin.user.add"  "@" )  -- require special permissions
     state $(utcVFile "/edit/:uuid"     "admin.user.edit" "@" )  -- require special permissions
@@ -279,12 +280,12 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
              , { state:"admin.user", name: "%{jsi18n (SomeMessage MsgMenuAdminUsers)}", icon: "fa users font-menu-icon font-lg"}
              ]
       admin: true
-    ,
-      state: "oauth2"
-      name:  "OAuth2"
-      visible : false
-      pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt font-menu-icon font-lg" }]
-      admin: true
+#    ,
+#      state: "oauth2"
+#      name:  "OAuth2"
+#      visible : false
+#      pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt font-menu-icon font-lg" }]
+#      admin: true
     ]
   return if perms.isAdmin then sections else _.reject(sections, (x) -> x.admin)
 |]
