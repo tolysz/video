@@ -18,7 +18,7 @@ $if (isAdmin perm)
 <md-list>
   <md-item ng-repeat="memb in members">
     <md-list-item .md-3-line>
-      <a ui-sref="admin.group.user.edit({uuid:group.uuid, uuid:memb.uuid})">
+      <a ui-sref="admin.group.user.edit({uuid:memb.group, uuid:memb.user})">
         <div .md-avatar>
            <img ng-show="memb.logo" ng-src="{{memb.logo}}" .logo alt="memb.who}}">
            <span ng-hide="memb.logo" .fa .font-3x .group>
