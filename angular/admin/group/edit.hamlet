@@ -22,5 +22,6 @@
          <md-button .md-raised .md-warn ng-click=delete()>
             <span .fa .times>
             _{SomeMessage MsgDelete}
-<pre ng-show=debug>
-  {{ group | json }}
+$if (isAdmin perm)
+    <pre ng-show=appDebug>
+      {{ group | json }}

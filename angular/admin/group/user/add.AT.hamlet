@@ -1,6 +1,6 @@
 <md-input-container>
     <label>_{SomeMessage MsgGroup}
-    <input ng-model="member.group" disabled>
+    <input ng-model="group.name" disabled>
 <md-autocomplete
         md-selected-item=select
         md-search-text=searchText
@@ -10,20 +10,22 @@
       <span md-highlight-text=searchText >{{user.display}}
 <md-checkbox ng-model="member.fullMember" aria-label="full group member">
      _{SomeMessage MsgFullMember}
-<md-checkbox ng-model="member.userAdmin" aria-label="member is videoAdmin">
-     _{SomeMessage MsgUserAdmin}
-<md-checkbox ng-model="member.videoAdmin" aria-label="member is videoAdmin">
-     _{SomeMessage MsgVideoAdmin}
+$if (isAdmin perm)
+    <md-checkbox ng-model="member.userAdmin" aria-label="member is videoAdmin">
+         _{SomeMessage MsgUserAdmin}
+    <md-checkbox ng-model="member.videoAdmin" aria-label="member is videoAdmin">
+         _{SomeMessage MsgVideoAdmin}
 
 <md-button .md-raised .md-warn ng-click=save()>_{SomeMessage MsgAdd}
-<pre>
-  {{ group | json }}
-<pre>
-  {{ member | json }}
 
-<pre>
-    \  group         SiteGroupId
-    \  user          UserId
-    \  fullMember    Bool
-    \  userAdmin     Bool
-    \  videoAdmin    Bool
+$if (isAdmin perm)
+    <pre ng-show=appDebug>
+      {{ group | json }}
+    <pre ng-show=appDebug>
+      {{ member | json }}
+    <pre ng-show=appDebug>
+        \  group         SiteGroupId
+        \  user          UserId
+        \  fullMember    Bool
+        \  userAdmin     Bool
+        \  videoAdmin    Bool

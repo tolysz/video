@@ -1,8 +1,8 @@
-function($scope,$http,$log, $sce, title){
+function($scope,$http,$log, $sce, title,$stateParams){
  title.set( $sce.trustAsHtml("About: how are we here... <small>Some OpenSource technologies used.</small>"))
-
+  $scope.uuid = $stateParams.uuid;
   $scope.getList = function(){
-      $http.get("@{YTChannelsR}")
+      $http.get("@{YTChannelsBaseR}/" + $stateParams.uuid)
           .success( function(data){
               $log.debug(data);
               $scope.channels = data;

@@ -14,7 +14,7 @@
                 <img ng-src={{pl.snippet.thumbnails.default.url}}  alt="{{pl.snippet.title}}" ng-click=setThose(pl) >
        <div flex  layout-align="center center" >
          <div layout=column>
-             <a ui-sref=oauth2.video({vid:curr_id})> {{curr_title}}
+             <a ui-sref=oauth2.video({uuid:uuid,vid:curr_id})> {{curr_title}}
              <youtube-video player-vars="curr_vars" player=player ng-style="style()" >
              <pre ng-show=debug>
                  {{ curr_pl | json}}

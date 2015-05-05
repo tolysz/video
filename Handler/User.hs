@@ -43,6 +43,9 @@ getYTVideoR gid (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
 -- how to merge this and the nent function ?? any help welcome! type class with an internal type/data family perhaps?
 
 -- all channels for a given user
+handleYTChannelsBaseR :: Handler Html
+handleYTChannelsBaseR = defaultLayout [whamlet||]
+
 handleYTChannelsR  :: GUUID -> ApiReq [YoutubeChannel]
 handleYTChannelsR  gid = TC <$> next HaveNull []
   where

@@ -78,9 +78,14 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
   runAngularUI $ cached $ do
     addConstant "maid"    [js|#{rawJS $ show maid}|]
     addConstant "appLang" [js|#{toJSON appLang}|]
+    addConstant "perms"   [js|#{toJSON perm}|]
 
-    addConstant "perms" [js|#{toJSON perm}|]
+--     addValue    "debug"   [js|false|]
 
+    addRun [js|function($rootScope){
+       $rootScope.appDebug = false;
+       $rootScope.setDebug = function (x){$rootScope.appDebug = x;};
+     }|]
 
     addConfig "$log"      [js|debugEnabled(#{development})|]
     addConfig "$compile"  [js|debugInfoEnabled(#{development})|]
@@ -122,11 +127,12 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
     state $(utcFile "/about"           "demos.about"         )
 
 --     state $(utcFile  "/oauth2"         "oauth2"              )  -- show only to channel admin who autenticated oauth
---     state $(utcVFile "/channels"       "oauth2.channels"  "@")
+    state (url   "/oauth2"  >> nameA "oauth2")
+    state $(utcVFile "/:uuid/channels"       "oauth2.channels"  "@")
 --
---     state $(utcVFile "/playlists/:cid" "oauth2.playlists" "@")
---     state $(utcVFile "/playlist/:pid"  "oauth2.playlist"  "@")
---     state $(utcVFile "/video/:vid"     "oauth2.video"     "@")
+    state $(utcVFile "/:uuid/playlists/:cid" "oauth2.playlists" "@")
+    state $(utcVFile "/:uuid/playlist/:pid"  "oauth2.playlist"  "@")
+    state $(utcVFile "/:uuid/video/:vid"     "oauth2.video"     "@")
     state $(utcFile  "/admin"          "admin"               )  -- only channel admin
     state $(utcFile  "/video"          "admin.video"         )
     state $(utcFile  "/group"          "admin.group"         )  -- require special permissions
@@ -142,7 +148,7 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
     state $(utcFile  "/auth/logout"    "logout"              )
     state $(utcFile  "/auth/login"     "login"               )
 
-    setDefaultRoute "/demos/about"
+    setDefaultRoute "site"
 
     addController "LeftCtrl"          $(ncoffeeFile "angular/_lib/Controlers/LeftCtrl.coffee"      )
     addController "RightCtrl"         $(juliusFile  "angular/_lib/Controlers/RightCtrl.julius"     )
@@ -244,22 +250,6 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
       visible: false
       pages: []
     ,
-      state: "admin"
-      name: "%{jsi18n (SomeMessage MsgMenuAdmin)}"
-      visible: false
-      pages: [ { state:"admin.video", name: "%{jsi18n (SomeMessage MsgMenuAdminVideo)}", icon: "fa video-camera  font-menu-icon font-lg"}
-             , { state:"admin.group", name: "%{jsi18n (SomeMessage MsgMenuAdminGroup)}", icon: "fa group font-spin font-menu-icon font-lg"}
-             #, { state:"admin.group.add", name: "group add", icon: "fa group font-spin  font-menu-icon font-lg"}
-             , { state:"admin.user", name: "%{jsi18n (SomeMessage MsgMenuAdminUsers)}", icon: "fa users font-menu-icon font-lg"}
-             ]
-      admin: true
-    ,
-      state: "oauth2"
-      name:  "OAuth2"
-      visible : false
-      pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt font-menu-icon font-lg" }]
-      admin: true
-    ,
       state: "chat"
       name:  "%{jsi18n (SomeMessage MsgMenuChat)}"
       visible : false
@@ -279,6 +269,22 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
              , { state: "demos.empty",     name: "%{jsi18n (SomeMessage MsgHello)}",      icon: "fa frown-o font-menu-icon font-lg" }
              , { state: "demos.about",     name: "About",      icon: "fa info font-menu-icon font-lg" }
              ]
+    ,
+      state: "admin"
+      name: "%{jsi18n (SomeMessage MsgMenuAdmin)}"
+      visible: false
+      pages: [ { state:"admin.video", name: "%{jsi18n (SomeMessage MsgMenuAdminVideo)}", icon: "fa video-camera  font-menu-icon font-lg"}
+             , { state:"admin.group", name: "%{jsi18n (SomeMessage MsgMenuAdminGroup)}", icon: "fa group font-spin font-menu-icon font-lg"}
+             #, { state:"admin.group.add", name: "group add", icon: "fa group font-spin  font-menu-icon font-lg"}
+             , { state:"admin.user", name: "%{jsi18n (SomeMessage MsgMenuAdminUsers)}", icon: "fa users font-menu-icon font-lg"}
+             ]
+      admin: true
+    ,
+      state: "oauth2"
+      name:  "OAuth2"
+      visible : false
+      pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt font-menu-icon font-lg" }]
+      admin: true
     ]
   return if perms.isAdmin then sections else _.reject(sections, (x) -> x.admin)
 |]

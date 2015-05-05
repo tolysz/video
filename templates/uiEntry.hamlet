@@ -40,7 +40,11 @@ $newline never
 <md-sidenav .site-sidenav .md-sidenav-right .md-whiteframe-z2 md-component-id="right" style="width:250px;" tabindex="-1" >
    <section ng-controller="RightCtrl" style="height: 100vh;" layout=column>
       <md-toolbar .md-theme-light>
-        <h1 .md-toolbar-tools>Sidenav Right
+        <h1 .md-toolbar-tools>
+          Sidenav Right
+        $if (isAdmin perms)
+          <md-switch ng-model=appDebug  ng-change="setDebug(appDebug)" aria-label=appDebug>
+             debug mode
       <div hide-gt-sm>
         <md-button .md-primary .md-accent ng-click="close()">
           _{SomeMessage MsgClosePanel}

@@ -8,21 +8,22 @@
 
 -- /oauth/ require additional authorization via @GoogleOAuthLoginR
 /api/oauth2/                          RootOAuth2R
-/api/oauth2/google/callback/#Text     GoogleCallbackR
+/api/oauth2/google/callback     GoogleCallbackR
 /api/oauth2/google/manage             GoogleManageR
-/api/oauth2/google/login/#Text        GoogleOAuthLoginR
+/api/oauth2/google/login/#GUUID        GoogleOAuthLoginR
 /api/oauth2/google/logout             GoogleOAuthLogoutR
 /api/oauth2/google/debug/#GUUID/*Texts  GoogleDebugR
 
 -- youtube
+/api/oauth2/youtube/channels                YTChannelsBaseR   -- user channels
 /api/oauth2/youtube/channels/#GUUID          YTChannelsR   -- user channels
-/api/oauth2/youtube/playlists/               YTPlaylistsBaseR
+/api/oauth2/youtube/playlists               YTPlaylistsBaseR
 /api/oauth2/youtube/playlists/#GUUID/#String YTPlaylistsR  -- playlists for a channel
-/api/oauth2/youtube/playlist/                YTPlaylistItemBaseR
+/api/oauth2/youtube/playlist                YTPlaylistItemBaseR
 /api/oauth2/youtube/playlist/#GUUID/#String  YTPlaylistItemR
 /api/oauth2/youtube/allvideos/#GUUID         YTAllVideosR  -- all videos for user
 
--- /oauth2/youtube/video             YTVideoBaseR
+/api/oauth2/youtube/video                    YTVideoBaseR
 /api/oauth2/youtube/video/#GUUID/*Texts      YTVideoR      GET  -- video details by id
 
 -- normal authentication level

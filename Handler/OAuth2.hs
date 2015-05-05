@@ -13,6 +13,7 @@ module Handler.OAuth2 where
 import Import
 
 import Data.Time.Clock ( diffUTCTime )
+import Data.Maybe
 import qualified Data.Text as T
 import Control.Lens
 {--
@@ -36,12 +37,16 @@ instance FromJSON a => IsString (Text -> Handler (TC a)) where
 -- ^ This simplyfies requesting data to suplying url with the appriopirate types
 --   example how monad is an onion and changing boundaries changes meaning
 
-handleGoogleCallbackR :: Text -> Handler Html
-handleGoogleCallbackR gid = do
+handleGoogleCallbackR :: Handler Html
+handleGoogleCallbackR = do
   codeMaybe <- lookupGetParam "code"
   errorMaybe <- lookupGetParam "error"
+  gidMaybe <- lookupGetParam "state"
+
+  unless (isJust gidMaybe) $ redirect (HomeR [])
+
   case (codeMaybe, errorMaybe) of
-    (Just c, _)       -> processTokenOU gid (fetchAccessToken c)
+    (Just c, _)       -> processTokenOU (fromJust gidMaybe) (fetchAccessToken c)
                           >> redirect (HomeR [])
     (_, Just e)       -> traceHTML e
     (Nothing,Nothing) -> redirect (HomeR [])
@@ -58,6 +63,7 @@ handleGoogleOAuthLogoutR = -- do
 
 handleGoogleOAuthLoginR :: Text -> Handler ()
 handleGoogleOAuthLoginR gid = do
+         setSession "GUUID" gid
          gc <- googleKey gid
          redirect $
            generateAuthUrl
@@ -78,15 +84,16 @@ handleRootOAuth2R :: Handler ()
 handleRootOAuth2R = return ()
 
 googleKey :: Text -> Handler OAuth2
-googleKey gid = do
+googleKey uuid = do
      render <- getUrlRender
      Just (OAuth2Google {..}) <- appGoogleWebAppOAuth . appSettings <$> getYesod
      return OAuth2 { oauthClientId     = gaClientId
                    , oauthClientSecret = gaClientSecret
-                   , oauthRedirectUri  = render ( GoogleCallbackR gid)
+                   , oauthRedirectUri  = render GoogleCallbackR
                    , oauthAuthUri      = "https://accounts.google.com/o/oauth2/auth"
                    , oauthTokenUri     = "https://accounts.google.com/o/oauth2/token"
                    , oauthRevokeUri    = "https://accounts.google.com/o/oauth2/revoke?token="
+                   , oauthState        = Just uuid
                    }
 
 getToken :: Text ->  Handler AuthToken

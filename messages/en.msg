@@ -72,4 +72,4 @@ NewMember: New group member
 EmailLong: Email address
 FullMember: full group member
 UserAdmin: member is user admin
-VideoAdmin: member ia video admin
+VideoAdmin: member is video admin

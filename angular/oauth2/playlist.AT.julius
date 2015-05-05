@@ -2,7 +2,7 @@ function($scope,$log,$http /*, ytPlayer*/ ,$stateParams){
 
     //$scope.player    = ytPlayer.player;
     //$scope.curr_vars = ytPlayer.curr_vars;
-
+    $scope.uuid = $stateParams.uuid;
     $scope.getList = function(){
         $log.debug($stateParams.pid)
         $http.get('@{YTPlaylistItemBaseR}' + "/" + $stateParams.pid)

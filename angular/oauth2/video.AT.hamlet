@@ -13,5 +13,5 @@
           <div .md-tile-content>
               $# <a ui-sref=oauth2.playlist({pid:pl.id})> {{pl.snippet.title}}
               <div ng-bind-html=to_trusted(vid.player.embedHtml)>
-              <pre ng-show=debug>
+              <pre ng-show=appDebug>
                 {{ vid | json}}

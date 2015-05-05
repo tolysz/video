@@ -28,6 +28,8 @@ import Database.Persist.Postgresql          (pgConnStr)
 import qualified Database.PostgreSQL.Simple as PGS (connect)
 import qualified Database.PostgreSQL.Simple.Internal as PGS
 
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
 
 import qualified Database.Esqueleto as E
 
@@ -47,6 +49,7 @@ data App = App
     , userChannels   :: CMap MsgBus
 --     , appOAuth2      :: OAuth2App
     }
+
 
 instance HasHttpManager App where
     getHttpManager = appHttpManager
@@ -248,6 +251,7 @@ instance YesodAuthPersist App
 instance YesodAngular App where
    angularUIEntry = do
      loggedIn <- isJust <$> handlerToWidget maybeAuthId
+     perms <- handlerToWidget userPerms
      $(widgetFile "uiEntry")
 
 langIdLocale :: LangId -> Route App
@@ -296,3 +300,13 @@ getUserAdmin =
 
 getUserLang :: Handler LangId
 getUserLang = cached (readLang <$> languages)
+
+
+type ApiReq a = Handler (TC a)
+type AppM x = HandlerT App IO x
+
+userPerms :: AppM Permssions
+userPerms = do
+         isAdmin <-  getUserAdmin
+         let userGroup = Map.empty
+         return Permssions{..}

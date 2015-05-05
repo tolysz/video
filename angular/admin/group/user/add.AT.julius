@@ -6,8 +6,10 @@ function($scope, $state, $stateParams, Group, User, GroupUser, title, $log) {
     User.query({},function(users){
         $scope.usersEmails = _.map( users,function(u){
             return {
-                value: u.uuid.toLowerCase(),
-                display: u.uuid
+                value: u.name.toLowerCase(),
+                display: u.name,
+                uuid: u.uuid
+
             };});
     });
 
@@ -37,8 +39,8 @@ function createFilterFor(query) {
 $scope.$watchGroup(['select', 'searchText'], function(val){
 
     if (angular.isDefined(val[0]) && angular.isDefined(val[0].value)) {
-        $scope.searchText = val[0].value;
-        $scope.member.user = val[0].value;
+        $scope.searchText = val[0].display;
+        $scope.member.user = val[0].uuid;
     } else
       delete ($scope.member.user);
 })

@@ -6,7 +6,7 @@
               <img ng-src={{chan.snippet.thumbnails.default.url}} alt="{{chan.snippet.title}}" .cover>
           <div .md-tile-content>
             <h3>
-               <a ui-sref=oauth2.playlists({cid:chan.id})>
+               <a ui-sref=oauth2.playlists({uuid:uuid,cid:chan.id})>
                       {{chan.snippet.title}}
             <h4>{{chan.kind}}
             <p>

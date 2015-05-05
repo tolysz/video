@@ -5,19 +5,24 @@
 
 module Types where
 
-import Data.Text (Text)
 -- import qualified Data.Text as T
 
-import Data.Char (toLower, isUpper)
-import Data.Bool
 import Prelude -- (drop, (.), (++), String)
-import Data.Typeable
-import GHC.Generics
-import Data.Aeson.TH
 import Data.Aeson
+import Data.Aeson.TH
+import Data.Bool
+import Data.Char (toLower, isUpper)
+import Data.Text (Text)
+import Data.Typeable
+import Data.Default
+
 import Yesod.Core.Content
--- import Data.String
 import Database.Persist.TH
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+
+import GHC.Generics
+-- import Data.String
 
 -- import Control.Applicative ((<$>))
 
@@ -108,4 +113,14 @@ type EmailQuery = Text
 -- formal informal rude
 -- aerial diffusion
 
+data Permssions = Permssions
+  { isAdmin   :: Bool
+  , userGroup :: !(Map Text Bool)
+  }
+   deriving (Show, Typeable, Generic)
 
+instance Default Permssions where
+  def = Permssions False Map.empty
+
+instance FromJSON Permssions
+instance ToJSON   Permssions

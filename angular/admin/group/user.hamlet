@@ -5,13 +5,15 @@
           <span .fa .pencil-square-o  .font-stack-2x .text-danger-blur>
           <span .fa .users .fix-users .font-stack-1x .text-white>
        _{SomeMessage MsgEditGroup}
-<pre>
-    {{ group | json }}
+$if (isAdmin perm)
+    <pre ng-show=appDebug>
+        {{ group | json }}
 <a ui-sref="admin.group.user.add({uuid:group.uuid})">
     <md-button .md-raised .md-primary>
        <span .font-stack>
           <span .fa .users     .font-stack-2x .text-danger-blur>
           <span .fa .user-plus .font-stack-2x .text-white>
        _{SomeMessage MsgAddUserToGroup}
-<pre>
-    {{ members | json}}
+$if (isAdmin perm)
+    <pre ng-show=appDebug>
+     {{ members | json}}
