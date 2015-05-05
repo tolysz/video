@@ -38,7 +38,7 @@
 /api/admin/user/#Text                 User1R GET DELETE
 
 /api/admin/group                      SiteGroupR  GET POST
-/api/admin/group/#Text                SiteGroup1R GET DELETE
+/api/admin/group/#GUUID                SiteGroup1R GET DELETE
 
 -- /api/event                            EventR  GET POST
 -- /api/event/#ObjectId                  Event1R GET DELETE
@@ -46,8 +46,9 @@
 -- backup restore for the whole site... needed for db upgrade change...
 /api/backup             BackupR GET POST
 
-/api/admin/group/#Text/user              SiteGroupUserR  GET POST
-/api/admin/group/#Text/user/#Text        SiteGroupUser1R GET DELETE
+/api/admin/group/user                     SiteGroupUser0R  POST
+/api/admin/group/#GUIID/user              SiteGroupUserR  GET
+/api/admin/group/#GUIID/user/#Text        SiteGroupUser1R GET DELETE
 
 -- user centric/ creds from the session
 -- /user

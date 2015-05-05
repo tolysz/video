@@ -106,8 +106,8 @@ deleteUser1R :: EmailQuery -> ApiReq User
 deleteUser1R = deleteByReturn UniqueUser
 
 -- | REST For Group membreship
-postSiteGroupUserR :: GUUID -> ApiReq SiteGroupMember
-postSiteGroupUserR gid = do
+postSiteGroupUser0R :: ApiReq SiteGroupMember
+postSiteGroupUser0R = do
    guardAllAdmin
    restOpenM $ \(v :: Value) -> runMaybeT $ do
        textGroup <- liftMaybe (v ^? key "group"      . _String )
