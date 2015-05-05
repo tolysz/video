@@ -22,80 +22,80 @@ import Google.Api{Kinds, Types.GoogleUser, Youtube{Channels, Playlists, Videos}}
 
 -- Requires OAuth2
 -- get information about logged user
-getGoogleUserR     :: ApiReq GoogleUser
-getGoogleUserR     =  "https://www.googleapis.com/oauth2/v2/userinfo"
+getGoogleUserR :: GUUID -> ApiReq GoogleUser
+getGoogleUserR  =  "https://www.googleapis.com/oauth2/v2/userinfo"
 
 -- get all videos by id
 handleYTVideoBaseR :: Handler Html
 handleYTVideoBaseR = defaultLayout [whamlet||]
 
-getYTVideoR :: [Text] -> ApiReq [YoutubeVideo]
-getYTVideoR (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
+getYTVideoR :: GUUID -> [Text] -> ApiReq [YoutubeVideo]
+getYTVideoR gid (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
     where
       req = "snippet,contentDetails,status,statistics,recordingDetails,fileDetails"
       base = [qm|https://www.googleapis.com/youtube/v3/videos?part=$req&id=$vid|]
       next MissingData a   = return a
       next (HaveData "") a = return a
       next n a = do -- HaveNull is our start
-         TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq YoutubeVideos
+         TC one <- (fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: GUUID -> ApiReq YoutubeVideos) gid
          next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- how to merge this and the nent function ?? any help welcome! type class with an internal type/data family perhaps?
 
 -- all channels for a given user
-handleYTChannelsR  :: ApiReq [YoutubeChannel]
-handleYTChannelsR  = TC <$> next HaveNull []
+handleYTChannelsR  :: GUUID -> ApiReq [YoutubeChannel]
+handleYTChannelsR  gid = TC <$> next HaveNull []
   where
     req = "brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails"
     base = [qm|https://www.googleapis.com/youtube/v3/channels?part=$req&mine=true|]
     next :: Possible String -> [YoutubeChannel] -> Handler [YoutubeChannel]
     next MissingData a = return a
     next n a = do
-           TC one <- fromString (base <> (possible "" "" ("&nextToken=" <>) n)) :: ApiReq YoutubeChannels
+           TC one <- (fromString (base <> (possible "" "" ("&nextToken=" <>) n)) :: Text -> ApiReq YoutubeChannels) gid
            next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- all playlists for a given channel
 handleYTPlaylistsBaseR :: Handler Html
 handleYTPlaylistsBaseR = defaultLayout [whamlet||]
 
-handleYTPlaylistsR :: String -> ApiReq [YoutubePlaylist]
-handleYTPlaylistsR cid = TC <$> next HaveNull []
+handleYTPlaylistsR :: Text -> String -> ApiReq [YoutubePlaylist]
+handleYTPlaylistsR gid cid = TC <$> next HaveNull []
   where
     req = "id,snippet,contentDetails,player,status"
     base = [qm|https://www.googleapis.com/youtube/v3/playlists?part=$req&channelId=$cid&maxResults=50|]
     next MissingData a   = return a
     next (HaveData "") a = return a
     next n a = do
-       TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq YoutubePlaylists
+       TC one <- (fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: Text -> ApiReq YoutubePlaylists) gid
        next (fetchNext one) (a ++ (one ^. lrItems))
 
 handleYTPlaylistItemBaseR :: Handler Html
 handleYTPlaylistItemBaseR = defaultLayout [whamlet||]
 
-handleYTPlaylistItemR :: String -> ApiReq [YoutubePlaylistItem]
-handleYTPlaylistItemR pid = TC <$> next HaveNull []
+handleYTPlaylistItemR :: Text -> String -> ApiReq [YoutubePlaylistItem]
+handleYTPlaylistItemR gid pid = TC <$> next HaveNull []
   where
     req = "id,snippet,contentDetails,status"
     base = [qm|https://www.googleapis.com/youtube/v3/playlistItems?part=$req&playlistId=$pid&maxResults=50|]
     next MissingData a   = return a
     next (HaveData "") a = return a
     next n a = do
-       TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq YoutubePlaylistItems
+       TC one <- (fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: Text -> ApiReq YoutubePlaylistItems) gid
        next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- get id, etag if etag does not match get ->
 -- auditDetails,brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails
 
 -- all videos for a given user
-handleYTAllVideosR   :: ApiReq [Value]
-handleYTAllVideosR = TC <$> next HaveNull [] -- if there be 'null' in the result add extra field init 
+handleYTAllVideosR   :: Text -> ApiReq [Value]
+handleYTAllVideosR gid = TC <$> next HaveNull [] -- if there be 'null' in the result add extra field init
   where
     req = "id,snippet"
     base = "https://www.googleapis.com/youtube/v3/search?part=" <> req <> "&forMine=true&type=video&maxResults=50"
     next MissingData a   = return a
     next (HaveData "") a = return a
     next n a = do
-       TC one <- fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: ApiReq (ListResponse Value "youtube#searchListResponse")
+       TC one <- (fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: Text -> ApiReq (ListResponse Value "youtube#searchListResponse")) gid
        next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- example how rto use lenses, kill soon

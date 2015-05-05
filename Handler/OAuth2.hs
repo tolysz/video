@@ -23,6 +23,7 @@ import Data {Time.Clock (diffUTCTime), Possible, Text qualified as T}
 import Network.HTTP.OAuth2
 import Network.HTTP.OAuth2.Types
 import Network.Google.Api.Kinds
+import qualified Database.Esqueleto as E
 
 fetchNext :: ListResponse a sym -> Possible String
 fetchNext lr = lr ^. lrNextPageToken . to (fmap T.unpack) -- . to (possible Nothing Nothing (Just . T.unpack))
@@ -30,17 +31,17 @@ fetchNext lr = lr ^. lrNextPageToken . to (fmap T.unpack) -- . to (possible Noth
 fetchItems :: ListResponse a sym -> [a]
 fetchItems lr = lr ^. lrItems
 
-instance FromJSON a => IsString (Handler (TC a)) where
-  fromString = getQueryOA'
+instance FromJSON a => IsString (Text -> Handler (TC a)) where
+  fromString a = \b -> getQueryOA' b a
 -- ^ This simplyfies requesting data to suplying url with the appriopirate types
 --   example how monad is an onion and changing boundaries changes meaning
 
-handleGoogleCallbackR :: Handler Html
-handleGoogleCallbackR = do
+handleGoogleCallbackR :: Text -> Handler Html
+handleGoogleCallbackR gid = do
   codeMaybe <- lookupGetParam "code"
   errorMaybe <- lookupGetParam "error"
   case (codeMaybe, errorMaybe) of
-    (Just c, _)       -> processTokenOU (fetchAccessToken c)
+    (Just c, _)       -> processTokenOU gid (fetchAccessToken c)
                           >> redirect (HomeR [])
     (_, Just e)       -> traceHTML e
     (Nothing,Nothing) -> redirect (HomeR [])
@@ -51,11 +52,13 @@ handleGoogleManageR = redirect ("https://security.google.com/settings/security/p
 handleGoogleOAuthLogoutR :: Handler ()
 handleGoogleOAuthLogoutR = -- do
    -- revoke token somehow else
-   void . runDB . deleteBy . OnePerRealm =<< getUserIdent
+   -- todo: brocken
+   -- void . runDB . deleteBy . OnePerRealm =<< getUserIdent
+   return ()
 
-handleGoogleOAuthLoginR :: Handler ()
-handleGoogleOAuthLoginR = do
-         gc <- googleKey
+handleGoogleOAuthLoginR :: Text -> Handler ()
+handleGoogleOAuthLoginR gid = do
+         gc <- googleKey gid
          redirect $
            generateAuthUrl
              gc
@@ -74,22 +77,27 @@ getHttpManager' = appHttpManager <$> getYesod
 handleRootOAuth2R :: Handler ()
 handleRootOAuth2R = return ()
 
-googleKey :: Handler OAuth2
-googleKey = do
+googleKey :: Text -> Handler OAuth2
+googleKey gid = do
      render <- getUrlRender
      Just (OAuth2Google {..}) <- appGoogleWebAppOAuth . appSettings <$> getYesod
      return OAuth2 { oauthClientId     = gaClientId
                    , oauthClientSecret = gaClientSecret
-                   , oauthRedirectUri  = render GoogleCallbackR
+                   , oauthRedirectUri  = render ( GoogleCallbackR gid)
                    , oauthAuthUri      = "https://accounts.google.com/o/oauth2/auth"
                    , oauthTokenUri     = "https://accounts.google.com/o/oauth2/token"
                    , oauthRevokeUri    = "https://accounts.google.com/o/oauth2/revoke?token="
                    }
 
-getToken :: Handler AuthToken
-getToken = do
+getToken :: Text ->  Handler AuthToken
+getToken gid = do
   now <- liftIO getCurrentTime
-  (runDB . getBy . OnePerRealm =<< getUserIdent) >>= \case
+  uid <- getUserIdent
+
+
+  runDB ( do
+     Entity gid' _ <- getBy404 (UniqueSiteGroup gid)
+     getBy (UniqueOAuthAccess uid gid')) >>= \case
       Just (Entity _ (OAuthAccess{..}))      -- we have the entry inside DB
         | Just ex  <- oAuthAccessExpires     -- it has expires field
         , diffUTCTime ex now > 10            -- it still has at least 10s on the clock
@@ -98,30 +106,33 @@ getToken = do
 
       Just (Entity _ (OAuthAccess{..}))      -- we have the entry inside DB
         | Just _ <- oAuthAccessRefreshToken  -- we have the refresh tocken there
-          -> refreshTokenOU def{atRefreshToken=oAuthAccessRefreshToken} >> getToken         -- this need to show errors whan fails
+          -> refreshTokenOU gid def{atRefreshToken=oAuthAccessRefreshToken} >> getToken gid        -- this need to show errors whan fails
 
       _  -- we failed on all of the above redirect oauth-login
-          -> redirect GoogleOAuthLoginR   -- have no credentials and need to get some
+          -> redirect ( GoogleOAuthLoginR gid)  -- have no credentials and need to get some
 
-getQueryOA :: (FromJSON a)=> String -> Handler (OAuth2Result a)
-getQueryOA url = do
+getQueryOA :: (FromJSON a) => Text -> String -> Handler (OAuth2Result a)
+getQueryOA gid url = do
    mgr   <- getHttpManager'
-   token <- getToken
+   token <- getToken gid
    liftIO $ getOAuth2 mgr token url
 
-getQueryOA' :: (FromJSON a)=> String -> ApiReq a
-getQueryOA' url = getQueryOA url >>= \case
+getQueryOA' :: (FromJSON a)=> Text -> String -> ApiReq a
+getQueryOA' gid url = getQueryOA gid url >>= \case
         Left e  -> sendResponseStatus (toEnum (fromMaybe 500 $ aeStatus e) ) (aeError e)
         Right v -> return $ TC v
 
 -- put a new tocken away, we loose the old one...
-updateDBToken :: AuthToken -> Handler ()
-updateDBToken AuthToken{..} = do
-       uid <- getUserIdent
+updateDBToken :: Text -> AuthToken -> Handler ()
+updateDBToken gid' AuthToken{..} = do
+       uid  <- getUserIdent
        runDB $ do
-         deleteBy $ OnePerRealm uid
+--          gid  <- get404 (UniqueSiteGroup gid')
+         Entity gid _ <- getBy404 (UniqueSiteGroup gid')
+         deleteBy $ UniqueOAuthAccess uid gid
          void $ insert $ OAuthAccess
                         uid
+                        gid
                         "google"               -- let sets oauth provider arbitrary to google
                         Nothing
                         (Just atAccessToken)   -- store the current access tocken
@@ -135,23 +146,23 @@ updateDBToken AuthToken{..} = do
                         , "https://www.googleapis.com/auth/youtubepartner"  -- some promotions and stuff
                         ]
 
-refreshTokenOU :: AuthToken -> Handler ()
-refreshTokenOU = processTokenOU . refreshToken
+refreshTokenOU :: Text -> AuthToken -> Handler ()
+refreshTokenOU gid = processTokenOU gid . refreshToken
 
-processTokenOU :: (Manager -> OAuth2 -> IO (OAuth2Result AuthToken))
+processTokenOU :: Text -> (Manager -> OAuth2 -> IO (OAuth2Result AuthToken))
                -> Handler ()
-processTokenOU action = do
-  gc <- googleKey
+processTokenOU gid action = do
+  gc <- googleKey gid
   mgr <- getHttpManager'
   liftIO (action mgr gc) >>=
      \case
         Left e -> sendResponseStatus (toEnum (fromMaybe 500 $ aeStatus e) ) (aeError e)
-        Right t -> updateDBToken t
+        Right t -> updateDBToken gid t
 
 traceHTML :: Show a => a -> Handler Html
 traceHTML (show -> e) = defaultLayout [whamlet|We hit authError <br> #{e}|]
 
-handleGoogleDebugR :: Texts -> ApiReq Value
-handleGoogleDebugR v = do
+handleGoogleDebugR :: Text -> Texts -> ApiReq Value
+handleGoogleDebugR gid v = do
   r <- T.intercalate "&" .  map (\(a,b)-> a <> "=" <> b ) . reqGetParams <$> getRequest
-  fromString $ T.unpack $ T.intercalate "/"  ("https://www.googleapis.com" : v) <> "?" <> r
+  (fromString $ T.unpack $ T.intercalate "/"  ("https://www.googleapis.com" : v) <> "?" <> r) gid

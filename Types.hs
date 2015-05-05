@@ -26,7 +26,7 @@ import Database.Persist.TH
 
 -- import Data.Maybe (fromMaybe)
 
-
+type GUUID = Text
 data OAuth2Google = OAuth2Google
   { gaClientId            :: Text
   , gaClientSecret        :: Text

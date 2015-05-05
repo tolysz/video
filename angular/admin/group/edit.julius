@@ -1,14 +1,14 @@
 function($scope, $state, $stateParams, Group, title) {
     title.set("#{jsi18n (SomeMessage MsgEditGroup)}")
 
-    $scope.group = Group.get({short:$stateParams.short});
+    $scope.group = Group.get({uuid:$stateParams.uuid});
 
     $scope.delete = function()
     {
-        var i = $scope.group.short;
+        var i = $scope.group.uuid;
         Group.delete($scope.group).$promise.then( function() {
             for (var ix = $scope.groups.length - 1; ix >= 0; ix--) {
-                if ($scope.groups[ix].short === i) {
+                if ($scope.groups[ix].uuid === i) {
                     $scope.groups.splice(ix, 1);
                 }
             }
@@ -20,14 +20,14 @@ function($scope, $state, $stateParams, Group, title) {
     $scope.save = function()
     {
       Group.save($scope.group).$promise.then( function(d) {
-          var match = _.find($scope.groups, function(item) { return item.short === d.short })
+          var match = _.find($scope.groups, function(item) { return item.uuid === d.uuid })
           if (match) {
               _.extend(match,d);
           } else
            { $scope.groups = Group.query();
            }
 
-          $state.go('admin.group.user',{short:$stateParams.short});
+          $state.go('admin.group.user',{uuid:$stateParams.uuid});
       })
     }
 }

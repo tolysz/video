@@ -5,7 +5,7 @@
       <md-item ng-repeat="group in groups">
         <md-item-content>
           <div .md-tile-left>
-              <a ui-sref="admin.group.user({short:group.short})">
+              <a ui-sref="admin.group.user({uuid:group.uuid})">
                   <img ng-src={{group.avatar}} ng-show=group.avatar .cover alt="{{group.short}}">
                   <span .cover .fa .user .font-3x ng-hide=group.avatar>
           <div .md-tile-content>

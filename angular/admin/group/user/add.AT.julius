@@ -1,13 +1,13 @@
 function($scope, $state, $stateParams, Group, User, GroupUser, title, $log) {
     $scope.member = {};
-    $scope.group = Group.get({short: $stateParams.short});
-    $scope.member.group = $stateParams.short;
+    $scope.group = Group.get({uuid: $stateParams.uuid});
+    $scope.member.group = $stateParams.uuid;
 
     User.query({},function(users){
         $scope.usersEmails = _.map( users,function(u){
             return {
-                value: u.ident.toLowerCase(),
-                display: u.ident
+                value: u.uuid.toLowerCase(),
+                display: u.uuid
             };});
     });
 
@@ -15,10 +15,10 @@ function($scope, $state, $stateParams, Group, User, GroupUser, title, $log) {
     title.set("#{jsi18n (SomeMessage MsgNewMember)}")
     $scope.save = function () {
         GroupUser
-            .save({short: $stateParams.short}, $scope.member, function (newMember) {
+            .save({uuid: $stateParams.uuid}, $scope.member, function (newMember) {
                 if(angular.isDefined($scope.members))
                      $scope.members.push(newMember);
-                $state.go('admin.group.user', {short:$stateParams.short});
+                $state.go('admin.group.user', {uuid:$stateParams.uuid});
             })
     };
 

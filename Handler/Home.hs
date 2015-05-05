@@ -24,6 +24,8 @@ import Control.Lens as DA
 import Data.Aeson.Lens as DA
 import qualified Data.Aeson as DA
 
+
+import Permissions
 type LangCache = Map LangId Html
 
 anonCache :: MVar LangCache
@@ -37,11 +39,12 @@ handleHomeR _ =  do
                xip = maybe ip ( ( <> (T.drop 9 ip)) . E.decodeUtf8) $ lookup "X-Real-IP" (Wai.requestHeaders req)
            (maid, loggedIn) <- maybeAuthId >>= \case
                Nothing ->  return  ( "not logged in" , False)
-               Just n ->   return . (,True ) . maybe xip userIdent =<< (runDB . get $ n)
+               Just n ->   return . (,True ) . maybe xip userUuid =<< (runDB . get $ n)
            langI18Ang <- getUserLang
            webSockets ( chatApp (bool xip maid loggedIn))
 
-           hasCache <- isJust . join . fmap (Map.lookup langI18Ang) <$> tryReadMVar anonCache
+           perms <- userPerms
+           hasCache  <- isJust . join . fmap (Map.lookup langI18Ang) <$> tryReadMVar anonCache
 
            if ((not hasCache && not loggedIn) || loggedIn)
                then do
@@ -51,8 +54,8 @@ handleHomeR _ =  do
                    let
                      jsi18n :: SomeMessage App -> RawJavascript
                      jsi18n m = rawJS $ mrender $ m
-
                    res <- genAngularBind
+                       perms
                        jsi18n   -- ^ javascript convertor for messages
                        langI18Ang -- ^ user languages
                        maid loggedIn
@@ -70,11 +73,14 @@ handleHomeR _ =  do
                   m1 <- readMVar anonCache
                   maybe (handleHomeR []) return $ Map.lookup langI18Ang m1
 
-genAngularBind :: (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool -> Bool ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind jsi18n appLang maid loggedIn development = do
+genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool -> Bool ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
+genAngularBind perm jsi18n appLang maid loggedIn development = do
   runAngularUI $ cached $ do
     addConstant "maid"    [js|#{rawJS $ show maid}|]
     addConstant "appLang" [js|#{toJSON appLang}|]
+
+    addConstant "perms" [js|#{toJSON perm}|]
+
 
     addConfig "$log"      [js|debugEnabled(#{development})|]
     addConfig "$compile"  [js|debugInfoEnabled(#{development})|]
@@ -115,22 +121,22 @@ genAngularBind jsi18n appLang maid loggedIn development = do
     state $(utcFile "/youtube"         "demos.youtube"       )
     state $(utcFile "/about"           "demos.about"         )
 
-    state $(utcFile  "/oauth2"         "oauth2"              )  -- show only to channel admin who autenticated oauth
-    state $(utcVFile "/channels"       "oauth2.channels"  "@")
-
-    state $(utcVFile "/playlists/:cid" "oauth2.playlists" "@")
-    state $(utcVFile "/playlist/:pid"  "oauth2.playlist"  "@")
-    state $(utcVFile "/video/:vid"     "oauth2.video"     "@")
+--     state $(utcFile  "/oauth2"         "oauth2"              )  -- show only to channel admin who autenticated oauth
+--     state $(utcVFile "/channels"       "oauth2.channels"  "@")
+--
+--     state $(utcVFile "/playlists/:cid" "oauth2.playlists" "@")
+--     state $(utcVFile "/playlist/:pid"  "oauth2.playlist"  "@")
+--     state $(utcVFile "/video/:vid"     "oauth2.video"     "@")
     state $(utcFile  "/admin"          "admin"               )  -- only channel admin
     state $(utcFile  "/video"          "admin.video"         )
     state $(utcFile  "/group"          "admin.group"         )  -- require special permissions
     state $(utcFile  "/add"            "admin.group.add"     )  -- require special permissions
-    state $(utcFile  "/:short/edit"    "admin.group.edit"    )  -- require special permissions
-    state $(utcFile  "/:short/user"    "admin.group.user"    )  -- require special permissions
+    state $(utcFile  "/:uuid/edit"     "admin.group.edit"    )  -- require special permissions
+    state $(utcFile  "/:uuid/user"     "admin.group.user"    )  -- require special permissions
     state $(utcVFile "/add"            "admin.group.user.add" "@")
     state $(utcFile  "/user"           "admin.user"          )  -- require special permissions
     state $(utcVFile "/add"            "admin.user.add"  "@" )  -- require special permissions
-    state $(utcVFile "/edit/:ident"    "admin.user.edit" "@" )  -- require special permissions
+    state $(utcVFile "/edit/:uuid"     "admin.user.edit" "@" )  -- require special permissions
     state $(utcFile  "/site"           "site"                )  -- will be per user
     state $(utcFile  "/chat"           "chat"                )  -- will be per user
     state $(utcFile  "/auth/logout"    "logout"              )
@@ -153,9 +159,9 @@ genAngularBind jsi18n appLang maid loggedIn development = do
 
     } |]
 
-    addFactory "User"      [js| function($resource) { return $resource("@{UserR}/:ident"); }|]
-    addFactory "Group"     [js| function($resource) { return $resource("@{SiteGroupR}/:short"); }|]
-    addFactory "GroupUser" [js| function($resource) { return $resource("@{SiteGroupR}/:short/user/:ident"); }|]
+    addFactory "User"      [js| function($resource) { return $resource("@{UserR}/:uuid"); }|]
+    addFactory "Group"     [js| function($resource) { return $resource("@{SiteGroupR}/:uuid"); }|]
+    addFactory "GroupUser" [js| function($resource) { return $resource("@{SiteGroupR}/:uuid/user/:uuuid"); }|]
 
     addFactory "wsLink" [js| function($rootScope, $log, maid, $mdToast, $timeout, $interval, appLang) {
       // Open a WebSocket connection
@@ -230,7 +236,7 @@ genAngularBind jsi18n appLang maid loggedIn development = do
      }
     |]
     addFactory "sections" [ncoffee|
-() ->
+(perms) ->
   sections =
     [
       state: "site"
@@ -246,11 +252,13 @@ genAngularBind jsi18n appLang maid loggedIn development = do
              #, { state:"admin.group.add", name: "group add", icon: "fa group font-spin  font-menu-icon font-lg"}
              , { state:"admin.user", name: "%{jsi18n (SomeMessage MsgMenuAdminUsers)}", icon: "fa users font-menu-icon font-lg"}
              ]
+      admin: true
     ,
       state: "oauth2"
       name:  "OAuth2"
       visible : false
       pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt font-menu-icon font-lg" }]
+      admin: true
     ,
       state: "chat"
       name:  "%{jsi18n (SomeMessage MsgMenuChat)}"
@@ -272,7 +280,7 @@ genAngularBind jsi18n appLang maid loggedIn development = do
              , { state: "demos.about",     name: "About",      icon: "fa info font-menu-icon font-lg" }
              ]
     ]
-  return sections
+  return if perms.isAdmin then sections else _.reject(sections, (x) -> x.admin)
 |]
 
 noop = return ()

@@ -1,4 +1,4 @@
 function($scope, $stateParams, Group, GroupUser) {
-    $scope.group   = Group.get({short:$stateParams.short});
-    $scope.members = GroupUser.query({short:$stateParams.short});
+    $scope.group   = Group.get({uuid:$stateParams.uuid});
+    $scope.members = GroupUser.query({uuid:$stateParams.uuid});
 }

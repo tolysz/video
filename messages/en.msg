@@ -1,4 +1,5 @@
 LangId: en-GB
+Uuid: UUID
 Demos: Demos
 Hello: Hello
 FullName: Full name

@@ -6,7 +6,7 @@
    <md-item ng-repeat="user in users">
      <md-item-content>
        <div .md-tile-left>
-           <a ui-sref="admin.user.edit({ident:user.ident})">
+           <a ui-sref="admin.user.edit({uuid:user.uuid})">
                <img ng-src={{user.avatar}} ng-show=user.avatar .cover alt="{{user.someName}}">
                <span .cover .fa .user .font-3x ng-hide=user.avatar>
        <div class="md-tile-content">

@@ -1,9 +1,12 @@
 <md-input-container>
+    <label> UUID
+    <input ng-model="group.uuid" disabled>
+<md-input-container>
     <label>_{SomeMessage MsgFullName}
     <input ng-model="group.name">
 <md-input-container>
     <label>_{SomeMessage MsgShortName}
-    <input ng-model="group.short" disabled>
+    <input ng-model="group.short" >
 <md-input-container flex>
     <label>_{SomeMessage MsgNotes}
     <textarea ng-model="group.notes" columns="1" md-maxlength="350">

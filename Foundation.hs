@@ -190,14 +190,13 @@ instance YesodAuth App where
              E.on $ (p E.^. UserId) E.==. e E.^. EmailUser
              E.where_ $ (e E.^. EmailEmail ) E.==. E.val (credsIdent creds)
              return p
-
         case x of
             [Entity uid _] -> return $ Just uid
             [] -> do
                 ruuid <- newUUID
                 Just <$> do
                   uu <- insert User
-                    { userIdent = ruuid
+                    { userUuid = ruuid
 --                     credsIdent creds
           --          , userPassword  = Nothing
                     , userName      = Nothing
@@ -277,24 +276,23 @@ angularUILayout ngApp widget = do
 
 -- get user identity from the DB, maybe this is already cached?
 getUserIdent :: Handler (Key User)
-getUserIdent = do
-  aid <- fmap (userIdent . fromJust) . runDB . get =<< requireAuthId
-  runDB $ do
-     Just (Entity k _) <- getBy $ UniqueUser aid
-     return k
+getUserIdent = requireAuthId
+
 
 getUserAdmin :: Handler Bool
-getUserAdmin = do
-  aid <- requireAuthId
-  runDB $
-     E.select (
-     E.from $ \(p `E.LeftOuterJoin` e) -> do
-     E.on $ (p E.^. UserId) E.==. e E.^. SiteAdminUser
-     E.where_ $ (p E.^. UserId ) E.==. E.val aid
-     return e)
-     >>= return . \case
-       [Entity _ v] -> siteAdminIsAdmin v
-       _ -> False
+getUserAdmin =
+  maybeAuthId >>= \case
+      Nothing -> return False
+      Just aid ->
+          runDB $
+             E.select (
+             E.from $ \(p `E.LeftOuterJoin` e) -> do
+             E.on $ (p E.^. UserId) E.==. e E.^. SiteAdminUser
+             E.where_ $ (p E.^. UserId ) E.==. E.val aid
+             return e)
+             >>= return . \case
+               [Entity _ v] -> siteAdminIsAdmin v
+               _ -> False
 
 getUserLang :: Handler LangId
 getUserLang = cached (readLang <$> languages)

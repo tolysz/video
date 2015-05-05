@@ -1,15 +1,15 @@
 function($scope, $state, $stateParams, User, $log, title) {
     title.set( "#{jsi18n (SomeMessage MsgEditUser)}");
-    $scope.user = User.get({ident:$stateParams.ident});
+    $scope.user = User.get({uuid:$stateParams.uuid});
 
     $log.debug($scope.users);
 
     $scope.delete = function()
     {
-        var i = $scope.user.ident;
+        var i = $scope.user.uuid;
         User.delete($scope.user).$promise.then( function() {
             for (var ix = $scope.users.length - 1; ix >= 0; ix--) {
-                    if ($scope.users[ix].ident === i) {
+                    if ($scope.users[ix].uuid === i) {
                         $scope.users.splice(ix, 1);
                     }
                 }
@@ -21,7 +21,7 @@ function($scope, $state, $stateParams, User, $log, title) {
     {
       User.save($scope.user).$promise.then(function(d){
 
-          var match = _.find($scope.users, function(item) { return item.ident === d.ident });
+          var match = _.find($scope.users, function(item) { return item.uuid === d.uuid });
 
           if (match) {
                 _.extend(match,d);

@@ -1,9 +1,9 @@
 User
-    ident         Text
+    uuid          Text
     name          Text Maybe
     friendly      Text Maybe
     avatar        Text Maybe
-    UniqueUser    ident
+    UniqueUser    uuid
     deriving Show Typeable Generic
 
 Email
@@ -20,6 +20,7 @@ SiteAdmin
 
 OAuthAccess
     owner         UserId
+    group         SiteGroupId
     realm         Text
     identity      Text Maybe
     accessToken   Text Maybe
@@ -27,8 +28,59 @@ OAuthAccess
     refreshToken  Text Maybe
     tokenType     Text Maybe
     scope         Texts
-    OnePerRealm   owner
+    -- OnePerRealm   owner group
+    UniqueOAuthAccess owner group
     deriving Show Typeable Generic
+
+
+-- Let start the other end
+SiteGroupMember
+  group         SiteGroupId
+  user          UserId
+  fullMember    Bool
+  userAdmin     Bool
+  videoAdmin    Bool
+  UniqueSiteGroupMember group user
+  deriving Show Typeable Generic
+
+GroupFriend
+  group         SiteGroupId
+  userMaster    UserId
+  userSlave     UserId
+  oauth         Bool
+
+SiteGroup
+  uuid            Text
+  public          Bool
+  name            Text
+  short           ShortName
+  notes           Text Maybe
+  url             Text Maybe
+  UniqueSiteGroup uuid
+  deriving Show Typeable Generic
+
+-- todo: revisit
+
+VirtualVideo
+  raw     YTVideoId
+  users   [UserId]
+  votes   [Int]
+  note    Text
+  start   Int
+  end     Int
+  UniqueVirtualVideo raw start
+  deriving Show Typeable Generic
+
+Event
+  title   Text
+  time    UTCTime
+  group   SiteGroupId
+
+PlaylistEvent
+  type     PlaylistType
+  event    EventId
+  playlist YTVideoPlaylistId
+
 
 YTChannel
     status        ViewChan
@@ -37,7 +89,7 @@ YTChannel
     UniqueYTPChannel ref
     deriving Show Typeable Generic
 
-YTPlaylist 
+YTPlaylist
     ref           Text
     etag          Text
     UniqueYTPlaylist ref
@@ -68,42 +120,3 @@ ChannelMember
     user          UserId
     UniqueChannelMember ref user
     deriving Show Typeable Generic
-
--- Let start the other end
-SiteGroupMember
-  group         SiteGroupId
-  user          UserId
-  fullMember    Bool
-  userAdmin     Bool
-  videoAdmin    Bool
-  UniqueSiteGroupMember group user
-  deriving Show Typeable Generic
-
-SiteGroup
-  public          Bool
-  name            Text
-  short           ShortName
-  notes           Text Maybe
-  url             Text Maybe
-  UniqueSiteGroup short
-  deriving Show Typeable Generic
-
-VirtualVideo
-  raw     YTVideoId
-  users   [UserId]
-  votes   [Int]
-  note    Text
-  start   Int
-  end     Int
-  UniqueVirtualVideo raw start
-  deriving Show Typeable Generic
-
-Event
-  title   Text
-  time    UTCTime
-  group   SiteGroupId
-
-PlaylistEvent
-  type     PlaylistType
-  event    EventId
-  playlist YTVideoPlaylistId

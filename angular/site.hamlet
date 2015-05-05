@@ -1,14 +1,40 @@
 <md-content .buttondemoBasicUsage  ui-view >
-  Site Create, List, assign owner.
   <md-list>
-    <md-item ng-repeat="site in sites">
-      <md-item-content>
-        <div class="md-tile-left">
-              <img ng-src="{{site.logo}}" .logo alt="{{site.who}}">
-        <div class="md-tile-content">
-            
-            <h3>{{site.name}}
-            <h4>{{site.andmin | json}}
+    <md-item ng-repeat="site in myGroups">
+      <md-list-item .md-3-line>
+        <div .md-avatar>
+           <img ng-show="site[0].logo" ng-src="{{site[0].logo}}" .logo alt="{{site[0].who}}">
+           <span ng-hide="site[0].logo" .fa .font-3x .group>
+        <div .md-list-item-text>
+            <h3>{{site[0].name}} ({{site[0].short}})
+            <h4>
+              {{ site[0].notes}}
             <p>
+                <span ng-hide="site[0].public" .fa .font-2x .user-secret>
+                <span ng-show="site[1].fullMember" .fa .font-2x .star>
+                <span ng-hide="site[1].fullMember" .fa .font-2x .star-o>
+
+                <span ng-show="site[1].videoAdmin" .fa .font-2x .file-video-o>
+                $# <span ng-show="site[1].userAdmin"  .fa .font-2x .group>
+                $# <div .md-secondary style="opacity:0.8" layout-gt-md="row" layout="column" layout-align="center center">
+                <md-button .md-primary .md-fab .md-mini ng-show="site[1].userAdmin" ui-sref="admin.group.edit({uuid:site[0].uuid})">
+                   <span .font-stack>
+                      <span .fa .pencil-square-o  .font-stack-2x .text-danger-blur>
+                      <span .fa .users .fix-users .font-stack-1x >
+                <md-button .md-primary .md-fab .md-mini ng-show="site[1].userAdmin" ui-sref="admin.group.user.add({uuid:site[0].uuid})">
+                   <span .font-stack>
+                      <span .fa .users     .font-stack-2x .text-danger-blur>
+                      <span .fa .user-plus .font-stack-2x >
+    <md-divider ng-show="myGroups">
+    <md-item ng-repeat="site in public">
+      <md-list-item .md-3-line>
+        <div .md-avatar>
+           <img ng-show="site.logo" ng-src="{{site.logo}}" .logo alt="{{site.who}}">
+           <span ng-hide="site.logo" .fa .font-3x .group>
+        <div .md-list-item-text>
+            <h3>{{site.name}} ({{site.short}})
+            <h4>
               {{ site.notes}}
-              {{ site.public }}
+
+  <pre>
+    {{myGroups | json}}

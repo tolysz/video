@@ -24,7 +24,7 @@ import Data.Aeson.TH       (deriveJSON)
 share [mkPersist sqlSettings, mkMigrate "migrateAll"]
     $(persistFileWith lowerCaseSettings "config/models")
 
-
+-- todo: revisit
 instance FromJSON YTChannel
 instance ToJSON   YTChannel
 

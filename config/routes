@@ -8,34 +8,36 @@
 
 -- /oauth/ require additional authorization via @GoogleOAuthLoginR
 /api/oauth2/                          RootOAuth2R
-/api/oauth2/google/callback           GoogleCallbackR
+/api/oauth2/google/callback/#Text     GoogleCallbackR
 /api/oauth2/google/manage             GoogleManageR
-/api/oauth2/google/login              GoogleOAuthLoginR
+/api/oauth2/google/login/#Text        GoogleOAuthLoginR
 /api/oauth2/google/logout             GoogleOAuthLogoutR
-/api/oauth2/google/debug/*Texts       GoogleDebugR
+/api/oauth2/google/debug/#GUUID/*Texts  GoogleDebugR
 
 -- youtube
-/api/oauth2/youtube/channels          YTChannelsR   -- user channels
-/api/oauth2/youtube/playlists         YTPlaylistsBaseR
-/api/oauth2/youtube/playlists/#String YTPlaylistsR  -- playlists for a channel
-/api/oauth2/youtube/playlist          YTPlaylistItemBaseR
-/api/oauth2/youtube/playlist/#String  YTPlaylistItemR
-/api/oauth2/youtube/allvideos         YTAllVideosR  -- all videos for user
+/api/oauth2/youtube/channels/#GUUID          YTChannelsR   -- user channels
+/api/oauth2/youtube/playlists/               YTPlaylistsBaseR
+/api/oauth2/youtube/playlists/#GUUID/#String YTPlaylistsR  -- playlists for a channel
+/api/oauth2/youtube/playlist/                YTPlaylistItemBaseR
+/api/oauth2/youtube/playlist/#GUUID/#String  YTPlaylistItemR
+/api/oauth2/youtube/allvideos/#GUUID         YTAllVideosR  -- all videos for user
 
 -- /oauth2/youtube/video             YTVideoBaseR
-/api/oauth2/youtube/video/*Texts      YTVideoR      GET  -- video details by id
+/api/oauth2/youtube/video/#GUUID/*Texts      YTVideoR      GET  -- video details by id
 
 -- normal authentication level
 /api/user/channels                    UserChannelsR GET
+/api/user/groups                      UserGroupsR   GET
+/api/user/groups-public               UserGroupsPublicR   GET
 
 
 -- REST access 2 urls per resource
 -- /api/login                            LoginCheckR  GET
 /api/admin/user                       UserR  GET POST
-/api/admin/user/#EmailQuery           User1R GET DELETE
+/api/admin/user/#Text                 User1R GET DELETE
 
 /api/admin/group                      SiteGroupR  GET POST
-/api/admin/group/#ShortName           SiteGroup1R GET DELETE
+/api/admin/group/#Text                SiteGroup1R GET DELETE
 
 -- /api/event                            EventR  GET POST
 -- /api/event/#ObjectId                  Event1R GET DELETE
@@ -43,8 +45,8 @@
 -- backup restore for the whole site... needed for db upgrade change...
 /api/backup             BackupR GET POST
 
-/api/admin/group/#ShortName/user              SiteGroupUserR  GET POST
-/api/admin/group/#ShortName/user/#EmailQuery  SiteGroupUser1R GET DELETE
+/api/admin/group/#Text/user              SiteGroupUserR  GET POST
+/api/admin/group/#Text/user/#Text        SiteGroupUser1R GET DELETE
 
 -- user centric/ creds from the session
 -- /user

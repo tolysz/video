@@ -9,6 +9,8 @@ import Control.Lens ((^?) , (^.))
 import Control.Lens.Iso (non)
 -- import Database.Persist.MongoDB
 import Data.ByteString.UTF8 (toString)
+import Model as M
+import Control.Arrow ((***))
 
 import qualified Database.Esqueleto as E
 
@@ -46,6 +48,8 @@ liftJust = return
 getSiteGroupR :: ApiReq [   SiteGroup   ]
 getSiteGroupR = listsOfAll
 
+
+-- todo: now broken
 postSiteGroupR :: ApiReq SiteGroup
 postSiteGroupR = do
         guardAllAdmin
@@ -55,15 +59,25 @@ postSiteGroupR = do
             siteGroupNotes  <- liftJust  (v ^? key "notes"  . _String )
             siteGroupPublic <- liftJust  (v ^? key "public" . _Bool   ^. non False)
             siteGroupUrl    <- liftJust  (v ^? key "url"    . _String )
-            let sg = SiteGroup {..}
-            MaybeT $ runDB $ getBy (UniqueSiteGroup siteGroupShort) >>= \case
-                Just (Entity uid _) -> replace uid sg >> return (Just $ TC sg)
-                Nothing -> insert sg >> return (Just $ TC sg)
+            siteGroupUuidM  <- liftJust  (v ^? key "uuid"   . _String )
+            -- we want it to be lazy
+            MaybeT $ runDB $
+              maybe (return Nothing) (getBy . UniqueSiteGroup) siteGroupUuidM >>= \case
+                Just (Entity uid _) ->
+                   let
+                     Just siteGroupUuid = siteGroupUuidM
+                     sg = SiteGroup {..}
+                   in
+                   replace uid sg >> return (Just $ TC sg)
+                Nothing -> do
+                   siteGroupUuid <- newUUID
+                   let sg = SiteGroup {..}
+                   insert sg >> return (Just $ TC sg)
 
-getSiteGroup1R :: ShortName -> ApiReq SiteGroup
+getSiteGroup1R :: Text -> ApiReq SiteGroup
 getSiteGroup1R = jsonDB1 . getBy404 . UniqueSiteGroup
 
-deleteSiteGroup1R :: ShortName -> ApiReq SiteGroup
+deleteSiteGroup1R :: Text  -> ApiReq SiteGroup
 deleteSiteGroup1R = deleteByReturn UniqueSiteGroup
 
 -- | REST For User
@@ -74,13 +88,13 @@ postUserR :: ApiReq User
 postUserR = do
         guardAllAdmin
         restOpenM $ \(v :: Value) -> runMaybeT $ do
-            userIdent     <- liftMaybe (v ^? key "ident"    . _String )
+            userUuid      <- liftMaybe (v ^? key "uuid"     . _String )
             userName      <- liftJust  (v ^? key "name"     . _String )
             userFriendly  <- liftJust  (v ^? key "friendly" . _String )
 --             userSiteAdmin <- liftJust  False -- (v ^? key "siteAdmin" . _Bool )
             userAvatar    <- liftJust  (v ^? key "avatar"   . _String )
             let us = User {..}
-            MaybeT $ runDB $ getBy (UniqueUser userIdent) >>= \case
+            MaybeT $ runDB $ getBy (UniqueUser userUuid) >>= \case
                  -- keep the old admin privs
                 Just (Entity uid old) -> replace uid us >> return (Just $ TC us)
                 Nothing -> insert us >> return (Just $ TC us)
@@ -119,8 +133,42 @@ getSiteGroupUserR gid =
      groupKey <- getDBKey (UniqueSiteGroup gid)
      memberList <- selectList [SiteGroupMemberGroup ==. groupKey] []
      forM memberList $ \m@(Entity k SiteGroupMember{..}) -> do
-          us <- fmap userIdent <$> get siteGroupMemberUser
+          us <- fmap userUuid <$> get siteGroupMemberUser
           return (SiteGroupMemberResolved (Just gid) us siteGroupMemberFullMember siteGroupMemberUserAdmin siteGroupMemberVideoAdmin)
+
+getUserGroupsR :: ApiReq [(SiteGroup,SiteGroupMember)]
+getUserGroupsR =
+  TC . map (E.entityVal *** E.entityVal) <$> do
+  aid <- requireAuthId
+  runDB $
+     E.select (
+     E.from   $ \(sgm `E.LeftOuterJoin` sg) -> do
+     E.on     $ sg  E.^. SiteGroupId         E.==. sgm E.^. SiteGroupMemberGroup
+     E.where_ $ sgm E.^. SiteGroupMemberUser E.==. E.val aid
+     return (sg, sgm)
+     )
+
+getUserGroupsPublicR :: ApiReq [SiteGroup]
+getUserGroupsPublicR =
+  TC . map E.entityVal <$> (
+  maybeAuthId >>= \case
+   Just aid ->
+      runDB $
+         E.select $
+         E.from   $ \sg -> do
+         E.where_ $ (sg  E.^. SiteGroupPublic E.==. E.val True)
+            E.&&. E.notExists ( E.from $ \sgm -> E.where_ (
+               (sg  E.^. SiteGroupId  E.==. sgm E.^. SiteGroupMemberGroup)
+               E.&&. (sgm E.^. SiteGroupMemberUser E.==. E.val aid) ))
+         return sg
+   Nothing ->
+      runDB $
+         E.select $
+            E.from   $ \sg -> do
+            E.where_ $ sg  E.^. SiteGroupPublic E.==. E.val True
+            return sg
+    )
+
 {-
      rawrecs <- runDB $ find (select
      ["loc" =: [

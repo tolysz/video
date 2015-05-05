@@ -1,6 +1,6 @@
 <md-input-container>
-    <label>_{SomeMessage MsgUserEmail}
-    <input ng-model=user.ident disabled>
+    <label>_{SomeMessage MsgUuid}
+    <input ng-model=user.uuid disabled>
 <md-input-container>
     <label>_{SomeMessage MsgUserName}
     <input ng-model=user.name>

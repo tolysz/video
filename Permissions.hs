@@ -5,26 +5,33 @@ import Import
 import Data.Bool
 import Data.Default
 
-import Data.Set (Set)
-import qualified Data.Set as Set
+import GHC.Generics
+import Data.Aeson
+
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
 
 {--
   import Data.Set { (Set), qualified as Set}
 -}
 
 data Permssions = Permssions
-  { isAdmin   :: Possible Bool
-  , userGroup :: Set ShortName
+  { isAdmin   :: Bool
+  , userGroup :: !(Map Text Bool)
   }
    deriving (Show, Typeable, Generic)
 
 instance Default Permssions where
-  def = Permssions MissingData Set.empty
+  def = Permssions False Map.empty
+
+instance FromJSON Permssions
+instance ToJSON   Permssions
 
 -- | gather user's all permissions
 userPerms :: AppM Permssions
 userPerms = do
-         isAdmin <- HaveData <$> getUserAdmin
+         isAdmin <-  getUserAdmin
+         let userGroup = Map.empty
          return Permssions{..}
 
 requirePerms _ = return ()
@@ -54,7 +61,7 @@ permInsertUser, permUpdateUser, permListUsers  :: Permssions
 
 
 permAllAdmin :: Permssions
-permAllAdmin = def{ isAdmin = HaveData True}
+permAllAdmin = def{isAdmin = True }
 
 permInsertUser = def
 permUpdateUser = def
