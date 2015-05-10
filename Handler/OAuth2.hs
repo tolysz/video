@@ -101,7 +101,6 @@ getToken gid = do
   now <- liftIO getCurrentTime
   uid <- getUserIdent
 
-
   runDB ( do
      Entity gid' _ <- getBy404 (UniqueSiteGroup gid)
      getBy (UniqueOAuthAccess uid gid')) >>= \case

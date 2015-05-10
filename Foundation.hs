@@ -290,7 +290,7 @@ getUserAdmin =
       Just aid ->
           runDB $
              E.select (
-             E.from $ \(p `E.LeftOuterJoin` e) -> do
+             E.from $ \(p `E.InnerJoin` e) -> do
              E.on $ (p E.^. UserId) E.==. e E.^. SiteAdminUser
              E.where_ $ (p E.^. UserId ) E.==. E.val aid
              return e)

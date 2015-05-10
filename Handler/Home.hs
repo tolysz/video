@@ -180,7 +180,7 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
 
     addFactory "User"      [js| function($resource) { return $resource("@{UserR}/:uuid"); }|]
     addFactory "Group"     [js| function($resource) { return $resource("@{SiteGroupR}/:uuid"); }|]
-    addFactory "GroupUser" [js| function($resource) { return $resource("@{SiteGroupR}/:uuid/user/:uuuid"); }|]
+    addFactory "GroupUser" [js| function($resource) { return $resource("@{SiteGroupUser0R}/:uuid/:uuuid"); }|]
 
     addFactory "wsLink" [js| function($rootScope, $log, maid, $mdToast, $timeout, $interval, appLang) {
       // Open a WebSocket connection

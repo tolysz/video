@@ -12,7 +12,8 @@ function($scope, $state, $stateParams, Group, title) {
                     $scope.groups.splice(ix, 1);
                 }
             }
-            $state.go('admin.group');
+            $scope.back();
+            //$state.go('admin.group');
         })
     }
 
@@ -26,8 +27,8 @@ function($scope, $state, $stateParams, Group, title) {
           } else
            { $scope.groups = Group.query();
            }
-
-          $state.go('admin.group.user',{uuid:$stateParams.uuid});
+          $scope.back();
+          //$state.go('admin.group.user',{uuid:$stateParams.uuid});
       })
     }
 }

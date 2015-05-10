@@ -1,12 +1,15 @@
 function($scope, $state, $stateParams, Group, User, GroupUser, title, $log) {
     
-    $scope.group = Group.get({uuid: $stateParams.uuid});
-    $scope.user = User.get({uuid: $stateParams.uuuid});
+    $scope.group  = Group.get({uuid: $stateParams.uuid});
+    $scope.user   = User.get({uuid: $stateParams.uuuid});
     $scope.member = GroupUser.get({uuid: $stateParams.uuid, uuuid: $stateParams.uuuid});
-    
+
     title.set("#{jsi18n (SomeMessage MsgNewMember)}")
     
     $scope.save = function () {
+        $scope.member.user  = $scope.user.uuid;
+        $scope.member.group = $scope.group.uuid;
+
         GroupUser.save($scope.member).$promise.then( $scope.back )
     };
 

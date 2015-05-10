@@ -111,7 +111,7 @@ postSiteGroupUser0R = do
    guardAllAdmin
    restOpenM $ \(v :: Value) -> runMaybeT $ do
        textGroup <- liftMaybe (v ^? key "group"      . _String )
-       guard (textGroup == gid)
+--        guard (textGroup == gid)
        textUser  <- liftMaybe  (v ^? key "user"       . _String )
        siteGroupMemberFullMember <- liftJust  (v ^? key "fullMember" . _Bool ^. non False)
        siteGroupMemberUserAdmin  <- liftJust  (v ^? key "userAdmin"  . _Bool ^. non False)
@@ -142,7 +142,7 @@ getUserGroupsR =
   aid <- requireAuthId
   runDB $
      E.select (
-     E.from   $ \(sgm `E.LeftOuterJoin` sg) -> do
+     E.from   $ \(sgm `E.InnerJoin` sg) -> do
      E.on     $ sg  E.^. SiteGroupId         E.==. sgm E.^. SiteGroupMemberGroup
      E.where_ $ sgm E.^. SiteGroupMemberUser E.==. E.val aid
      return (sg, sgm)
@@ -183,13 +183,13 @@ getUserGroupsPublicR =
      mapM_ (liftIO . putStrLn . show) rawrecs
 -}
 
-getSiteGroupUser1R :: ShortName -> EmailQuery -> ApiReq SiteGroupMember
+getSiteGroupUser1R :: GUUID -> GUUID -> ApiReq SiteGroupMember
 getSiteGroupUser1R gid e = do
   (groupKey, userKey) <- runDB $ (,) <$> getDBKey (UniqueSiteGroup gid)
                                      <*> getDBKey (UniqueUser e)
   jsonDB1 . getBy404 $ UniqueSiteGroupMember groupKey userKey
 
-deleteSiteGroupUser1R :: ShortName -> EmailQuery -> ApiReq SiteGroupMember
+deleteSiteGroupUser1R :: GUUID -> GUUID -> ApiReq SiteGroupMember
 deleteSiteGroupUser1R gid e = do
   (groupKey, userKey) <- runDB $ (,) <$> getDBKey (UniqueSiteGroup gid)
                                      <*> getDBKey (UniqueUser e)

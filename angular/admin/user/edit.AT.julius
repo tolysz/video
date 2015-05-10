@@ -13,7 +13,8 @@ function($scope, $state, $stateParams, User, $log, title) {
                         $scope.users.splice(ix, 1);
                     }
                 }
-            $state.go('admin.user');
+            $scope.back();
+            //$state.go('admin.user');
         })
     }
 
@@ -28,6 +29,8 @@ function($scope, $state, $stateParams, User, $log, title) {
             } else{
                 $scope.users = User.query();
               }
-          $state.go('admin.user'); });
+          $scope.back();
+          //$state.go('admin.user');
+          });
     }
 }

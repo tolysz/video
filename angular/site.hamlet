@@ -14,12 +14,12 @@
                 <span ng-show="site[1].fullMember" .fa .font-2x .star>
                 <span ng-hide="site[1].fullMember" .fa .font-2x .star-o>
 
-                <md-button .md-primary .md-fab .md-mini ng-show="site[1].userAdmin" ui-sref="oauth2.channels({uuid:site[0].uuid})">
+                <md-button .md-primary .md-fab .md-mini ng-show="site[1].videoAdmin" ui-sref="oauth2.channels({uuid:site[0].uuid})">
                    <span ng-show="site[1].videoAdmin" .fa .font-2x .file-video-o>
 
                 <md-button .md-primary .md-fab .md-mini
                    target="_blank"
-                   ng-show="site[1].userAdmin"
+                   ng-show="site[1].videoAdmin"
                    ng-href="@{RootOAuth2R}/google/login/{{site[0].uuid}}">
                    <span .fa .youtube-square .font-2x >
 
