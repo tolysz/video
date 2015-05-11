@@ -124,3 +124,6 @@ instance Default Permssions where
 
 instance FromJSON Permssions
 instance ToJSON   Permssions
+
+
+-- newtype Photo = Photo ByteString

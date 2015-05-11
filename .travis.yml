@@ -3,7 +3,7 @@ language: haskell
 before_install:
 env:
  - GHCVER=7.8.4 CABALVER=1.22
-# - GHCVER=7.10.1 CABALVER=1.22
+ - GHCVER=7.10.1 CABALVER=1.22
 # - GHCVER=head  CABALVER=head
 
 matrix:
@@ -30,8 +30,22 @@ before_install:
  - cabal install alex happy
 
 install:
+ - cd /home/travis
+ - git clone --depth=50 --branch=MissingDefault2 https://github.com/tolysz/aeson tolysz/aeson
+ - git clone --depth=50 --branch=master https://github.com/tolysz/google-api tolysz/google-api
+ - git clone --depth=50 --branch=master https://github.com/tolysz/http-client-extra tolysz/http-client-extra
+ - git clone --depth=50 --branch=master https://github.com/tolysz/http-client-extra-oauth2 tolysz/http-client-extra-oauth2
+ - git clone --depth=50 --branch=master https://github.com/tolysz/yesod-websockets-extra tolysz/yesod-websockets-extra
+ - git clone --depth=50 --branch=master https://github.com/tolysz/yesod-angular-ui tolysz/yesod-angular-ui
+
+ - cd tolysz/video
  - cabal sandbox init
- - cabal install aeson-0.8.0.2.tar.gz haxl-0.1.0.0.tar.gz
+ - cabal sandbox add-source /home/travis/tolysz/aeson
+ - cabal sandbox add-source /home/travis/tolysz/google-api
+ - cabal sandbox add-source /home/travis/tolysz/http-client-extra
+ - cabal sandbox add-source /home/travis/tolysz/http-client-extra-oauth2
+ - cabal sandbox add-source /home/travis/tolysz/yesod-websockets-extra
+ - cabal sandbox add-source /home/travis/tolysz/yesod-angular-ui
  - cabal install --only-dependencies --enable-tests
 
 script:

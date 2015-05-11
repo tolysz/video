@@ -3,6 +3,7 @@ User
     name          Text Maybe
     friendly      Text Maybe
     avatar        Text Maybe
+--    photo         Photo Maybe
     UniqueUser    uuid
     deriving Show Typeable Generic
 
@@ -80,7 +81,6 @@ PlaylistEvent
   type     PlaylistType
   event    EventId
   playlist YTVideoPlaylistId
-
 
 YTChannel
     status        ViewChan
