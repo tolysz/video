@@ -46,7 +46,7 @@ install:
  - cabal sandbox add-source /home/travis/tolysz/http-client-extra-oauth2
  - cabal sandbox add-source /home/travis/tolysz/yesod-websockets-extra
  - cabal sandbox add-source /home/travis/tolysz/yesod-angular-ui
- - cabal install --only-dependencies --enable-tests
+ - cabal install --only-dependencies --enable-tests --allow-newer=fb
 
 script:
  - cabal configure --enable-tests --disable-shared
