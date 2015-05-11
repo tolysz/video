@@ -38,7 +38,7 @@ install:
  - git clone --depth=50 --branch=master https://github.com/tolysz/yesod-websockets-extra tolysz/yesod-websockets-extra
  - git clone --depth=50 --branch=master https://github.com/tolysz/yesod-angular-ui tolysz/yesod-angular-ui
 
- - cd tolysz/video
+ - cd $TRAVIS_BUILD_DIR
  - cabal sandbox init
  - cabal sandbox add-source /home/travis/tolysz/aeson
  - cabal sandbox add-source /home/travis/tolysz/google-api
