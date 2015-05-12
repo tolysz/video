@@ -27,6 +27,7 @@
     "angular-aria": ">=1.4",
     "angular-i18n": ">=1.4",
     "angulartics": "master",
-    "annyang": ">=1.5.0"
+    "annyang": ">=1.5.0",
+    "popcorn-js": "~1.5.10"
   }
 }

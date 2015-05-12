@@ -18,7 +18,7 @@ function($scope,$log,$http,$stateParams /*, ytPlayer */, title){
         $log.debug (pl);
         $scope.curr_pl = pl;
         $scope.curr_id = pl.id;
-        $scope.curr_vars = { list: pl.id }
+        $scope.curr_vars = { list: pl.id, startSeconds: 13, endSeconds: 30  }
         $scope.curr_title = pl.snippet.title;
 
         //ytPlayer.curr_vars = $scope.curr_vars;

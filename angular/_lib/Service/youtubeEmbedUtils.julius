@@ -1,5 +1,5 @@
 function ($window, $rootScope, $cookies) {
-    var Service = {}
+    var Service = {};
 
     // adapted from http://stackoverflow.com/a/5831191/1614967
     var youtubeRegexp = /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/ig;
@@ -10,8 +10,8 @@ function ($window, $rootScope, $cookies) {
     }
 
     Service.calculateDims= function (newValue) {
-        var w = newValue.w
-        var h = newValue.h
+        var w = newValue.w;
+        var h = newValue.h;
         var menuOffset = w > 960 ? 300 : 0;
 
         var cww = Math.max(w - 150 - menuOffset, 128);
