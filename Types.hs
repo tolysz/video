@@ -1,6 +1,7 @@
 {-# LANGUAGE TemplateHaskell       #-}
 {-# LANGUAGE DeriveDataTypeable    #-}
 {-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE DeriveFunctor         #-}
 {-# LANGUAGE FlexibleInstances, UndecidableInstances, RankNTypes   #-}
 
 module Types where
@@ -15,6 +16,8 @@ import Data.Char (toLower, isUpper)
 import Data.Text (Text)
 import Data.Typeable
 import Data.Default
+import Data.Monoid
+import Data.Possible
 
 import Yesod.Core.Content
 import Database.Persist.TH
@@ -22,6 +25,7 @@ import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 
 import GHC.Generics
+import Text.Blaze
 -- import Data.String
 
 -- import Control.Applicative ((<$>))
@@ -57,7 +61,8 @@ fromCamel n = worker True . drop n
          ++ worker (isUpper c) cs
 
 
-data TC a = TC a
+data TC a = TC a deriving Functor
+data PC a = PC a deriving Functor
 
 instance (ToJSON a) => ToJSON (TC a) where
   toJSON (TC a) = toJSON a
@@ -66,6 +71,15 @@ instance (ToJSON a) => ToContent (TC a) where
   toContent (TC a) = toContent $ toJSON a
 
 instance (ToJSON a) => ToTypedContent (TC a) where
+  toTypedContent a = TypedContent typeJson (toContent a )
+
+instance (ToJSON a) => ToJSON (PC a) where
+  toJSON (PC a) = toJSON a
+
+instance (ToJSON a) => ToContent (PC a) where
+  toContent (PC a) = toContent $ toJSON a
+
+instance (ToJSON a) => ToTypedContent (PC a) where
   toTypedContent a = TypedContent typeJson (toContent a )
 
 
@@ -85,6 +99,9 @@ data ViewChan = Owner    -- Puts Channel offline
 
 instance FromJSON ViewChan
 instance ToJSON   ViewChan
+
+-- instance FromJSON YTVideo
+-- instance ToJSON   YTVideo
 
 derivePersistField "ViewChan"
 
@@ -127,3 +144,30 @@ instance ToJSON   Permssions
 
 
 -- newtype Photo = Photo ByteString
+
+data DBAction
+  = DBNoop
+  | DBAdd
+  | DBUpdate
+  | DBDelete
+  | DBApiFail
+
+ deriving (Show, Typeable, Generic)
+
+instance FromJSON DBAction
+instance ToJSON   DBAction
+
+instance ToMarkup a => ToMarkup (Possible a) where
+  toMarkup = possible "" "???" toMarkup
+
+instance ToMarkup a => ToMarkup (Maybe a) where
+  toMarkup = maybe "" toMarkup
+
+instance ToMarkup Value where
+  toMarkup = unsafeLazyByteString . encode
+
+instance ToJSON a => ToMarkup (TC a) where
+  toMarkup (TC a)= toMarkup (toJSON a :: Value)
+
+instance (ToMarkup a, ToMarkup b) => ToMarkup (a,b) where
+  toMarkup (a,b) = unsafeLazyByteString "(" <> toMarkup a <> unsafeLazyByteString ", " <> toMarkup b <> unsafeLazyByteString ")"

@@ -1,0 +1,7 @@
+<md-content>
+   <h1>
+      {{ len }}
+   <pre>
+     {{ stats | json }}
+   <pre>
+     {{ channels | json }}

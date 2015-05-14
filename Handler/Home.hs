@@ -19,12 +19,13 @@ import System.IO.Unsafe
 
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
-import Handler.Translate
+
 import Control.Lens as DA
 import Data.Aeson.Lens as DA
 import qualified Data.Aeson as DA
 
 
+import Handler.Translate
 import Permissions
 type LangCache = Map LangId Html
 
@@ -141,6 +142,7 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
 --     state $(utcFile  "/oauth2"         "oauth2"              )  -- show only to channel admin who autenticated oauth
     state (url   "/oauth2"  >> nameA "oauth2")
     state $(utcVFile "/:uuid/channels"       "oauth2.channels"  "@")
+    state $(utcVFile "/:uuid/refresh"        "oauth2.refresh"   "@")
 --
     state $(utcVFile "/:uuid/playlists/:cid" "oauth2.playlists" "@")
     state $(utcVFile "/:uuid/playlist/:pid"  "oauth2.playlist"  "@")

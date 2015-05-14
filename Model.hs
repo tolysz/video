@@ -9,7 +9,11 @@ import Database.Persist.Quasi
 import Types
 -- import Data.UUID
 import Network.Google.Api.Utils
+import Network.Google.Api.Youtube.Videos
+
+
 import Data.Aeson.TH       (deriveJSON)
+import Types.Persistent
 
 -- import Database.Persist.Sql.Class
 
@@ -20,6 +24,7 @@ import Data.Aeson.TH       (deriveJSON)
 
 -- instance PersistFieldSql UUID where
 --   sqlType _ = SqlBlob
+
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"]
     $(persistFileWith lowerCaseSettings "config/models")
@@ -50,3 +55,5 @@ data Backup = Backup
   }
 
 deriveJSON (optsL 1)  ''Backup
+
+

@@ -1,0 +1,16 @@
+function($scope,$http,$log, $sce, title,$stateParams){
+    title.set( $sce.trustAsHtml("About: how are we here... <small>Some OpenSource technologies used.</small>"))
+    $scope.uuid = $stateParams.uuid;
+    $scope.getList = function(){
+        $http.get("@{UpdateVideosBaseR}/" + $stateParams.uuid)
+            .success( function(data){
+                $log.debug(data);
+                $scope.channels = data;
+                $scope.len = data.length;
+                $scope.stats = _.chain(data).map(_.first).countBy().value();
+            }
+        )
+    }
+
+    $scope.getList()
+}

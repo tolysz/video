@@ -7,6 +7,7 @@ import Import
 import Data.Possible
 import Data.String.QM
 import Control.Lens
+import Data.Aeson.Lens
 
 import Network.Google.Api.Kinds
 import Network.Google.Api.Types.GoogleUser
@@ -15,6 +16,9 @@ import Network.Google.Api.Youtube.Playlists
 import Network.Google.Api.Youtube.PlaylistItems
 import Network.Google.Api.Youtube.Videos
 import Data.Text as T
+
+import Handler.DB
+
 -- import qualified Data.List as DL (intercalate)
 {-
 import Google.Api{Kinds, Types.GoogleUser, Youtube{Channels, Playlists, Videos}}
@@ -23,8 +27,32 @@ import Google.Api{Kinds, Types.GoogleUser, Youtube{Channels, Playlists, Videos}}
 -- Requires OAuth2
 -- get information about logged user
 getGoogleUserR :: GUUID -> ApiReq GoogleUser
-getGoogleUserR  =  "https://www.googleapis.com/oauth2/v2/userinfo"
+getGoogleUserR =  "https://www.googleapis.com/oauth2/v2/userinfo"
 
+getUpdateVideosBaseR :: Handler Html
+getUpdateVideosBaseR = defaultLayout [whamlet||]
+
+
+postWatchVideosR :: GUUID -> Handler Text
+postWatchVideosR gid = do
+  return ""
+
+getUpdateVideosR :: GUUID -> ApiReq [(DBAction, Text)]
+getUpdateVideosR gid = do
+  TC guid <- getGoogleUserR gid
+  vds  <- process <$> handleYTAllVideosR gid
+  -- todo: unsafe
+--   upds <-
+  unTC <$> forM vds (\(e,i) -> updateYTVideo (possible (error "no user") (error "no user") id $ guid ^. googleUserId) i e (fmap listToMaybe <$> getYTVideoR gid [i]))
+
+   where
+     unTC a = TC (Import.map (\(TC a)-> a) a)
+     process (TC a) = catMaybes (Import.map extr a)
+     extr :: Value -> Maybe (Text,Text)
+     extr a = do
+         ma <- a ^? key "etag" . _String
+         mb <- a ^? key "id" . key "videoId" . _String
+         return (ma,mb)
 -- get all videos by id
 handleYTVideoBaseR :: Handler Html
 handleYTVideoBaseR = defaultLayout [whamlet||]
@@ -61,7 +89,7 @@ handleYTChannelsR  gid = TC <$> next HaveNull []
 handleYTPlaylistsBaseR :: Handler Html
 handleYTPlaylistsBaseR = defaultLayout [whamlet||]
 
-handleYTPlaylistsR :: Text -> String -> ApiReq [YoutubePlaylist]
+handleYTPlaylistsR :: GUUID -> String -> ApiReq [YoutubePlaylist]
 handleYTPlaylistsR gid cid = TC <$> next HaveNull []
   where
     req = "id,snippet,contentDetails,player,status"
@@ -75,7 +103,7 @@ handleYTPlaylistsR gid cid = TC <$> next HaveNull []
 handleYTPlaylistItemBaseR :: Handler Html
 handleYTPlaylistItemBaseR = defaultLayout [whamlet||]
 
-handleYTPlaylistItemR :: Text -> String -> ApiReq [YoutubePlaylistItem]
+handleYTPlaylistItemR :: GUUID -> String -> ApiReq [YoutubePlaylistItem]
 handleYTPlaylistItemR gid pid = TC <$> next HaveNull []
   where
     req = "id,snippet,contentDetails,status"
@@ -90,10 +118,11 @@ handleYTPlaylistItemR gid pid = TC <$> next HaveNull []
 -- auditDetails,brandingSettings,contentDetails,contentOwnerDetails,id,invideoPromotion,snippet,statistics,status,topicDetails
 
 -- all videos for a given user
-handleYTAllVideosR   :: Text -> ApiReq [Value]
+handleYTAllVideosR   :: GUUID -> ApiReq [Value]
 handleYTAllVideosR gid = TC <$> next HaveNull [] -- if there be 'null' in the result add extra field init
   where
     req = "id,snippet"
+--     req = "id"
     base = "https://www.googleapis.com/youtube/v3/search?part=" <> req <> "&forMine=true&type=video&maxResults=50"
     next MissingData a   = return a
     next (HaveData "") a = return a

@@ -35,6 +35,7 @@ library
                      Data.CMap
                      Types.MsgBus
                      Types.Lang
+                     Types.Persistent
 
                 --  move to a separate module after testing or merge with http-client?
                   -- binary-js
@@ -140,6 +141,7 @@ library
                  , http-client-extra
                  , http-client-extra-oauth2
                  , uuid
+                 , blaze-markup
                -- CMap
                  , stm-containers
                  , list-t

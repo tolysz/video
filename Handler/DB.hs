@@ -12,6 +12,7 @@ import Data.ByteString.UTF8 (toString)
 import Model as M
 import Control.Arrow ((***))
 
+import Network.Google.Api.Youtube.Videos
 import qualified Database.Esqueleto as E
 
 -- import Database.MongoDB.Query (MongoContext(..))
@@ -168,6 +169,34 @@ getUserGroupsPublicR =
             E.where_ $ sg  E.^. SiteGroupPublic E.==. E.val True
             return sg
     )
+
+
+-- todo: agregate queries
+updateYTVideo :: Text -> Text -> Text -> ApiReq (Maybe YoutubeVideo) -> ApiReq (DBAction,Text)
+updateYTVideo gu i e rq =
+  runDB ( E.select $
+     E.from   $ \yv -> do
+     E.where_ $
+        (yv E.^. YTVideoRef E.==. E.val i)
+     return yv )
+  >>= \case
+   [] ->
+      rq >>= \case
+        TC (Just v) -> do
+            runDB $ insert $ YTVideo i e (Just v) gu
+            return $ TC (DBAdd, i)
+        _ -> return $ TC (DBApiFail, i)
+   (a:_) -> if (==) e . yTVideoEtag . entityVal $ a
+      then
+        return $ TC (DBNoop, i)
+      else
+        rq >>= \case
+                TC (Just v) -> do
+                    runDB $ update (entityKey a) [YTVideoEtag =. e, YTVideoSnippet =. Just v]
+                    return $ TC (DBUpdate, i)
+                _ -> return $ TC (DBApiFail, i)
+
+
 
 {-
      rawrecs <- runDB $ find (select

@@ -1,4 +1,3 @@
-
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings     #-}
@@ -23,8 +22,10 @@ import Data {Time.Clock (diffUTCTime), Possible, Text qualified as T}
 
 import Network.HTTP.OAuth2
 import Network.HTTP.OAuth2.Types
+import Network.HTTP.ClientExtra.Types
 import Network.Google.Api.Kinds
 import qualified Database.Esqueleto as E
+import Control.Monad
 
 fetchNext :: ListResponse a sym -> Possible String
 fetchNext lr = lr ^. lrNextPageToken . to (fmap T.unpack) -- . to (possible Nothing Nothing (Just . T.unpack))
@@ -32,16 +33,27 @@ fetchNext lr = lr ^. lrNextPageToken . to (fmap T.unpack) -- . to (possible Noth
 fetchItems :: ListResponse a sym -> [a]
 fetchItems lr = lr ^. lrItems
 
+instance FromJSON a => IsString (AuthToken -> Handler (TC a)) where
+  fromString a = (`getQueryOA'` a)
+
 instance FromJSON a => IsString (Text -> Handler (TC a)) where
-  fromString a = \b -> getQueryOA' b a
+  fromString a = getTokenG >=> (`getQueryOA'` a)
+
+
+instance (ContentEncoder IO b, FromJSON a) => IsString (Text -> b -> Handler (PC a)) where
+  fromString a = \t b -> getTokenG t >>= \t1 -> postQueryOA' t1 a b
+
+instance (ContentEncoder IO b, FromJSON a) => IsString (AuthToken -> b -> Handler (PC a)) where
+  fromString a = \t b -> postQueryOA' t a b
+
 -- ^ This simplyfies requesting data to suplying url with the appriopirate types
 --   example how monad is an onion and changing boundaries changes meaning
 
 handleGoogleCallbackR :: Handler Html
 handleGoogleCallbackR = do
-  codeMaybe <- lookupGetParam "code"
+  codeMaybe  <- lookupGetParam "code"
   errorMaybe <- lookupGetParam "error"
-  gidMaybe <- lookupGetParam "state"
+  gidMaybe   <- lookupGetParam "state"
 
   unless (isJust gidMaybe) $ redirect (HomeR [])
 
@@ -63,7 +75,7 @@ handleGoogleOAuthLogoutR = -- do
 
 handleGoogleOAuthLoginR :: Text -> Handler ()
 handleGoogleOAuthLoginR gid = do
-         setSession "GUUID" gid
+--          setSession "GUUID" gid
          gc <- googleKey gid
          redirect $
            generateAuthUrl
@@ -96,11 +108,12 @@ googleKey uuid = do
                    , oauthState        = Just uuid
                    }
 
-getToken :: Text ->  Handler AuthToken
-getToken gid = do
-  now <- liftIO getCurrentTime
-  uid <- getUserIdent
+getTokenG :: Text -> Handler AuthToken
+getTokenG gid = flip getToken gid =<< getUserIdent
 
+getToken :: Key User -> Text -> Handler AuthToken
+getToken uid gid = do
+  now <- liftIO getCurrentTime
   runDB ( do
      Entity gid' _ <- getBy404 (UniqueSiteGroup gid)
      getBy (UniqueOAuthAccess uid gid')) >>= \case
@@ -112,21 +125,36 @@ getToken gid = do
 
       Just (Entity _ (OAuthAccess{..}))      -- we have the entry inside DB
         | Just _ <- oAuthAccessRefreshToken  -- we have the refresh tocken there
-          -> refreshTokenOU gid def{atRefreshToken=oAuthAccessRefreshToken} >> getToken gid        -- this need to show errors whan fails
+          -> refreshTokenOU gid def{atRefreshToken=oAuthAccessRefreshToken} >> getToken uid gid        -- this need to show errors whan fails
 
       _  -- we failed on all of the above redirect oauth-login
           -> redirect ( GoogleOAuthLoginR gid)  -- have no credentials and need to get some
 
-getQueryOA :: (FromJSON a) => Text -> String -> Handler (OAuth2Result a)
-getQueryOA gid url = do
+getQueryOA :: (FromJSON a) => AuthToken -> String -> Handler (OAuth2Result a)
+getQueryOA token url = do
    mgr   <- getHttpManager'
-   token <- getToken gid
    liftIO $ getOAuth2 mgr token url
 
-getQueryOA' :: (FromJSON a)=> Text -> String -> ApiReq a
-getQueryOA' gid url = getQueryOA gid url >>= \case
+getQueryOA' :: (FromJSON a) => AuthToken -> String -> ApiReq a
+getQueryOA' tok url = getQueryOA tok url >>= \case
         Left e  -> sendResponseStatus (toEnum (fromMaybe 500 $ aeStatus e) ) (aeError e)
         Right v -> return $ TC v
+
+
+-- postQueryOA :: (FromJSON a) => Text -> String -> Handler (OAuth2Result a)
+postQueryOA :: (ContentEncoder IO b, FromJSON a)
+  => AuthToken -> String -> b -> Handler(OAuth2Result a)
+postQueryOA tok url b = do
+   mgr   <- getHttpManager'
+--    token <- getToken <$> getUserIdent <*> pure guid
+   liftIO $ postOAuth2 mgr tok url b
+
+-- postQueryOA' :: (FromJSON a)=> Text -> String -> b -> ApiReq a
+postQueryOA' :: (ContentEncoder IO b, FromJSON a)
+  => AuthToken -> String -> ApiPost b a
+postQueryOA' tok url b = postQueryOA tok url b >>= \case
+        Left e  -> sendResponseStatus (toEnum (fromMaybe 500 $ aeStatus e) ) (aeError e)
+        Right v -> return $ PC v
 
 -- put a new tocken away, we loose the old one...
 updateDBToken :: Text -> AuthToken -> Handler ()
@@ -170,5 +198,6 @@ traceHTML (show -> e) = defaultLayout [whamlet|We hit authError <br> #{e}|]
 
 handleGoogleDebugR :: Text -> Texts -> ApiReq Value
 handleGoogleDebugR gid v = do
+  token <- getTokenG gid
   r <- T.intercalate "&" .  map (\(a,b)-> a <> "=" <> b ) . reqGetParams <$> getRequest
-  (fromString $ T.unpack $ T.intercalate "/"  ("https://www.googleapis.com" : v) <> "?" <> r) gid
+  (fromString $ T.unpack $ T.intercalate "/"  ("https://www.googleapis.com" : v) <> "?" <> r) token

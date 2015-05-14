@@ -302,7 +302,9 @@ getUserLang :: Handler LangId
 getUserLang = cached (readLang <$> languages)
 
 
-type ApiReq a = Handler (TC a)
+type ApiReq a    = Handler (TC a)
+type ApiPost b a = b -> Handler (PC a)
+
 type AppM x = HandlerT App IO x
 
 userPerms :: AppM Permssions

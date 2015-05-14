@@ -101,9 +101,11 @@ YTVideoPlaylist
      UniqueYTVideoPlaylist playlist video
      deriving Show Typeable Generic
 
-YTVideo
+YTVideo json
     ref           Text
     etag          Text
+    snippet       YoutubeVideo Maybe
+    googleUser    Text
     UniqueYTVideo ref
     deriving Show Typeable Generic
 
