@@ -2,8 +2,8 @@
     <div .md-toolbar-tools>
       <span .md-flex>
          Playlist: {{playlists[0].snippet.channelTitle}}
-         <button .fa .sort-desc ng-show=sort ng-click=flipSort()>
-         <button .fa .sort-up ng-hide=sort ng-click=flipSort()>
+      <button .fa .sort-desc ng-show=sort ng-click=flipSort()>
+      <button .fa .sort-up   ng-hide=sort ng-click=flipSort()>
     <div flex>
 
 <md-content>
@@ -18,3 +18,7 @@
              $if (isAdmin perm)
                 <pre ng-show=appDebug>
                      {{ curr_pl | json}}
+$if (isAdmin perm)
+   <div layout=row>
+      <pre ng-show=appDebug>
+         {{playlist | json}}
