@@ -1,0 +1,39 @@
+# After you've edited this file, remove the following line to allow
+# `yesod keter` to build your bundle.
+user-edited: true
+
+# A Keter app is composed of 1 or more stanzas. The main stanza will define our
+# web application. See the Keter documentation for more information on
+# available stanzas.
+stanzas:
+
+  # Your Yesod application.
+  - type: webapp
+
+    # Name of your executable. You are unlikely to need to change this.
+    # Note that all file paths are relative to the keter.yml file.
+    exec: ../dist/build/MyProject/MyProject
+
+    # Command line options passed to your application.
+    args: []
+
+    connection-time-bound: 0
+
+    hosts:
+      - my
+      project.net
+    env:
+       IP_FROM_HEADER: "true"
+    # Enable to force Keter to redirect to https
+    # Can be added to any stanza
+    requires-secure: true
+    ssl: true
+
+copy-to: a@myproject.net:/opt/keter/incoming
+
+
+# If you would like to have Keter automatically create a PostgreSQL database
+# and set appropriate environment variables for it to be discovered, uncomment
+# the following line.
+plugins:
+  postgres: true

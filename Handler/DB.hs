@@ -183,7 +183,7 @@ updateYTVideo gu i e rq =
    [] ->
       rq >>= \case
         TC (Just v) -> do
-            runDB $ insert $ YTVideo i e (Just v) gu
+            runDB $ insert $ YTVideo i e (Just $ TC v) gu
             return $ TC (DBAdd, i)
         _ -> return $ TC (DBApiFail, i)
    (a:_) -> if (==) e . yTVideoEtag . entityVal $ a
@@ -192,7 +192,7 @@ updateYTVideo gu i e rq =
       else
         rq >>= \case
                 TC (Just v) -> do
-                    runDB $ update (entityKey a) [YTVideoEtag =. e, YTVideoSnippet =. Just v]
+                    runDB $ update (entityKey a) [YTVideoEtag =. e, YTVideoSnippet =. Just (TC v)]
                     return $ TC (DBUpdate, i)
                 _ -> return $ TC (DBApiFail, i)
 
@@ -276,8 +276,8 @@ getAllSiteGroup       = listsOfAll
 getAllVirtualVideo    :: ApiReq [ VirtualVideo  ]
 getAllVirtualVideo    = listsOfAll
 
-getAllPlaylistEvent   :: ApiReq [ PlaylistEvent ]
-getAllPlaylistEvent   = listsOfAll
+-- getAllPlaylistEvent   :: ApiReq [ PlaylistEvent ]
+-- getAllPlaylistEvent   = listsOfAll
 
 -- | type magic
 --   convert any list of all into a respoce; too many things to import

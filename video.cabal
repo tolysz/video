@@ -30,6 +30,7 @@ library
                      Handler.User
                      Handler.OAuth2
                      Handler.DB
+                     Handler.DBRaw
                      Handler.Translate
                 --  maybe a package
                      Data.CMap

@@ -26,12 +26,16 @@ import Types.Persistent
 --   sqlType _ = SqlBlob
 
 
+-- instance FromJSON YTChannel
+
+-- instance FromJSON YoutubeVideo
+
 share [mkPersist sqlSettings, mkMigrate "migrateAll"]
     $(persistFileWith lowerCaseSettings "config/models")
 
 -- todo: revisit
-instance FromJSON YTChannel
-instance ToJSON   YTChannel
+-- instance FromJSON YTChannel
+-- instance ToJSON   YTChannel
 
 deriveJSON (optsL 4)  ''User
 deriveJSON (optsL 9)  ''SiteGroup

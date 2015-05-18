@@ -77,12 +77,12 @@ Event
   time    UTCTime
   group   SiteGroupId
 
-PlaylistEvent
+PlaylistEven, 1.7t
   type     PlaylistType
   event    EventId
   playlist YTVideoPlaylistId
 
-YTChannel
+YTChannel json
     status        ViewChan
     ref           Text
     etag          Text
@@ -104,7 +104,7 @@ YTVideoPlaylist
 YTVideo json
     ref           Text
     etag          Text
-    snippet       YoutubeVideo Maybe
+    snippet       (TC YoutubeVideo) Maybe
     googleUser    Text
     UniqueYTVideo ref
     deriving Show Typeable Generic

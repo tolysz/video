@@ -18,6 +18,7 @@ import Data.Typeable
 import Data.Default
 import Data.Monoid
 import Data.Possible
+import Control.Applicative ((<$>))
 
 import Yesod.Core.Content
 import Database.Persist.TH
@@ -63,6 +64,12 @@ fromCamel n = worker True . drop n
 
 data TC a = TC a deriving Functor
 data PC a = PC a deriving Functor
+
+instance Show a => Show (TC a) where
+  show (TC a) = show a
+
+instance (FromJSON a) => FromJSON (TC a) where
+  parseJSON = fmap TC <$> parseJSON
 
 instance (ToJSON a) => ToJSON (TC a) where
   toJSON (TC a) = toJSON a

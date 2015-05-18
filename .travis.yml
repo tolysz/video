@@ -1,35 +1,34 @@
-language: haskell
-
-before_install:
 env:
+ - GHCVER=7.4.2 CABALVER=1.18
+ - GHCVER=7.6.3 CABALVER=1.18
  - GHCVER=7.8.4 CABALVER=1.22
  - GHCVER=7.10.1 CABALVER=1.22
-# - GHCVER=head  CABALVER=head
+ - GHCVER=head  CABALVER=head
 
 matrix:
   allow_failures:
+   - env: GHCVER=7.8.4  CABALVER=1.22
    - env: GHCVER=7.10.1 CABALVER=1.22
    - env: GHCVER=head  CABALVER=head
 
 before_install:
- - npm -g install coffee-script
- - coffee --version
  - travis_retry sudo add-apt-repository -y ppa:hvr/ghc
  - travis_retry sudo apt-get update
  - travis_retry sudo apt-get install cabal-install-$CABALVER ghc-$GHCVER
- - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$HOME/.cabal/bin:$PATH
- - gcc --version
- - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
- - sudo apt-get -qq update
- - sudo apt-get -qq install gcc-4.8
- - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
- - gcc --version
- - cabal --version
- - echo $GHCVER $CABALVER
- - travis_retry cabal update
- - cabal install alex happy
+ - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
+ # Update happy when building with GHC head
+ - |
+   if [ $GHCVER = "head" ] || [ ${GHCVER%.*} = "7.8" ] || [ ${GHCVER%.*} = "7.10" ]; then
+     travis_retry sudo apt-get install happy-1.19.4 alex-3.1.3
+     export PATH=/opt/alex/3.1.3/bin:/opt/happy/1.19.4/bin:$PATH
+   else
+     travis_retry sudo apt-get install happy alex
+   fi
 
 install:
+ - cabal --version
+ - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
+ - travis_retry cabal update
  - cd /home/travis
  - git clone --depth=50 --branch=MissingDefault2 https://github.com/tolysz/aeson tolysz/aeson
  - git clone --depth=50 --branch=master https://github.com/tolysz/google-api tolysz/google-api
@@ -37,6 +36,8 @@ install:
  - git clone --depth=50 --branch=master https://github.com/tolysz/http-client-extra-oauth2 tolysz/http-client-extra-oauth2
  - git clone --depth=50 --branch=master https://github.com/tolysz/yesod-websockets-extra tolysz/yesod-websockets-extra
  - git clone --depth=50 --branch=master https://github.com/tolysz/yesod-angular-ui tolysz/yesod-angular-ui
+ - git clone --depth=50 --branch=master https://github.com/tolysz/typedquery tolysz/typedquery
+ - git clone --depth=50 --branch=master https://github.com/tolysz/postgresql-simple-typed tolysz/postgresql-simple-typed
 
  - cd $TRAVIS_BUILD_DIR
  - cabal sandbox init
@@ -46,14 +47,29 @@ install:
  - cabal sandbox add-source /home/travis/tolysz/http-client-extra-oauth2
  - cabal sandbox add-source /home/travis/tolysz/yesod-websockets-extra
  - cabal sandbox add-source /home/travis/tolysz/yesod-angular-ui
- - cabal install --only-dependencies --enable-tests 
+ - cabal sandbox add-source /home/travis/tolysz/typedquery
+ - cabal sandbox add-source /home/travis/tolysz/postgresql-simple-typed
+
+ - cabal install --only-dependencies
+ # --enable-tests --enable-benchmarks
 
 script:
- - cabal configure --enable-tests --disable-shared
- #--enable-library-coverage || cabal configure --disable-executable-dynamic --disable-shared  --enable-tests --enable-coverage
+ - if [ -f configure.ac ]; then autoreconf -i; fi
+ - cabal configure
+ # --enable-tests --enable-library-coverage || cabal configure --enable-tests --enable-coverage
  - cabal build
-# - cabal test
+ # - cabal test
+ - cabal sdist
+# The following scriptlet checks that the resulting source distribution can be built & installed
+ - export SRC_TGZ=$(cabal info . | awk '{print $2 ".tar.gz";exit}') ;
+   cd dist/;
+   if [ -f "$SRC_TGZ" ]; then
+      cabal install --force-reinstalls "$SRC_TGZ";
+   else
+      echo "expected '$SRC_TGZ' not found";
+      exit 1;
+   fi
 
-#after_script:
+# after_script:
 # - cabal install hpc-coveralls
 # - hpc-coveralls --exclude-dir=test test

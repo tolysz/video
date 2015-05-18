@@ -166,6 +166,14 @@ instance YesodPersist App where
 
 getConn = liftIO . PGS.connectPostgreSQL =<< pgConnStr . appDatabaseConf . appSettings <$> getYesod
 
+-- runRawDB :: forall (m :: * -> *) b.
+--       (MonadHandler m, HandlerSite m ~ App) =>
+--       (PGS.Connection -> IO b) -> m b
+
+runRawDB cc = do
+   conn <- getConn
+   liftIO (cc conn)
+
 instance YesodFacebook App where
  fbHttpManager = appHttpManager
  fbCredentials = appFbCredentials . appSettings

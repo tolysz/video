@@ -35,6 +35,22 @@
 /api/user/groups                      UserGroupsR   GET
 /api/user/groups-public               UserGroupsPublicR   GET
 
+/api/test/db/0  Test0R GET
+/api/test/db/1  Test1R GET
+/api/test/db/2  Test2R GET
+/api/test/db/3  Test3R GET
+/api/test/db/4  Test4R GET
+/api/test/db/5  Test5R GET
+/api/test/db/6  Test6R GET
+/api/test/db/7  Test7R GET
+/api/test/db/8  Test8R GET
+/api/test/db/9  Test9R GET
+/api/test/db/10 Test10R GET
+/api/test/db/11 Test11R GET
+/api/test/db/12 Test12R GET
+/api/test/db/13 Test13R GET
+/api/test/db/14 Test14R GET
+/api/test/db/15 Test15R GET
 
 -- REST access 2 urls per resource
 -- /api/login                            LoginCheckR  GET

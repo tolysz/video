@@ -13,4 +13,4 @@
 $if (isAdmin perm)
    <div layout=row>
       <pre ng-show=appDebug>
-         {{playlists | json}}
+         {{ playlists | json }}
