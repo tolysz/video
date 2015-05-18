@@ -1,7 +1,7 @@
 env:
  - GHCVER=7.8.4 CABALVER=1.22
- - GHCVER=7.10.1 CABALVER=1.22
- - GHCVER=head  CABALVER=head
+# - GHCVER=7.10.1 CABALVER=1.22
+# - GHCVER=head  CABALVER=head
 
 matrix:
   allow_failures:
@@ -31,7 +31,6 @@ install:
  - git clone --depth=50 --branch=MissingDefault2 https://github.com/tolysz/aeson tolysz/aeson
  - git clone --depth=50 --branch=fixAtto         https://github.com/tolysz/fb    tolysz/fb
 
- - git clone --depth=50 https://github.com/tolysz/keys  tolysz/keys
  - git clone --depth=50 --branch=master https://github.com/tolysz/google-api tolysz/google-api
  - git clone --depth=50 --branch=master https://github.com/tolysz/http-client-extra tolysz/http-client-extra
  - git clone --depth=50 --branch=master https://github.com/tolysz/http-client-extra-oauth2 tolysz/http-client-extra-oauth2
@@ -45,8 +44,6 @@ install:
  - cabal sandbox add-source /home/travis/tolysz/aeson
  - cabal sandbox add-source /home/travis/tolysz/fb
 
-
- - cabal sandbox add-source /home/travis/tolysz/keys
  - cabal sandbox add-source /home/travis/tolysz/google-api
  - cabal sandbox add-source /home/travis/tolysz/http-client-extra
  - cabal sandbox add-source /home/travis/tolysz/http-client-extra-oauth2
@@ -54,7 +51,7 @@ install:
  - cabal sandbox add-source /home/travis/tolysz/yesod-angular-ui
  - cabal sandbox add-source /home/travis/tolysz/typedquery
  - cabal sandbox add-source /home/travis/tolysz/postgresql-simple-typed
- - travis_wait cabal install --only-dependencies
+ - cabal install -j1 --only-dependencies
  # --enable-tests --enable-benchmarks
 
 script:
