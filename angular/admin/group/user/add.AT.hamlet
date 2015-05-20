@@ -10,7 +10,7 @@
       <span md-highlight-text=searchText >{{user.display}}
 <md-checkbox ng-model="member.fullMember" aria-label="full group member">
      _{SomeMessage MsgFullMember}
-$if (isAdmin perm)
+$if isAdmin
     <md-checkbox ng-model="member.userAdmin" aria-label="member is videoAdmin">
          _{SomeMessage MsgUserAdmin}
     <md-checkbox ng-model="member.videoAdmin" aria-label="member is videoAdmin">
@@ -18,7 +18,7 @@ $if (isAdmin perm)
 
 <md-button .md-raised .md-warn ng-click=save()>_{SomeMessage MsgAdd}
 
-$if (isAdmin perm)
+$if isAdmin
     <pre ng-show=appDebug>
       {{ group | json }}
     <pre ng-show=appDebug>

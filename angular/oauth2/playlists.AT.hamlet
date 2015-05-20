@@ -6,11 +6,11 @@
       <div layout=column>
          <a ui-sref=oauth2.playlist({uuid:uuid,pid:curr_id})> {{curr_title}}
          <youtube-video player-vars="curr_vars" player=player ng-style="style()" >
-         $if (isAdmin perm)
+         $if isAdmin
              <pre ng-show=appDebug>
                 {{ curr_pl | json}}
 
-$if (isAdmin perm)
+$if isAdmin
    <div layout=row>
       <pre ng-show=appDebug>
          {{ playlists | json }}

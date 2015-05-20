@@ -51,6 +51,8 @@
 /api/test/db/13 Test13R GET
 /api/test/db/14 Test14R GET
 /api/test/db/15 Test15R GET
+/api/test/db/16 Test16R GET
+/api/test/db/17 Test17R GET
 
 -- REST access 2 urls per resource
 -- /api/login                            LoginCheckR  GET

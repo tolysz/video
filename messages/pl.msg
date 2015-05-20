@@ -43,6 +43,7 @@ ChatSend: wyślij
 MenuAdminVideo: Klipy wideo
 MenuAdminGroup: Grupy
 MenuAdminUsers: Użytkownicy
+MenuSettings: Ustawienia
 
 LoginOr: lub
 LoginUsing: Zaloguj się przez:

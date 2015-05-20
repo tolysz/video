@@ -5,7 +5,7 @@
           <span .fa .pencil-square-o  .font-stack-2x .text-danger-blur>
           <span .fa .users .fix-users .font-stack-1x .text-white>
        _{SomeMessage MsgEditGroup}
-$if (isAdmin perm)
+$if isAdmin
     <pre ng-show=appDebug>
         {{ group | json }}
 <a ui-sref="admin.group.user.add({uuid:group.uuid})">
@@ -26,6 +26,6 @@ $if (isAdmin perm)
           <h3>{{memb.name}} ({{memb.short}})
           <pre>
              {{memb | json }}
-$if (isAdmin perm)
+$if isAdmin
     <pre ng-show=appDebug>
       {{ members | json}}

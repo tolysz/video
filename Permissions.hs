@@ -45,7 +45,7 @@ permInsertUser, permUpdateUser, permListUsers  :: Permssions
 
 
 permAllAdmin :: Permssions
-permAllAdmin = def{isAdmin = True }
+permAllAdmin = def{ isAdmin = True, isLogged = True }
 
 permInsertUser = def
 permUpdateUser = def

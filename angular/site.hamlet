@@ -47,6 +47,6 @@
             <h3>{{site.name}} ({{site.short}})
             <h4>
               {{ site.notes}}
-  $if (isAdmin perm)
+  $if isAdmin
       <pre ng-show=appDebug>
         {{myGroups | json}}

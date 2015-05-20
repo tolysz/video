@@ -59,7 +59,7 @@ handleHomeR _ =  do
                        perms
                        jsi18n   -- ^ javascript convertor for messages
                        langI18Ang -- ^ user languages
-                       maid loggedIn
+                       maid -- loggedIn
                        compiledAsDevel {- -> ap-> conf -> -} (\y x ->
                          angularUILayout y $ do
                            setTitle "Video Selector" -- "Welcome To Yesod!"
@@ -74,8 +74,8 @@ handleHomeR _ =  do
                   m1 <- readMVar anonCache
                   maybe (handleHomeR []) return $ Map.lookup langI18Ang m1
 
-genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool -> Bool ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind perm jsi18n appLang maid loggedIn development = do
+genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool  ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
+genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
   runAngularUI $ cached $ do
     addConstant "maid"    [js|#{rawJS $ show maid}|]
     addConstant "appLang" [js|#{toJSON appLang}|]
@@ -159,9 +159,13 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
     state $(utcVFile "/add"            "admin.user.add"  "@" )  -- require special permissions
     state $(utcVFile "/edit/:uuid"     "admin.user.edit" "@" )  -- require special permissions
     state $(utcFile  "/site"           "site"                )  -- will be per user
-    state $(utcFile  "/chat"           "chat"                )  -- will be per user
     state $(utcFile  "/auth/logout"    "logout"              )
     state $(utcFile  "/auth/login"     "login"               )
+
+    when (isLogged) $ do
+        state $(utcFile  "/chat"       "chat"                )  -- will be per user
+        state $(utcFile  "/settings"   "settings"            )
+        state $(utcVFile "/me"         "settings.me"      "@")
 
     setDefaultRoute "site"
 
@@ -269,6 +273,13 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
       name:  "%{jsi18n (SomeMessage MsgMenuChat)}"
       visible : false
       pages: []
+      logged: true
+    ,
+      state: "settings"
+      name:  "%{jsi18n (SomeMessage MsgMenuSettings)}"
+      visible : false
+      pages: [{ state: "settings.me",     name: "Me",     icon: "fa columns font-menu-icon font-lg" }]
+      logged: true
     ,
       state : "demos"
       name:   "%{jsi18n (SomeMessage MsgDemos)}"
@@ -301,7 +312,9 @@ genAngularBind perm jsi18n appLang maid loggedIn development = do
 #      pages: [ { state: "oauth2.channels",     name: "Channels",      icon: "fa list-alt font-menu-icon font-lg" }]
 #      admin: true
     ]
-  return if perms.isAdmin then sections else _.reject(sections, (x) -> x.admin)
+  return _.reject(sections,
+    (x) -> (x.admin && ! perms.isAdmin) || (x.logged && ! perms.isLogged)
+    )
 |]
 
 noop = return ()

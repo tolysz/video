@@ -44,6 +44,7 @@ data App = App
     { appSettings    :: AppSettings
     , appStatic      :: Static -- ^ Settings for static file serving.
     , appConnPool    :: ConnectionPool -- ^ Database connection pool.
+--     , appConnPoolRaw :: ConnectionPoolRaw -- ^ Database connection pool.
     , appHttpManager :: Manager
     , appLogger      :: Logger
     , userChannels   :: CMap MsgBus
@@ -164,6 +165,9 @@ instance YesodPersist App where
         master <- getYesod
         runSqlPool action $ appConnPool master
 
+
+--- Implement Connetion Pool to tackle this
+-- for now it have to
 getConn = liftIO . PGS.connectPostgreSQL =<< pgConnStr . appDatabaseConf . appSettings <$> getYesod
 
 -- runRawDB :: forall (m :: * -> *) b.
@@ -181,7 +185,6 @@ instance YesodFacebook App where
 instance YesodGoogleAuth App where
   googleClientID     a = gaClientId     <$> (appGoogleWebAppOAuth . appSettings) a
   googleClientSecret a = gaClientSecret <$> (appGoogleWebAppOAuth . appSettings) a
-
 
 newUUID = decodeUtf8 . UUID.toASCIIBytes <$> liftIO UUID.nextRandom
 
@@ -318,5 +321,6 @@ type AppM x = HandlerT App IO x
 userPerms :: AppM Permssions
 userPerms = do
          isAdmin <-  getUserAdmin
+         isLogged <- maybe False (const True) <$> maybeAuthId
          let userGroup = Map.empty
          return Permssions{..}

@@ -1,0 +1,5 @@
+function(maid, title, $log, appLang, $locale){
+    title.set("AboutMe " + maid);
+    $log.debug(appLang);
+    $log.debug($locale);
+}

@@ -44,7 +44,7 @@ ChatSend: Send
 MenuAdminVideo: Video
 MenuAdminGroup: Group
 MenuAdminUsers: Users
-
+MenuSettings: Settings
 LoginOr: OR
 LoginUsing: Login Using:
 
