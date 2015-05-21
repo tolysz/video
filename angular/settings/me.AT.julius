@@ -1,5 +1,6 @@
-function(maid, title, $log, appLang, $locale){
+function($scope, maid, title, $log, $http, appLang, $locale){
     title.set("AboutMe " + maid);
-    $log.debug(appLang);
-    $log.debug($locale);
-}
+    $http.get("@{UserMeR}").then(function(v){
+       $log.debug(v);
+       $scope.user = v.data[0];
+    })}

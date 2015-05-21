@@ -40,19 +40,32 @@ postWatchVideosR gid = do
 getUpdateVideosR :: GUUID -> ApiReq [(DBAction, Text)]
 getUpdateVideosR gid = do
   TC guid <- getGoogleUserR gid
-  vds  <- process <$> handleYTAllVideosR gid
+  vds  <- processV  <$> handleYTAllVideosR    gid
+  pls  <- processPL <$> handleYTAllPlaylistsR gid
+
+  let ggg = possible (error "no user") (error "no user") id $ guid ^. googleUserId
   -- todo: unsafe
---   upds <-
-  unTC <$> forM vds (\(e,i) -> updateYTVideo (possible (error "no user") (error "no user") id $ guid ^. googleUserId) i e (fmap listToMaybe <$> getYTVideoR gid [i]))
+  TC u1 <- unTC <$> (forM vds (\(e,i) -> updateYTVideo     ggg i e (fmap listToMaybe <$> getYTVideoR    gid [i])))
+  TC u2 <- unTC <$> (forM pls (\(e,i) -> updateYTPlaylist  ggg i e (fmap listToMaybe <$> getYTPlaylistR gid [i])))
+
+  return $ TC (u1 ++ u2)
 
    where
      unTC a = TC (Import.map (\(TC a)-> a) a)
-     process (TC a) = catMaybes (Import.map extr a)
+     processV  (TC a) = catMaybes (Import.map extr a)
+     processPL (TC a) = catMaybes (Import.map extrPL a)
      extr :: Value -> Maybe (Text,Text)
      extr a = do
          ma <- a ^? key "etag" . _String
          mb <- a ^? key "id" . key "videoId" . _String
          return (ma,mb)
+     extrPL :: Value -> Maybe (Text,Text)
+     extrPL a = do
+         ma <- a ^? key "etag" . _String
+         mb <- a ^? key "id" . _String
+--          mb <- a ^? key "id" . key "playlistId" . _String
+         return (ma,mb)
+
 -- get all videos by id
 handleYTVideoBaseR :: Handler Html
 handleYTVideoBaseR = defaultLayout [whamlet||]
@@ -67,6 +80,18 @@ getYTVideoR gid (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
       next n a = do -- HaveNull is our start
          TC one <- (fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: GUUID -> ApiReq YoutubeVideos) gid
          next (fetchNext one) (a ++ (one ^. lrItems))
+
+getYTPlaylistR :: GUUID -> [Text] -> ApiReq [YoutubePlaylist]
+getYTPlaylistR gid (T.unpack . T.intercalate "," -> vid) =  TC <$> next HaveNull []
+    where
+      req = "snippet,contentDetails,status,id,player"
+      base = [qm|https://www.googleapis.com/youtube/v3/playlists?part=$req&id=$vid|]
+      next MissingData a   = return a
+      next (HaveData "") a = return a
+      next n a = do -- HaveNull is our start
+         TC one <- (fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: GUUID -> ApiReq YoutubePlaylists) gid
+         next (fetchNext one) (a ++ (one ^. lrItems))
+
 
 -- how to merge this and the nent function ?? any help welcome! type class with an internal type/data family perhaps?
 
@@ -128,6 +153,18 @@ handleYTAllVideosR gid = TC <$> next HaveNull [] -- if there be 'null' in the re
     next (HaveData "") a = return a
     next n a = do
        TC one <- (fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: Text -> ApiReq (ListResponse Value "youtube#searchListResponse")) gid
+       next (fetchNext one) (a ++ (one ^. lrItems))
+
+
+handleYTAllPlaylistsR :: GUUID -> ApiReq [Value]
+handleYTAllPlaylistsR gid = TC <$> next HaveNull []
+  where
+    req = "id,snippet"
+    base = [qm|https://www.googleapis.com/youtube/v3/playlists?part=$req&mine=true&maxResults=50|]
+    next MissingData a   = return a
+    next (HaveData "") a = return a
+    next n a = do
+       TC one <- (fromString (base <> (possible "" "" ("&pageToken=" <>) n)) :: Text -> ApiReq (ListResponse Value "youtube#playlistListResponse")) gid
        next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- example how rto use lenses, kill soon

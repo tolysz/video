@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes       #-}
+{-# LANGUAGE CPP               #-}
 -- | Use an email address as an identifier via Google's login system.
 --
 -- Note that this is a replacement for "Yesod.Auth.GoogleEmail", which depends
@@ -150,6 +151,7 @@ authGoogleEmail =
              -> HandlerT Auth (HandlerT site IO) TypedContent
     dispatch "GET" ["forward"] = do
         tm <- getRouteToParent
+        void getCreateCsrfToken
         clientID <- lift getGoogleClientID
         lift (getDest clientID tm) >>= redirect
 
@@ -157,11 +159,16 @@ authGoogleEmail =
 #if DEVELOPMENT
 #else
         mstate <- lookupGetParam "state"
+--         mtoken <- getCsrfToken
+--         liftIO $ do
+--             print mstate
+--             print mtoken
+--
         case mstate of
             Nothing -> invalidArgs ["CSRF state from Google is missing"]
             Just state -> do
-                mtoken <- getCsrfToken
-                unless (Just state == mtoken) $ invalidArgs ["Invalid CSRF token from Google"]
+                mtoken <- getCreateCsrfToken
+                unless (state == mtoken) $ invalidArgs ["Invalid CSRF token from Google"]
 #endif
         mcode <- lookupGetParam "code"
         code <-

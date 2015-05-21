@@ -77,7 +77,7 @@ Event
   time    UTCTime
   group   SiteGroupId
 
-PlaylistEven, 1.7t
+PlaylistEven
   type     PlaylistType
   event    EventId
   playlist YTVideoPlaylistId
@@ -92,6 +92,8 @@ YTChannel json
 YTPlaylist
     ref           Text
     etag          Text
+    snippet       (TC YoutubePlaylist) Maybe
+    googleUser    Text
     UniqueYTPlaylist ref
     deriving Show Typeable Generic
 
@@ -112,8 +114,10 @@ YTVideo json
 YTVideoUser
     video         YTVideoId
     user          UserId
+    created       UTCTime default=now()
+    eventPerm     EventParticipants default='EventParticipantsRegardless'
+    viewPerms     ViewPerm          default='VPChanMembers'
     UniqueYTVideoUser video user
---    status        ViewPerm
     deriving Show Typeable Generic
 
 ChannelMember

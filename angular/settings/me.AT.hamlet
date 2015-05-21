@@ -1,1 +1,15 @@
 About me
+<md-content layout-padding>
+  <div layout=column>
+    <img ng-src={{user.avatar}} alt="{{user.name}}" .cover>
+    <md-input-container flex>
+      <label>Name
+      <input ng-model=user.name readonly>
+    <md-input-container flex>
+      <label>Friendly
+      <input ng-model=user.friendly readonly>
+    <md-chips ng-model=user.emails readonly=true>
+
+$if isAdmin
+  <pre>
+    {{ user | json }}

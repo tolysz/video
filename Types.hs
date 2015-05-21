@@ -106,11 +106,11 @@ data ViewChan = Owner    -- Puts Channel offline
 
 instance FromJSON ViewChan
 instance ToJSON   ViewChan
+derivePersistField "ViewChan"
 
 -- instance FromJSON YTVideo
 -- instance ToJSON   YTVideo
 
-derivePersistField "ViewChan"
 
 data PlaylistType = PLRaw
                   | PLPresent
@@ -121,12 +121,32 @@ data PlaylistType = PLRaw
     deriving (Show, Read, Eq, Typeable, Generic)
 
 derivePersistField "PlaylistType"
-instance ToJSON PlaylistType
+instance ToJSON    PlaylistType
+instance FromJSON  PlaylistType
 
 type ShortName = Text
-
 type EmailQuery = Text
 
+data EventParticipants
+  = EventParticipantsRegardless
+  | EventParticipantsOnly
+  | DoNotCare
+  deriving (Show, Read, Eq, Typeable, Generic)
+
+derivePersistField "EventParticipants"
+instance ToJSON    EventParticipants
+instance FromJSON  EventParticipants
+
+data ViewPerm
+   = VPOnlyMe
+   | VPChanMembers
+   | VPGuests
+   | VPWorld
+  deriving (Show, Read, Eq, Typeable, Generic)
+
+derivePersistField "ViewPerm"
+instance ToJSON    ViewPerm
+instance FromJSON  ViewPerm
 
 
 --   deriving (Show, Read, Eq, Typeable, Generic)
@@ -149,7 +169,6 @@ instance Default Permssions where
 
 instance FromJSON Permssions
 instance ToJSON   Permssions
-
 
 -- newtype Photo = Photo ByteString
 

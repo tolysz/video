@@ -275,12 +275,6 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
       pages: []
       logged: true
     ,
-      state: "settings"
-      name:  "%{jsi18n (SomeMessage MsgMenuSettings)}"
-      visible : false
-      pages: [{ state: "settings.me",     name: "Me",     icon: "fa columns font-menu-icon font-lg" }]
-      logged: true
-    ,
       state : "demos"
       name:   "%{jsi18n (SomeMessage MsgDemos)}"
       visible : false
@@ -295,6 +289,12 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
              , { state: "demos.empty",     name: "%{jsi18n (SomeMessage MsgHello)}",      icon: "fa frown-o font-menu-icon font-lg" }
              , { state: "demos.about",     name: "About",      icon: "fa info font-menu-icon font-lg" }
              ]
+    ,
+      state: "settings"
+      name:  "%{jsi18n (SomeMessage MsgMenuSettings)}"
+      visible : false
+      pages: [{ state: "settings.me",     name: "Me",     icon: "fa columns font-menu-icon font-lg" }]
+      logged: true
     ,
       state: "admin"
       name: "%{jsi18n (SomeMessage MsgMenuAdmin)}"

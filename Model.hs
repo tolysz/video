@@ -10,6 +10,7 @@ import Types
 -- import Data.UUID
 import Network.Google.Api.Utils
 import Network.Google.Api.Youtube.Videos
+import Network.Google.Api.Youtube.Playlists
 
 
 import Data.Aeson.TH       (deriveJSON)

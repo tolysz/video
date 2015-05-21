@@ -8,7 +8,27 @@ import Data.String.QM
 import qualified Database.PostgreSQL.Simple     as TQ
 import qualified Database.PostgreSQL.Simple.TypedQuery   as TQ
 import Network.Google.Api.Youtube.Videos
+import Network.Google.Api.Youtube.Playlists
+import qualified Database.Persist.Sql as P
 
+
+getUserMeR :: ApiReq [Value]
+getUserMeR = do
+   uid <- P.fromSqlKey <$> requireAuthId
+   TC <$> runRawDB $(TQ.genJsonQuery [qq|
+    select name     as name     -- Text
+         , friendly as friendly -- Text
+         , avatar   as avatar   -- Maybe Text
+         , emails   as emails   -- Maybe [Text]
+    from "user"
+    left join (select "email".user as id
+          , array_agg("email".email) as emails
+          from "email"
+          group by "email".user
+          ) as "em" on "user".id = em.id
+    where
+     "user".id = ?  -- < uid
+   |])
 
 getTest0R :: ApiReq [Int]
 getTest0R = TC <$> runRawDB $(TQ.genTypedQuery "select 1+1")

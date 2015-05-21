@@ -13,6 +13,7 @@ import Model as M
 import Control.Arrow ((***))
 
 import Network.Google.Api.Youtube.Videos
+import Network.Google.Api.Youtube.Playlists
 import qualified Database.Esqueleto as E
 
 -- import Database.MongoDB.Query (MongoContext(..))
@@ -176,7 +177,7 @@ updateYTVideo :: Text -> Text -> Text -> ApiReq (Maybe YoutubeVideo) -> ApiReq (
 updateYTVideo gu i e rq =
   runDB ( E.select $
      E.from   $ \yv -> do
-     E.where_ $
+     E.where_
         (yv E.^. YTVideoRef E.==. E.val i)
      return yv )
   >>= \case
@@ -196,7 +197,31 @@ updateYTVideo gu i e rq =
                     return $ TC (DBUpdate, i)
                 _ -> return $ TC (DBApiFail, i)
 
+updateYTPlaylist :: Text -> Text -> Text -> ApiReq (Maybe YoutubePlaylist) -> ApiReq (DBAction,Text)
+updateYTPlaylist gu i e rq =
+  runDB ( E.select $
+     E.from   $ \yv -> do
+     E.where_
+        (yv E.^. YTPlaylistRef E.==. E.val i)
+     return yv )
+  >>= \case
+   [] ->
+      rq >>= \case
+        TC (Just v) -> do
+            runDB $ insert $ YTPlaylist i e (Just $ TC v) gu
+            return $ TC (DBAdd, i)
+        _ -> return $ TC (DBApiFail, i)
+   (a:_) -> if (==) e . yTPlaylistEtag . entityVal $ a
+      then
+        return $ TC (DBNoop, i)
+      else
+        rq >>= \case
+                TC (Just v) -> do
+                    runDB $ update (entityKey a) [YTPlaylistEtag =. e, YTPlaylistSnippet =. Just (TC v)]
+                    return $ TC (DBUpdate, i)
+                _ -> return $ TC (DBApiFail, i)
 
+-- handleYTPlaylistsR
 
 {-
      rawrecs <- runDB $ find (select

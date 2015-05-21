@@ -31,6 +31,7 @@
 /api/oauth2/youtube/sync/#GUUID        UpdateVideosR GET
 
 -- normal authentication level
+/api/user/me                          UserMeR GET
 /api/user/channels                    UserChannelsR GET
 /api/user/groups                      UserGroupsR   GET
 /api/user/groups-public               UserGroupsPublicR   GET
