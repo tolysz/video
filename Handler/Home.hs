@@ -112,12 +112,15 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
          .warnPalette('lime')
          .backgroundPalette('amber');
      // #b2ebf2
-      $mdThemingProvider.theme('docs-menu')
-         .primaryPalette('red')
-         .backgroundPalette('amber')
-         .warnPalette('brown')
-         .dark();
+      $mdThemingProvider.theme('docs-menu', 'default')
+        .backgroundPalette('grey');
+        ;
+      $mdThemingProvider.theme('docs-dark', 'default')
+        .backgroundPalette('blue');
+        ;
+
       $mdThemingProvider.setDefaultTheme('default');
+      $mdThemingProvider.alwaysWatchTheme(true);
       |]
 
 

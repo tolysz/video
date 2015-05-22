@@ -7,44 +7,52 @@ $newline never
     style="width:250px"
     layout=column
  >
-  <section md-scroll-y style="height: 100vh;"  ng-controller=LeftCtrl>
+  <section flex layout-fill layout=column md-scroll-y style="height: 100vh;"  ng-controller=LeftCtrl>
   $#<md-content style="overflow: auto;" .md-default-theme ng-controller=LeftCtrl>
-      <md-toolbar style="min-height: 64px; max-height:64px;"  >
+      <md-toolbar style="min-height: 64px; max-height:64px;" >
         <h1 .md-toolbar-tools .md-toolbar-tools-bottom flex layout=row >
           <a href="" ng-click="toggleFullScreen()" tabindex=0>
                 <span .glyphicon .fullscreen .font-menu-icon>
                 Video Selector
-      <div hide-gt-sm .menu-item .md-menu-item .menu-sub-item>
-        <md-button .md-primary ng-click="closeLeft()">
-          _{SomeMessage MsgClosePanel}
-      <md-content flex role=navigation>
+      <md-content flex role=navigation md-theme="docs-dark">
           <ul .docs-menu>
+              <li hide-gt-sm >
+                 <md-button .md-primary ng-click="closeLeft()">
+                     <div flex layout="row">
+                        _{SomeMessage MsgClosePanel}
+                        <span flex>
+
               <li ng-repeat="section in sections">
-                <md-button  .md-button-toggle ng-click="unselect(section)" .md-raised .md-primary ui-sref={{section.state}} ui-sref-active=md-hue-2>
+                <md-button ng-hide=section.pages.length
+                   .md-button-toggle ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active="md-primary md-raised">
+                  <div flex layout="row">
+                      {{section.name}}
+                      <span flex>
+                <md-button ng-show=section.pages.length
+                  .md-button-toggle
+                  ng-click="unselect(section)"
+                  .md-primary ui-sref-active=md-hue-2>
                   <div flex layout="row">
                       {{section.name}}
                       <span flex>
                       <span aria-hidden=true .md-toggle-icon
                           ng-class="{'toggled' : section.visible}"
-                          ng-show=section.pages.length
                           >
                             <md-icon md-svg-src="md-toggle-arrow">
-
                 $#<a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=md-hue-2 md-ink-ripple="#bbb" tabindex=0 md-theme="menu">
                 $#  {{section.name}}
-                <ul ng-show="section.visible && section.pages.length" .menu-toggle-list>
-                  <li ng-repeat="page in section.pages">
-                    <md-button
-                       .md-raised .md-warn
-                       ng-show=section.visible
-                       ui-sref-active=md-hue-1
-                       ui-sref={{page.state}}
-                       >
-                        <span ng-class=page.icon>
-                        {{page.name}}
+                <md-content md-theme="docs-menu">
+                    <ul ng-show="section.visible && section.pages.length" .menu-toggle-list>
+                      <li ng-repeat="page in section.pages">
+                        <md-button
+                           ng-show=section.visible
+                           ui-sref-active="md-primary md-raised"
+                           ui-sref={{page.state}}
+                           >
+                            <span ng-class=page.icon>
+                            {{page.name}}
 
-<div layout=column md-theme="default" layout-fill ng-cloak tabindex="-1" role=main style="height: 100vh; overflow-y: auto; overflow-x: hide;" md-scroll-y>
-   <section>
+<section flex layout=column md-theme="default" layout-fill ng-cloak tabindex="-1" role=main style="height-min: 100vh; height: 100vh; overflow-y: auto;" md-scroll-y>
       <md-toolbar md-default-theme md-scroll-shrink .md-accent ng-controller=LeftCtrl>
          <div .md-toolbar-tools tabindex="0" >
             <md-button .md-primary .menu-icon aria-label="Toggle Menu" hide-gt-md ng-click="toggleLeft()">
@@ -64,7 +72,8 @@ $newline never
             <div ng-click="toggleRight()" tabindex="1" >
                <md-button .md-primary .menu-icon aria-label="Toggle Video Menu">
                   <span .fa .font-2x .indent .font-rotate-180>
-      <md-content data-ui-view flex>
+      <md-content data-ui-view flex=100>
+      <div flex .fill-height>
 
 <md-sidenav .site-sidenav .md-sidenav-right .md-whiteframe-z2 md-component-id="right" style="width:250px;" tabindex="-1" >
    <section ng-controller="RightCtrl" style="height: 100vh;" layout=column>
