@@ -3,8 +3,9 @@
     <md-item ng-repeat="site in myGroups">
       <md-list-item .md-3-line>
         <div .md-avatar>
-           <img ng-show="site[0].logo" ng-src="{{site[0].logo}}" .logo alt="{{site[0].who}}">
-           <span ng-hide="site[0].logo" .fa .font-3x .group>
+           <a ui-sref="site.playlists({uuid:site[0].uuid})">
+                <img ng-show="site[0].logo" ng-src="{{site[0].logo}}" .logo alt="{{site[0].who}}">
+                <span ng-hide="site[0].logo" .fa .font-3x .group>
         <div .md-list-item-text>
             <h3>{{site[0].name}} ({{site[0].short}})
             <h4>
@@ -47,6 +48,6 @@
             <h3>{{site.name}} ({{site.short}})
             <h4>
               {{ site.notes}}
-  $if isAdmin
+  $if isDebugger
       <pre ng-show=appDebug>
         {{myGroups | json}}

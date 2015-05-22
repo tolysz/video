@@ -110,9 +110,15 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
          .primaryPalette('teal')
          .accentPalette('pink')
          .warnPalette('lime')
+         .backgroundPalette('amber');
+     // #b2ebf2
+      $mdThemingProvider.theme('docs-menu')
+         .primaryPalette('red')
          .backgroundPalette('amber')
-         |]
-    addConfig "$mdTheming" [js|theme('cyan')|]
+         .warnPalette('brown')
+         .dark();
+      $mdThemingProvider.setDefaultTheme('default');
+      |]
 
 
     addModules [ "ui.router"
@@ -159,6 +165,7 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
     state $(utcVFile "/add"            "admin.user.add"  "@" )  -- require special permissions
     state $(utcVFile "/edit/:uuid"     "admin.user.edit" "@" )  -- require special permissions
     state $(utcFile  "/site"           "site"                )  -- will be per user
+    state $(utcVFile "/:uuid/playlists"  "site.playlists" "@" )  -- will be per user
     state $(utcFile  "/auth/logout"    "logout"              )
     state $(utcFile  "/auth/login"     "login"               )
 

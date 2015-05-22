@@ -160,12 +160,13 @@ instance FromJSON  ViewPerm
 data Permssions = Permssions
   { isAdmin   :: Bool
   , isLogged  :: Bool
+  , isDebugger  :: Bool
   , userGroup :: !(Map Text Bool)
   }
    deriving (Show, Typeable, Generic)
 
 instance Default Permssions where
-  def = Permssions False False Map.empty
+  def = Permssions False False False Map.empty
 
 instance FromJSON Permssions
 instance ToJSON   Permssions

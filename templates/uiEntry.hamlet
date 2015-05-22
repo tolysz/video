@@ -1,29 +1,49 @@
 $newline never
-<md-sidenav .site-sidenav .md-sidenav-left .md-whiteframe-z2  md-is-locked-open="$mdMedia('gt-md')" md-component-id=left tabindex="-1" style="width:250px" >
-  <section md-scroll-y style="height: 100vh;" .md-default-theme ng-controller=LeftCtrl>
+<md-sidenav .site-sidenav .md-sidenav-left .md-whiteframe-z2
+    md-theme="docs-menu"
+    md-is-locked-open="$mdMedia('gt-md')"
+    md-component-id=left
+    tabindex="-1"
+    style="width:250px"
+    layout=column
+ >
+  <section md-scroll-y style="height: 100vh;"  ng-controller=LeftCtrl>
   $#<md-content style="overflow: auto;" .md-default-theme ng-controller=LeftCtrl>
-      <md-toolbar style="min-height: 64px; max-height:64px;"  .md-default-theme>
-        <h1 .md-toolbar-tools .md-toolbar-tools-bottom flex layout=row>
+      <md-toolbar style="min-height: 64px; max-height:64px;"  >
+        <h1 .md-toolbar-tools .md-toolbar-tools-bottom flex layout=row >
           <a href="" ng-click="toggleFullScreen()" tabindex=0>
                 <span .glyphicon .fullscreen .font-menu-icon>
                 Video Selector
       <div hide-gt-sm .menu-item .md-menu-item .menu-sub-item>
         <md-button .md-primary ng-click="closeLeft()">
           _{SomeMessage MsgClosePanel}
-      <div ng-repeat="section in sections">
-        <a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=active md-ink-ripple="#bbb" tabindex=0 >
-          {{section.name}}
-        <a .menu-item .md-menu-item .menu-sub-item
-           ng-show=section.visible
-           ng-repeat="page in section.pages"
-           ui-sref-active=active
-           ui-sref={{page.state}}
-           md-ink-ripple="#bbb"
-           >
-         <span ng-class=page.icon>
-         {{page.name}}
+      <md-content flex role=navigation>
+          <ul .docs-menu>
+              <li ng-repeat="section in sections">
+                <md-button  .md-button-toggle ng-click="unselect(section)" .md-raised .md-primary ui-sref={{section.state}} ui-sref-active=md-hue-2>
+                  <div flex layout="row">
+                      {{section.name}}
+                      <span flex>
+                      <span aria-hidden=true .md-toggle-icon
+                          ng-class="{'toggled' : section.visible}"
+                          ng-show=section.pages.length
+                          >
+                            <md-icon md-svg-src="md-toggle-arrow">
 
-<div layout=column layout-fill ng-cloak tabindex="-1" role=main style="height: 100vh; overflow-y: auto; overflow-x: hide;" md-scroll-y>
+                $#<a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=md-hue-2 md-ink-ripple="#bbb" tabindex=0 md-theme="menu">
+                $#  {{section.name}}
+                <ul ng-show="section.visible && section.pages.length" .menu-toggle-list>
+                  <li ng-repeat="page in section.pages">
+                    <md-button
+                       .md-raised .md-warn
+                       ng-show=section.visible
+                       ui-sref-active=md-hue-1
+                       ui-sref={{page.state}}
+                       >
+                        <span ng-class=page.icon>
+                        {{page.name}}
+
+<div layout=column md-theme="default" layout-fill ng-cloak tabindex="-1" role=main style="height: 100vh; overflow-y: auto; overflow-x: hide;" md-scroll-y>
    <section>
       <md-toolbar md-default-theme md-scroll-shrink .md-accent ng-controller=LeftCtrl>
          <div .md-toolbar-tools tabindex="0" >
@@ -32,17 +52,26 @@ $newline never
             <div layout=row flex .fill-height  ng-click="toggleLeft()">
                <div .md-toolbar-item .md-breadcrumb>
                   <span style="display: inline-block;" ng-bind-html="title.get">
+
+            $if not (isLogged perms)
+                <div flex hide-sm>
+                <div >
+                   <md-button .md-raised .md-hue-4 .md-primary ui-sref=login md-ink-ripple="#bbb" >
+                      <span .glyphicon .log-in .font-lg .menu-icon >
+                      <span hide-sm>
+                        \ _{SomeMessage MsgLogin}
+
             <div ng-click="toggleRight()" tabindex="1" >
                <md-button .md-primary .menu-icon aria-label="Toggle Video Menu">
                   <span .fa .font-2x .indent .font-rotate-180>
-      <md-content data-ui-view flex .md-default-theme>
+      <md-content data-ui-view flex>
 
 <md-sidenav .site-sidenav .md-sidenav-right .md-whiteframe-z2 md-component-id="right" style="width:250px;" tabindex="-1" >
    <section ng-controller="RightCtrl" style="height: 100vh;" layout=column>
       <md-toolbar .md-theme-light>
         <h1 .md-toolbar-tools>
           Sidenav Right
-        $if (isAdmin perms)
+        $if (isDebugger perms)
           <md-switch ng-model=appDebug  ng-change="setDebug(appDebug)" aria-label=appDebug>
              debug mode
       <div hide-gt-sm>

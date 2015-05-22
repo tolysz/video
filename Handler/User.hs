@@ -32,21 +32,27 @@ getGoogleUserR =  "https://www.googleapis.com/oauth2/v2/userinfo"
 getUpdateVideosBaseR :: Handler Html
 getUpdateVideosBaseR = defaultLayout [whamlet||]
 
+handleUserRootR:: Handler Html
+handleUserRootR = defaultLayout [whamlet||]
+
 
 postWatchVideosR :: GUUID -> Handler Text
 postWatchVideosR gid = do
   return ""
 
+
 getUpdateVideosR :: GUUID -> ApiReq [(DBAction, Text)]
 getUpdateVideosR gid = do
+  gr      <- getGroupKey gid
   TC guid <- getGoogleUserR gid
+
   vds  <- processV  <$> handleYTAllVideosR    gid
   pls  <- processPL <$> handleYTAllPlaylistsR gid
 
   let ggg = possible (error "no user") (error "no user") id $ guid ^. googleUserId
   -- todo: unsafe
-  TC u1 <- unTC <$> (forM vds (\(e,i) -> updateYTVideo     ggg i e (fmap listToMaybe <$> getYTVideoR    gid [i])))
-  TC u2 <- unTC <$> (forM pls (\(e,i) -> updateYTPlaylist  ggg i e (fmap listToMaybe <$> getYTPlaylistR gid [i])))
+  TC u1 <- unTC <$> (forM vds (\(e,i) -> updateYTVideo     gr ggg i e (fmap listToMaybe <$> getYTVideoR    gid [i])))
+  TC u2 <- unTC <$> (forM pls (\(e,i) -> updateYTPlaylist  gr ggg i e (fmap listToMaybe <$> getYTPlaylistR gid [i])))
 
   return $ TC (u1 ++ u2)
 

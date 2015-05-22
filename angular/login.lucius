@@ -1,62 +1,10 @@
-.menu-item {
-  background: none;
-  border-width: 0;
-  cursor: pointer;
-  display: block;
-  color: #333;
-  font-size: inherit;
-  line-height: 40px;
-  max-height: 40px;
-  opacity: 1;
-  margin: 0;
-  outline: none;
-  padding: 0px 28px;
-  position: relative;
-  text-align: left;
-  text-decoration: none;
-  width: 100%;
-  z-index: 1;
-  -webkit-transition: 0.45s cubic-bezier(0.35, 0, 0.25, 1);
-  -webkit-transition-property: max-height, background-color, opacity;
-  -moz-transition: 0.45s cubic-bezier(0.35, 0, 0.25, 1);
-  -moz-transition-property: max-height, background-color, opacity;
-  transition: 0.45s cubic-bezier(0.35, 0, 0.25, 1);
-  transition-property: max-height, background-color, opacity;
-}
-.menu-item.ng-hide {
-  max-height: 0;
-  opacity: 0;
-}
-.menu-item:hover {
-  color: #999;
-}
-.menu-item:focus {
-  font-weight: bold;
-}
-.menu-item.menu-title {
-  color: #888;
-  font-size: 16px;
-  padding-left: 16px;
-  text-align: left;
-  transition: color 0.35s cubic-bezier(0.35, 0, 0.25, 1);
-}
-.menu-item.menu-title:hover,
-.menu-item.menu-title.active {
-  color: #1976d2;
-}
 
-.menu-icon {
-  background: none;
-  border: none;
-}
 
-.font-menu-icon {
-  padding-right: 20px;
-  padding-top: 20px;
+@media all and (orientation:portrait) {
+	/* Styles for Portrait screen */
+    .landscape {display:none}
 }
-
-.menu-item.menu-sub-item {
-  color: #888;
-  font-size: 16px;
-  text-align: left;
+@media all and (orientation:landscape) {
+	/* Styles for Landscape screen */
+	.portrait {display:none}
 }

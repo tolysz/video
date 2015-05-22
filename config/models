@@ -33,7 +33,6 @@ OAuthAccess
     UniqueOAuthAccess owner group
     deriving Show Typeable Generic
 
-
 -- Let start the other end
 SiteGroupMember
   group         SiteGroupId
@@ -94,6 +93,7 @@ YTPlaylist
     etag          Text
     snippet       (TC YoutubePlaylist) Maybe
     googleUser    Text
+    group         SiteGroupId
     UniqueYTPlaylist ref
     deriving Show Typeable Generic
 
@@ -108,6 +108,7 @@ YTVideo json
     etag          Text
     snippet       (TC YoutubeVideo) Maybe
     googleUser    Text
+    group         SiteGroupId
     UniqueYTVideo ref
     deriving Show Typeable Generic
 

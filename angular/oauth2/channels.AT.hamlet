@@ -11,6 +11,6 @@
             <h4>{{chan.kind}}
             <p>
               {{chan.snippet.description}}
-    $if isAdmin
+    $if isDebugger
       <pre ng-show=appDebug>
          {{channels | json}}

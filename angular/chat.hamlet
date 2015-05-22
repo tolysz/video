@@ -63,6 +63,7 @@
            $#<h4>{{item.who}}
            $#<p>
            $#  {{item.notes}}
-<div ng-show=debug>
-     {{wsLink | json}}
+$if isDebugger
+    <div ng-show=appDebug>
+         {{wsLink | json}}
 

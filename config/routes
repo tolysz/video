@@ -8,6 +8,7 @@
 
 -- /oauth/ require additional authorization via @GoogleOAuthLoginR
 /api/notifications/videos/#GUUID       WatchVideosR POST
+
 /api/oauth2/                           RootOAuth2R
 /api/oauth2/google/callback            GoogleCallbackR
 /api/oauth2/google/manage              GoogleManageR
@@ -31,10 +32,12 @@
 /api/oauth2/youtube/sync/#GUUID        UpdateVideosR GET
 
 -- normal authentication level
+/api/user                             UserRootR
 /api/user/me                          UserMeR GET
 /api/user/channels                    UserChannelsR GET
 /api/user/groups                      UserGroupsR   GET
 /api/user/groups-public               UserGroupsPublicR   GET
+/api/user/group/#GUUID/playlists      UserPlaylistsGroupR GET
 
 /api/test/db/0  Test0R GET
 /api/test/db/1  Test1R GET
@@ -58,7 +61,7 @@
 -- REST access 2 urls per resource
 -- /api/login                            LoginCheckR  GET
 /api/admin/user                       UserR  GET POST
-/api/admin/user/#Text                 User1R GET DELETE
+/api/admin/user/#GUUID                 User1R GET DELETE
 
 /api/admin/group                      SiteGroupR  GET POST
 /api/admin/group/#GUUID               SiteGroup1R GET DELETE

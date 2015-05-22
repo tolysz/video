@@ -18,7 +18,7 @@
              $if isAdmin
                 <pre ng-show=appDebug>
                      {{ curr_pl | json}}
-$if isAdmin
+$if isDebugger
    <div layout=row>
       <pre ng-show=appDebug>
          {{playlist | json}}

@@ -173,8 +173,8 @@ getUserGroupsPublicR =
 
 
 -- todo: agregate queries
-updateYTVideo :: Text -> Text -> Text -> ApiReq (Maybe YoutubeVideo) -> ApiReq (DBAction,Text)
-updateYTVideo gu i e rq =
+updateYTVideo :: Key SiteGroup -> Text -> Text -> Text -> ApiReq (Maybe YoutubeVideo) -> ApiReq (DBAction,Text)
+updateYTVideo gr gu i e rq =
   runDB ( E.select $
      E.from   $ \yv -> do
      E.where_
@@ -184,7 +184,7 @@ updateYTVideo gu i e rq =
    [] ->
       rq >>= \case
         TC (Just v) -> do
-            runDB $ insert $ YTVideo i e (Just $ TC v) gu
+            runDB $ insert $ YTVideo i e (Just $ TC v) gu gr
             return $ TC (DBAdd, i)
         _ -> return $ TC (DBApiFail, i)
    (a:_) -> if (==) e . yTVideoEtag . entityVal $ a
@@ -197,8 +197,8 @@ updateYTVideo gu i e rq =
                     return $ TC (DBUpdate, i)
                 _ -> return $ TC (DBApiFail, i)
 
-updateYTPlaylist :: Text -> Text -> Text -> ApiReq (Maybe YoutubePlaylist) -> ApiReq (DBAction,Text)
-updateYTPlaylist gu i e rq =
+updateYTPlaylist :: Key SiteGroup -> Text -> Text -> Text -> ApiReq (Maybe YoutubePlaylist) -> ApiReq (DBAction,Text)
+updateYTPlaylist gr gu i e rq =
   runDB ( E.select $
      E.from   $ \yv -> do
      E.where_
@@ -208,7 +208,7 @@ updateYTPlaylist gu i e rq =
    [] ->
       rq >>= \case
         TC (Just v) -> do
-            runDB $ insert $ YTPlaylist i e (Just $ TC v) gu
+            runDB $ insert $ YTPlaylist i e (Just $ TC v) gu gr
             return $ TC (DBAdd, i)
         _ -> return $ TC (DBApiFail, i)
    (a:_) -> if (==) e . yTPlaylistEtag . entityVal $ a

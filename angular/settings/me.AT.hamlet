@@ -10,6 +10,6 @@ About me
       <input ng-model=user.friendly readonly>
     <md-chips ng-model=user.emails readonly=true>
 
-$if isAdmin
-  <pre>
+$if isDebugger
+  <pre ng-show=appDebug>
     {{ user | json }}

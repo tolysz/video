@@ -26,6 +26,6 @@ $if isAdmin
           <h3>{{memb.name}} ({{memb.short}})
           <pre>
              {{memb | json }}
-$if isAdmin
+$if isDebugger
     <pre ng-show=appDebug>
       {{ members | json}}

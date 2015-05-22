@@ -16,12 +16,12 @@ getUserMeR :: ApiReq [Value]
 getUserMeR = do
    uid <- P.fromSqlKey <$> requireAuthId
    TC <$> runRawDB $(TQ.genJsonQuery [qq|
-    select name     as name     -- Text
-         , friendly as friendly -- Text
-         , avatar   as avatar   -- Maybe Text
-         , emails   as emails   -- Maybe [Text]
+    select name     -- Text
+         , friendly -- Text
+         , avatar   -- Maybe  Text
+         , emails   -- Maybe [Text]
     from "user"
-    left join (select "email".user as id
+    left outer join (select "email".user as id
           , array_agg("email".email) as emails
           from "email"
           group by "email".user
@@ -29,6 +29,21 @@ getUserMeR = do
     where
      "user".id = ?  -- < uid
    |])
+
+getUserPlaylistsGroupR :: GUUID -> ApiReq [Value]
+getUserPlaylistsGroupR gr = do
+    uid <- P.fromSqlKey <$> requireAuthId
+    gid <- P.fromSqlKey <$> getGroupKey gr
+    TC <$> runRawDB $(TQ.genJsonQuery [qq|
+    select ref                                     as id         -- Text
+         , snippet->'snippet'->'thumbnails'        as thumbnails -- Maybe Value
+         , snippet->'snippet'->>'title'            as title      -- Text
+         , (snippet->'contentDetails'->>'itemCount') :: integer as count -- Int
+    from "y_t_playlist"
+    where
+      "group" = ? -- < gid
+  |])
+
 
 getTest0R :: ApiReq [Int]
 getTest0R = TC <$> runRawDB $(TQ.genTypedQuery "select 1+1")

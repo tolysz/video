@@ -13,6 +13,6 @@
      <label>_{SomeMessage MsgUrl}
      <input ng-model=group.url type=url>
 <md-button .md-raised .md-warn ng-click=save()>_{SomeMessage MsgCreate}
-$if isAdmin
+$if isDebugger
     <pre ng-show=appDebug>
          {{ group | json }}

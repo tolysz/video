@@ -18,7 +18,7 @@ $if isAdmin
 
 <md-button .md-raised .md-warn ng-click=save()>_{SomeMessage MsgAdd}
 
-$if isAdmin
+$if isDebugger
     <pre ng-show=appDebug>
       {{ group | json }}
     <pre ng-show=appDebug>

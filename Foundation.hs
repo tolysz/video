@@ -293,6 +293,8 @@ angularUILayout ngApp widget = do
 getUserIdent :: Handler (Key User)
 getUserIdent = requireAuthId
 
+getGroupKey :: GUUID -> AppM (Key SiteGroup)
+getGroupKey u = runDB $ entityKey <$> getBy404 (UniqueSiteGroup u)
 
 getUserAdmin :: Handler Bool
 getUserAdmin =
@@ -321,6 +323,7 @@ type AppM x = HandlerT App IO x
 userPerms :: AppM Permssions
 userPerms = do
          isAdmin <-  getUserAdmin
-         isLogged <- maybe False (const True) <$> maybeAuthId
+         let isDebugger = isAdmin
+         isLogged <- isJust <$> maybeAuthId
          let userGroup = Map.empty
          return Permssions{..}

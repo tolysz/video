@@ -1,16 +1,18 @@
 function($scope,$log,$http,$stateParams /*, ytPlayer */, title){
-    $scope.sort = 0
+    $scope.sort = 0;
     $scope.uuid = $stateParams.uuid;
-        $scope.getList = function(){
-            $log.debug($stateParams.cid)
-            $http.get('@{YTPlaylistsBaseR}' +"/" + $scope.uuid + "/" + $stateParams.cid)
-                .success( function(data){
-                    $log.debug(data);
-                    $scope.playlists = data;
-                    title.set("Playlists for: " + data[0].snippet.channelTitle);
-                }
-            )
-        }
+    $scope.getList = function(){
+        $log.debug($stateParams.cid);
+        $http.get('@{UserRootR}' +"/group/" + $scope.uuid + "/playlists")
+            .success( function(data){
+                $log.debug(data);
+                $scope.debug = data;
+                $scope.playlists = data;
+                title.set("Playlists for channel");
+
+            }
+        )
+    };
     //$scope.curr_vars = ytPlayer.curr_vars;
     //$scope.player = ytPlayer.player;
 
@@ -19,7 +21,8 @@ function($scope,$log,$http,$stateParams /*, ytPlayer */, title){
         $scope.curr_pl = pl;
         $scope.curr_id = pl.id;
         $scope.curr_vars = { list: pl.id }
-        $scope.curr_title = pl.snippet.title;
+        $scope.curr_title = pl.title;
+        title.set(pl.title);
 
         //ytPlayer.curr_vars = $scope.curr_vars;
     }
