@@ -1,1 +1,12 @@
 theme settings
+
+<div ng-repeat="thm in themes">
+   {{thm}}
+   <div ng-repeat="ar in areas">
+      <md-select ng-model="thmConf[thm][ar]">
+         <md-option ng-value=null>delete
+         <md-option ng-value=opt ng-repeat="opt in colors">{{ opt }}
+
+
+<pre>
+   {{ thmConf | json }}

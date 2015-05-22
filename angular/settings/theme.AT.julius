@@ -1,4 +1,5 @@
 function(){
+
 	$scope.colors = [ 'red', 'pink', 'purple', 'deep-purple'
 	                , 'indigo', 'blue', 'light-blue', 'cyan'
 	                , 'teal', 'green', 'light-green', 'lime'
@@ -6,5 +7,12 @@ function(){
 	                , 'brown', 'grey', 'blue-grey'
 	                ];
 	$scope.themes = [ 'default', 'docs-menu', 'docs-dark' ];
+	$scope.areas = [ 'primary', 'accent', 'warn', 'background' ]
+
+
+//	.primaryPalette('teal')
+//         .accentPalette('pink')
+//         .warnPalette('lime')
+//         .backgroundPalette('amber');
 
 }
