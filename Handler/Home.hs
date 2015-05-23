@@ -154,7 +154,6 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
                , "ngMaterial"
                , "ngResource"
                , "ngLocale"
-               , "ngStorage"
                , "angulartics"
                , "angulartics.google.analytics"
                ]
