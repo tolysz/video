@@ -113,6 +113,7 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     addConfigRaw [js|function($mdThemingProvider, thm){
 
     app = function (name){
+       try{
            $mdThemingProvider.theme(name)
              .primaryPalette   (thm[name]['primary']   )
              .accentPalette    (thm[name]['accent']    )
@@ -121,6 +122,8 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
 
            if (thm[name]['dark'])
                   $mdThemingProvider.theme(name).dark();
+         } catch(e){};
+
          };
 
     _.map ( _.keys(thm), app);
