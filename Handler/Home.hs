@@ -85,6 +85,7 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     addConstant "perms"   [js|#{toJSON perm}|]
 
     addConstant "thm"   [js|#{toJSON thm}|]
+    addConstant "thmColours" [js|['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey']|]
 
 --     addValue    "debug"   [js|false|]
 
@@ -110,10 +111,10 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     addConfig "$http"     [js|useApplyAsync(true)|]
     addConfig "$location" [js|html5Mode({rewriteLinks:true, requireBase:true, enabled: true})|]
 
-    addConfigRaw [js|function($mdThemingProvider, thm){
+    addConfigRaw [js|function($mdThemingProvider, thm, thmColours){
     
     red = function(c){
-     if (_.indexOf(['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey'], c) > -1)
+     if (_.indexOf(thmColours, c) > -1)
         then
            return c;
         else

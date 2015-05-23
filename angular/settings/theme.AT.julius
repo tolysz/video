@@ -1,13 +1,8 @@
-function($scope,thm, $window, $log, $http, title){
+function($scope, thm, thmColours, $window, $log, $http, title){
     title.set("Play with themes")
     $scope.thmConf = thm;
 
-	$scope.colors = [ 'red', 'pink', 'purple', 'deep-purple'
-	                , 'indigo', 'blue', 'light-blue', 'cyan'
-	                , 'teal', 'green', 'light-green', 'lime'
-	                , 'yellow', 'amber', 'orange', 'deep-orange'
-	                , 'brown', 'grey', 'blue-grey'
-	                ];
+	$scope.colors = thmColours;
 	$scope.themes = [ 'default', 'docs-menu', 'docs-dark' ];
 	$scope.areas = [ 'primary', 'accent', 'warn', 'background' ]
 
@@ -24,9 +19,4 @@ function($scope,thm, $window, $log, $http, title){
            $window.location.reload();
        })
     };
-//	.primaryPalette('teal')
-//         .accentPalette('pink')
-//         .warnPalette('lime')
-//         .backgroundPalette('amber');
-//    $mdTheming.$get('default').backgroundPalette('green');
 }
