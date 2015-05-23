@@ -111,14 +111,23 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     addConfig "$location" [js|html5Mode({rewriteLinks:true, requireBase:true, enabled: true})|]
 
     addConfigRaw [js|function($mdThemingProvider, thm){
+    
+    red = function(c){
+     if (_.indexOf(['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey'], c) > -1)
+        then
+           return c;
+        else
+           return 'red';
+
+  }
 
     app = function (name){
        try{
            $mdThemingProvider.theme(name)
-             .primaryPalette   (thm[name]['primary']   )
-             .accentPalette    (thm[name]['accent']    )
-             .warnPalette      (thm[name]['warn']      )
-             .backgroundPalette(thm[name]['background']);
+             .primaryPalette   (red(thm[name]['primary'])   )
+             .accentPalette    (red(thm[name]['accent'] )   )
+             .warnPalette      (red(thm[name]['warn']   )   )
+             .backgroundPalette(red(thm[name]['background']));
 
            if (thm[name]['dark'])
                   $mdThemingProvider.theme(name).dark();
