@@ -3,7 +3,7 @@ function($scope, thm, thmColours, $window, $log, $http, title){
     $scope.thmConf = thm;
 
 	$scope.colors = thmColours;
-	$scope.themes = [ 'default', 'docs-menu', 'docs-dark' ];
+	$scope.themes = [ 'default', 'main-menu', 'sub-menu' ];
 	$scope.areas = [ 'primary', 'accent', 'warn', 'background' ]
 
 

@@ -1,6 +1,6 @@
 $newline never
 <md-sidenav .site-sidenav .md-sidenav-left .md-whiteframe-z2
-    md-theme="docs-menu"
+    md-theme="main-menu"
     md-is-locked-open="$mdMedia('gt-md')"
     md-component-id=left
     tabindex="-1"
@@ -14,7 +14,7 @@ $newline never
           <a href="" ng-click="toggleFullScreen()" tabindex=0>
                 <span .glyphicon .fullscreen .font-menu-icon>
                 Video Selector
-      <md-content flex role=navigation md-theme="docs-dark">
+      <md-content flex role=navigation md-theme="sub-menu">
           <ul .docs-menu>
               <li hide-gt-sm >
                  <md-button .md-primary ng-click="closeLeft()">
@@ -39,9 +39,9 @@ $newline never
                           ng-class="{'toggled' : section.visible}"
                           >
                             <md-icon md-svg-src="md-toggle-arrow">
-                $#<a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=md-hue-2 md-ink-ripple="#bbb" tabindex=0 md-theme="menu">
+                $#<a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=md-hue-2 md-ink-ripple="#bbb" tabindex=0 md-theme="main-menu">
                 $#  {{section.name}}
-                <md-content md-theme="docs-menu">
+                <md-content md-theme="main-menu">
                     <ul ng-show="section.visible && section.pages.length" .menu-toggle-list>
                       <li ng-repeat="page in section.pages">
                         <md-button
@@ -77,7 +77,7 @@ $newline never
 
 <md-sidenav .site-sidenav .md-sidenav-right .md-whiteframe-z2 md-component-id="right" style="width:250px;" tabindex="-1" >
    <section ng-controller="RightCtrl" style="height: 100vh;" layout=column>
-      <md-toolbar .md-theme-light>
+      <md-toolbar>
         <h1 .md-toolbar-tools>
           Sidenav Right
         $if (isDebugger perms)

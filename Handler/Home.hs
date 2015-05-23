@@ -119,9 +119,11 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
            return c;
         }
         else
+        {
            return 'red';
+        }
 
-  }
+    }
 
     app = function (name){
        try{

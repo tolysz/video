@@ -158,14 +158,14 @@ getUserGroupsR =
 
 defTheme :: Theme
 defTheme = fromJust $ A.decode [qq|{
- "docs-dark": {
+ "main-menu": {
   "dark": false,
   "accent": "purple",
   "primary": "deep-purple",
   "warn": "cyan",
   "background": "blue"
  },
- "docs-menu": {
+ "sub-menu": {
   "dark": false,
   "accent": "purple",
   "primary": "pink",
