@@ -22,8 +22,8 @@ function($scope,thm, $window, $log, $http, title){
        $http.delete("@{UserThemeR}").then(function() {
            $log.debug("success");
            $window.location.reload();
-       };
-    }
+       })
+    };
 //	.primaryPalette('teal')
 //         .accentPalette('pink')
 //         .warnPalette('lime')
