@@ -15,7 +15,7 @@ $newline never
           <a href="" ng-click="toggleFullScreen()" tabindex=0>
                 <span .glyphicon .fullscreen .font-menu-icon>
                 Video Selector
-      <md-content flex role=navigation md-theme="sub-menu">
+      <md-content flex role=navigation md-theme="main-menu">
           <ul .docs-menu>
               <li hide-gt-sm >
                  <md-button .md-primary ng-click="closeLeft()">
@@ -45,9 +45,9 @@ $newline never
                           ng-class="{'toggled' : section.visible}"
                           >
                             <md-icon md-svg-src="md-toggle-arrow">
-                $#<a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=md-hue-2 md-ink-ripple="#bbb" tabindex=0 md-theme="main-menu">
+                $#<a .menu-item .md-menu-item .menu-title  ng-click="unselect(section)" ui-sref={{section.state}} ui-sref-active=md-hue-2 md-ink-ripple="#bbb" tabindex=0 md-theme="sub-menu">
                 $#  {{section.name}}
-                <md-content md-theme="main-menu">
+                <md-content md-theme="sub-menu">
                     <ul ng-show="section.visible && section.pages.length"
                        .menu-toggle-list>
                       <li ng-repeat="page in section.pages">
