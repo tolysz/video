@@ -19,6 +19,12 @@ SiteAdmin
     UniqueSiteAdmin user
     deriving Show Typeable Generic
 
+UserTheme
+    user            UserId
+    theme           (TC Theme) Maybe
+    UniqueUserTheme user
+    deriving Show Typeable Generic
+
 OAuthAccess
     owner         UserId
     group         SiteGroupId

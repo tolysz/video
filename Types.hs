@@ -27,7 +27,9 @@ import qualified Data.Map.Strict as Map
 
 import GHC.Generics
 import Text.Blaze
--- import Data.String
+
+-- import Control.Lens              (makeLenses)
+import Network.Google.Api.Utils  (optsL)-- import Data.String
 
 -- import Control.Applicative ((<$>))
 
@@ -110,6 +112,25 @@ derivePersistField "ViewChan"
 
 -- instance FromJSON YTVideo
 -- instance ToJSON   YTVideo
+
+
+data ThemeRules = ThemeRules
+  { themeRulesPrimary    :: !(Maybe Text)
+  , themeRulesAccent     :: !(Maybe Text)
+  , themeRulesWarn       :: !(Maybe Text)
+  , themeRulesBackground :: !(Maybe Text)
+  , themeRulesDark       :: !(Maybe Bool)
+  }
+  deriving (Show, Read, Eq, Typeable, Generic)
+
+deriveJSON (optsL 10) ''ThemeRules
+
+newtype Theme = Theme (Map Text ThemeRules)
+  deriving (Show, Read, Eq, Typeable, Generic)
+
+instance ToJSON    Theme
+instance FromJSON  Theme
+
 
 
 data PlaylistType = PLRaw
@@ -199,3 +220,4 @@ instance ToJSON a => ToMarkup (TC a) where
 
 instance (ToMarkup a, ToMarkup b) => ToMarkup (a,b) where
   toMarkup (a,b) = unsafeLazyByteString "(" <> toMarkup a <> unsafeLazyByteString ", " <> toMarkup b <> unsafeLazyByteString ")"
+

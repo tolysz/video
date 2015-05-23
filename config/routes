@@ -34,6 +34,7 @@
 -- normal authentication level
 /api/user                             UserRootR
 /api/user/me                          UserMeR GET
+/api/user/theme                       UserThemeR GET POST DELETE
 /api/user/channels                    UserChannelsR GET
 /api/user/groups                      UserGroupsR   GET
 /api/user/groups-public               UserGroupsPublicR   GET

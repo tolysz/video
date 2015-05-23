@@ -4,6 +4,7 @@ module Handler.DB where
 import Import
 import Permissions
 import Data.Aeson.Lens
+import qualified Data.Aeson as A
 import Data.Aeson.Types
 import Control.Lens ((^?) , (^.))
 import Control.Lens.Iso (non)
@@ -12,9 +13,14 @@ import Data.ByteString.UTF8 (toString)
 import Model as M
 import Control.Arrow ((***))
 
+
+import Data.Maybe (fromJust)
+
 import Network.Google.Api.Youtube.Videos
 import Network.Google.Api.Youtube.Playlists
 import qualified Database.Esqueleto as E
+
+import Data.String.QM
 
 -- import Database.MongoDB.Query (MongoContext(..))
 -- import Data.Aeson.Types (emptyObject)
@@ -149,6 +155,62 @@ getUserGroupsR =
      E.where_ $ sgm E.^. SiteGroupMemberUser E.==. E.val aid
      return (sg, sgm)
      )
+
+defTheme :: Theme
+defTheme = fromJust $ A.decode [qq|{
+ "docs-dark": {
+  "dark": false,
+  "accent": "purple",
+  "primary": "deep-purple",
+  "warn": "cyan",
+  "background": "blue"
+ },
+ "docs-menu": {
+  "dark": false,
+  "accent": "purple",
+  "primary": "pink",
+  "warn": "light-blue",
+  "background": "light-blue"
+ },
+ "default": {
+  "dark": false,
+  "accent": "pink",
+  "primary": "teal",
+  "warn": "lime",
+  "background": "amber"
+ }
+}|]
+
+
+getUserThemeR :: ApiReq Theme
+getUserThemeR = maybeAuthId >>= \case
+  Nothing -> rtd
+  Just u ->  runDB ( E.select $
+                 E.from   $ \yv -> do
+                 E.where_
+                    (yv E.^. UserThemeUser E.==. E.val u)
+                 return yv )
+              >>= \case
+               [Entity _ (UserTheme _ (Just t)) ] -> return t
+               _        -> rtd
+ where
+    rtd = return  $ TC defTheme
+
+deleteUserThemeR :: AppM ()
+deleteUserThemeR = do
+  uid <- requireAuthId
+  runDB $ deleteBy (UniqueUserTheme uid)
+
+postUserThemeR :: ApiReq Theme
+postUserThemeR = do
+        guardAllAdmin
+        uid <- requireAuthId
+        restOpenM $ \(v :: Theme) -> runMaybeT $ do
+            MaybeT $ runDB $ do
+              getBy (UniqueUserTheme uid)>>= \case
+                Just (Entity k _) -> repsert k (UserTheme uid (Just $ TC v))
+                Nothing           -> insert_ (UserTheme uid (Just $ TC v))
+              return $ Just (TC v)
 
 getUserGroupsPublicR :: ApiReq [SiteGroup]
 getUserGroupsPublicR =

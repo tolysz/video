@@ -1,12 +1,25 @@
 theme settings
 
-<div ng-repeat="thm in themes">
-   {{thm}}
-   <div ng-repeat="ar in areas">
-      <md-select ng-model="thmConf[thm][ar]">
-         <md-option ng-value=null>delete
-         <md-option ng-value=opt ng-repeat="opt in colors">{{ opt }}
+<md-content layout=row layout-align="space-between center">
+   <div ng-repeat="thm in themes" >
+      <h2>{{thm}}
+      <md-content ng-repeat="ar in areas" layout="row">
+         {{ar}}
+         <md-select ng-model="thmConf[thm][ar]" placeholder={{ar}}>
+            <md-option ng-value=null>delete
+            <md-option ng-value=opt ng-repeat="opt in colors">{{ opt }}
+      <md-content layout="row">
+         flavor
+         <md-select ng-model="thmConf[thm]['dark']" placeholder={{ar}}>
+               <md-option ng-value=false>light
+               <md-option ng-value=true >dark
 
-
+<div>
+     <md-button .md-raised .md-warn ng-click=save()>
+         <span .fa .floppy-o>
+         _{SomeMessage MsgSave}
+     <md-button .md-raised .md-warn ng-click=delete()>
+            <span .fa .times>
+            _{SomeMessage MsgXDelete}
 <pre>
    {{ thmConf | json }}

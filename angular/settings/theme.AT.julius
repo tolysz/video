@@ -1,4 +1,6 @@
-function(){
+function($scope,thm, $window, $log, $http, title){
+    title.set("Play with themes")
+    $scope.thmConf = thm;
 
 	$scope.colors = [ 'red', 'pink', 'purple', 'deep-purple'
 	                , 'indigo', 'blue', 'light-blue', 'cyan'
@@ -10,9 +12,21 @@ function(){
 	$scope.areas = [ 'primary', 'accent', 'warn', 'background' ]
 
 
+    $scope.save = function(){
+      $http.post("@{UserThemeR}", $scope.thmConf).then(function(){
+        $log.debug("success");
+        $window.location.reload();
+    })
+    };
+    $scope.delete = function(){
+       $http.delete("@{UserThemeR}").then(function() {
+           $log.debug("success");
+           $window.location.reload();
+       };
+    }
 //	.primaryPalette('teal')
 //         .accentPalette('pink')
 //         .warnPalette('lime')
 //         .backgroundPalette('amber');
-
+//    $mdTheming.$get('default').backgroundPalette('green');
 }

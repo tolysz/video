@@ -26,6 +26,7 @@ import qualified Data.Aeson as DA
 
 
 import Handler.Translate
+import Handler.DB
 import Permissions
 type LangCache = Map LangId Html
 
@@ -55,10 +56,12 @@ handleHomeR _ =  do
                    let
                      jsi18n :: SomeMessage App -> RawJavascript
                      jsi18n m = rawJS $ mrender $ m
+                   TC thm <- getUserThemeR
                    res <- genAngularBind
                        perms
                        jsi18n   -- ^ javascript convertor for messages
                        langI18Ang -- ^ user languages
+                       thm -- ^ user theme
                        maid -- loggedIn
                        compiledAsDevel {- -> ap-> conf -> -} (\y x ->
                          angularUILayout y $ do
@@ -74,12 +77,14 @@ handleHomeR _ =  do
                   m1 <- readMVar anonCache
                   maybe (handleHomeR []) return $ Map.lookup langI18Ang m1
 
-genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> LangId -> Text -> Bool  ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
+genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> LangId -> Theme-> Text -> Bool  ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
+genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
   runAngularUI $ cached $ do
     addConstant "maid"    [js|#{rawJS $ show maid}|]
     addConstant "appLang" [js|#{toJSON appLang}|]
     addConstant "perms"   [js|#{toJSON perm}|]
+
+    addConstant "thm"   [js|#{toJSON thm}|]
 
 --     addValue    "debug"   [js|false|]
 
@@ -105,23 +110,24 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
     addConfig "$http"     [js|useApplyAsync(true)|]
     addConfig "$location" [js|html5Mode({rewriteLinks:true, requireBase:true, enabled: true})|]
 
-    addConfig "$mdTheming"
-      [js|theme('default')
-         .primaryPalette('teal')
-         .accentPalette('pink')
-         .warnPalette('lime')
-         .backgroundPalette('amber');
-     // #b2ebf2
-      $mdThemingProvider.theme('docs-menu', 'default')
-        .backgroundPalette('grey');
-        ;
-      $mdThemingProvider.theme('docs-dark', 'default')
-        .backgroundPalette('blue');
-        ;
+    addConfigRaw [js|function($mdThemingProvider, thm){
+
+    app = function (name){
+           $mdThemingProvider.theme(name)
+             .primaryPalette   (thm[name]['primary']   )
+             .accentPalette    (thm[name]['accent']    )
+             .warnPalette      (thm[name]['warn']      )
+             .backgroundPalette(thm[name]['background']);
+
+           if (thm[name]['dark'])
+                  $mdThemingProvider.theme(name).dark();
+         };
+
+    _.map ( _.keys(thm), app);
 
       $mdThemingProvider.setDefaultTheme('default');
       $mdThemingProvider.alwaysWatchTheme(true);
-      |]
+}|]
 
 
     addModules [ "ui.router"
@@ -132,6 +138,7 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
                , "ngMaterial"
                , "ngResource"
                , "ngLocale"
+               , "ngStorage"
                , "angulartics"
                , "angulartics.google.analytics"
                ]
@@ -175,6 +182,7 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
     when (isLogged) $ do
         state $(utcFile  "/chat"       "chat"                )  -- will be per user
         state $(utcFile  "/settings"   "settings"            )
+        state $(utcVFile "/settings"   "settings.theme"   "@")
         state $(utcVFile "/me"         "settings.me"      "@")
 
     setDefaultRoute "site"
@@ -303,7 +311,9 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang maid development = do
       state: "settings"
       name:  "%{jsi18n (SomeMessage MsgMenuSettings)}"
       visible : false
-      pages: [{ state: "settings.me",     name: "Me",     icon: "fa columns font-menu-icon font-lg" }]
+      pages: [ { state: "settings.me",     name: "Me",     icon: "fa columns font-menu-icon font-lg" }
+             , { state: "settings.theme",  name: "theme",  icon: "fa columns font-menu-icon font-lg" }
+             ]
       logged: true
     ,
       state: "admin"

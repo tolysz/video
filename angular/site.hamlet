@@ -15,26 +15,37 @@
                 <span ng-show="site[1].fullMember" .fa .font-2x .star>
                 <span ng-hide="site[1].fullMember" .fa .font-2x .star-o>
 
-                <md-button .md-primary .md-fab .md-mini ng-show="site[1].videoAdmin" ui-sref="oauth2.channels({uuid:site[0].uuid})">
+                <md-button .md-primary .md-fab .md-mini
+                   ng-show="site[1].videoAdmin"
+                   ui-sref="oauth2.channels({uuid:site[0].uuid})"
+                   aria-label="video admin" >
                    <span ng-show="site[1].videoAdmin" .fa .font-2x .file-video-o .fix-top5 >
 
-                <md-button .md-primary .md-fab .md-mini ng-show="site[1].videoAdmin" ui-sref="oauth2.refresh({uuid:site[0].uuid})">
+                <md-button .md-primary .md-fab .md-mini
+                   ng-show="site[1].videoAdmin"
+                   ui-sref="oauth2.refresh({uuid:site[0].uuid})"
+                   aria-label="reload raw videos" >
                    <span ng-show="site[1].videoAdmin" .fa .font-2x .refresh .fix-top5 >
 
                 <md-button .md-primary .md-fab .md-mini
                    target="_blank"
                    ng-show="site[1].videoAdmin"
-                   ng-href="@{RootOAuth2R}/google/login/{{site[0].uuid}}">
+                   ng-href="@{RootOAuth2R}/google/login/{{site[0].uuid}}"
+                   aria-label="login oauth2"
+                   >
                    <span .fa .youtube-square .font-2x .fix-top5 >
 
                 $# <span ng-show="site[1].userAdmin"  .fa .font-2x .group>
                 $# <div .md-secondary style="opacity:0.8" layout-gt-md="row" layout="column" layout-align="center center">
-                <md-button .md-primary .md-fab .md-mini ng-show="site[1].userAdmin" ui-sref="admin.group.edit({uuid:site[0].uuid})">
+                <md-button .md-primary .md-fab .md-mini ng-show="site[1].userAdmin"
+                   ui-sref="admin.group.edit({uuid:site[0].uuid})"
+                   aria-label="edit group" >
                    <span .font-stack>
                       <span .fa .pencil-square-o  .font-stack-2x .text-danger-blur>
                       <span .fa .users .fix-users .font-stack-1x >
 
-                <md-button .md-primary .md-fab .md-mini ng-show="site[1].userAdmin" ui-sref="admin.group.user.add({uuid:site[0].uuid})">
+                <md-button .md-primary .md-fab .md-mini ng-show="site[1].userAdmin" ui-sref="admin.group.user.add({uuid:site[0].uuid})"
+                   aria-label="add users">
                    <span .font-stack>
                       <span .fa .users     .font-stack-2x .text-danger-blur>
                       <span .fa .user-plus .font-stack-2x >
