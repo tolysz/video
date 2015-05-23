@@ -115,8 +115,9 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     
     red = function(c){
      if (_.indexOf(thmColours, c) > -1)
-        then
+        {
            return c;
+        }
         else
            return 'red';
 
