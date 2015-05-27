@@ -6,6 +6,14 @@ $newline never
 \<!--[if gt IE 8]><!-->
 <html class="no-js" data-ng-app=#{ngApp} data-ng-controller=AppCtrl lang="#{mrender MsgLangId}" ng-cloak> <!--<![endif]-->
     <head>
+        <script type="text/javascript" src="@{StaticR webcomponents_js}">
+        <script type="text/javascript" src="@{StaticR modernizr_js}">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="@{StaticR webcomponents_js}">
+        <script type="text/javascript" src="@{StaticR modernizr_js}">
+        <script src="//html5shiv-printshiv.googlecode.com/svn/trunk/html5shiv-printshiv.js"></script>
+        <![endif]-->
         <meta charset="UTF-8">
         <title ng-bind-html=title.get>
            #{pageTitle pc}
@@ -16,15 +24,13 @@ $newline never
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="mobile-web-app-capable" content="yes">
         $maybe siteVerification <- appSiteVerification $ appSettings master
-            <meta name="google-site-verification" content="#{siteVerification}" />
-        <base href="@{HomeR []}" />
+            <meta name="google-site-verification" content="#{siteVerification}" >
+        <base href="@{HomeR []}" >
         <link rel="icon" href="@{StaticR polish_your_polish_124_gif}" sizes="124x141" type="image/gif">
         ^{pageHead pc}
         <script type="text/javascript" src="@{StaticR app_min_js}">
         <script type="text/javascript" src="@{langI18Ang}">
-        \<!--[if lt IE 9]>
-        \<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-        \<![endif]-->
+
     <body layout=row>
         ^{pageBody pc}
         <script>

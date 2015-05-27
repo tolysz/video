@@ -1,4 +1,6 @@
-<md-content>
+<md-content .md-padding ng-hide=len>
+    <md-progress-linear md-mode=indeterminate>
+<md-content ng-show=len>
    <h1>
       {{ len }}
    <pre>

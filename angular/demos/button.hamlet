@@ -25,7 +25,7 @@
          $# <md-icon icon="/static/material-design-icons/editor/svg/production/ic_insert_drive_file_24px.svg" style="width: 24px; height: 24px;">
       <md-button .md-fab ng-disabled="true" aria-label="Comment">
          <md-icon icon="/static/material-design-icons/communication/svg/production/ic_comment_24px.svg" style="width: 24px; height: 24px;">
-      <md-button .md-fab .md-primary md-theme="cyan" aria-label="Profile">
+      <md-button .md-fab .md-primary md-theme="sub-menu" aria-label="Profile">
          <md-icon icon="/static/material-design-icons/social/svg/production/ic_people_24px.svg" style="width: 24px; height: 24px;">
       <div .label>FAB
     <section layout=row layout-sm=column layout-align="center center">

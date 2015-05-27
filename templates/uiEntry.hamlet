@@ -59,7 +59,7 @@ $newline never
                             <span ng-class=page.icon>
                             {{page.name}}
 
-<section flex layout=column md-theme="default" layout-fill ng-cloak tabindex="-1" role=main style="height-min: 100vh; height: 100vh; overflow-y: auto;" md-scroll-y>
+<div flex layout=column md-theme="default" layout-fill ng-cloak tabindex="-1" role=main style="height-min: 100vh; height: 100vh; overflow-y: auto;" md-scroll-y>
       <md-toolbar md-default-theme md-scroll-shrink .md-accent ng-controller=LeftCtrl>
          <div .md-toolbar-tools tabindex="0" >
             <md-button .md-primary .menu-icon aria-label="Toggle Menu" hide-gt-md ng-click="toggleLeft()">
