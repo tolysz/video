@@ -222,21 +222,17 @@ select, button, textarea, input {
 */
 [layout] {
   box-sizing: border-box;
-  display: -webkit-inline-box;
   display: -webkit-flex;
   display: -moz-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex; }
 
 [layout=column] {
-  -webkit-box-orient: vertical;
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column; }
 
 [layout=row] {
-  -webkit-box-orient: horizontal;
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row; }
@@ -278,13 +274,11 @@ select, button, textarea, input {
 
 [flex] {
   box-sizing: border-box;
-  -webkit-box-flex: 1;
   -webkit-flex: 1;
       -ms-flex: 1;
           flex: 1; }
 
 [flex="0"] {
-  -webkit-box-flex: 0;
   -webkit-flex: 0 0 0%;
       -ms-flex: 0 0 0%;
           flex: 0 0 0%; }
@@ -536,7 +530,6 @@ select, button, textarea, input {
   max-height: 66.66%; }
 
 [layout-align="center"], [layout-align="center center"], [layout-align="center start"], [layout-align="center end"] {
-  -webkit-box-align: center;
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center; }
@@ -557,7 +550,6 @@ select, button, textarea, input {
           justify-content: space-between; }
 
 [layout-align="center center"], [layout-align="start center"], [layout-align="end center"], [layout-align="space-between center"], [layout-align="space-around center"] {
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center; }
@@ -745,7 +737,6 @@ select, button, textarea, input {
             order: 9; }
 
   [layout-align-sm="center"], [layout-align-sm="center center"], [layout-align-sm="center start"], [layout-align-sm="center end"] {
-    -webkit-box-pack: center;
     -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center; }
@@ -766,7 +757,6 @@ select, button, textarea, input {
             justify-content: space-between; }
 
   [layout-align-sm="center center"], [layout-align-sm="start center"], [layout-align-sm="end center"], [layout-align-sm="space-between center"], [layout-align-sm="space-around center"] {
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
@@ -786,11 +776,9 @@ select, button, textarea, input {
     display: -webkit-flex;
     display: -moz-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex; }
 
   [layout-sm=column] {
-    -webkit-box-orient:vertical;
     -webkit-flex-direction: column;
         -ms-flex-direction: column;
             flex-direction: column; }
@@ -865,13 +853,11 @@ select, button, textarea, input {
 
   [flex-sm] {
     box-sizing: border-box;
-    -webkit-box-flex: 1;
     -webkit-flex: 1;
         -ms-flex: 1;
             flex: 1; }
 
   [flex-sm="0"] {
-    -webkit-box-flex: 0;
     -webkit-flex: 0 0 0%;
         -ms-flex: 0 0 0%;
             flex: 0 0 0%; }
@@ -1175,13 +1161,11 @@ select, button, textarea, input {
             order: 9; }
 
   [layout-align-gt-sm="center"], [layout-align-gt-sm="center center"], [layout-align-gt-sm="center start"], [layout-align-gt-sm="center end"] {
-    -webkit-box-pack: center;
     -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center; }
 
   [layout-align-gt-sm="end"], [layout-align-gt-sm="end center"], [layout-align-gt-sm="end start"], [layout-align-gt-sm="end end"] {
-    -webkit-box-pack: center;
     -webkit-justify-content: flex-end;
         -ms-flex-pack: end;
             justify-content: flex-end; }
@@ -1197,7 +1181,6 @@ select, button, textarea, input {
             justify-content: space-between; }
 
   [layout-align-gt-sm="center center"], [layout-align-gt-sm="start center"], [layout-align-gt-sm="end center"], [layout-align-gt-sm="space-between center"], [layout-align-gt-sm="space-around center"] {
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
@@ -1217,17 +1200,14 @@ select, button, textarea, input {
     display: -webkit-flex;
     display: -moz-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex; }
 
   [layout-gt-sm=column] {
-    -webkit-box-orient: vertical;
     -webkit-flex-direction: column;
         -ms-flex-direction: column;
             flex-direction: column; }
 
   [layout-gt-sm=row] {
-    -webkit-box-orient: horizontal;
     -webkit-flex-direction: row;
         -ms-flex-direction: row;
             flex-direction: row; }
@@ -1297,13 +1277,11 @@ select, button, textarea, input {
 
   [flex-gt-sm] {
     box-sizing: border-box;
-    -webkit-box-flex: 1;
     -webkit-flex: 1;
         -ms-flex: 1;
             flex: 1; }
 
   [flex-gt-sm="0"] {
-    -webkit-box-flex: 0;
     -webkit-flex: 0 0 0%;
         -ms-flex: 0 0 0%;
             flex: 0 0 0%; }
@@ -1613,7 +1591,6 @@ select, button, textarea, input {
             order: 9; }
 
   [layout-align-md="center"], [layout-align-md="center center"], [layout-align-md="center start"], [layout-align-md="center end"] {
-    -webkit-box-pack: center;
     -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center; }
@@ -1634,7 +1611,6 @@ select, button, textarea, input {
             justify-content: space-between; }
 
   [layout-align-md="center center"], [layout-align-md="start center"], [layout-align-md="end center"], [layout-align-md="space-between center"], [layout-align-md="space-around center"] {
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
@@ -1654,17 +1630,14 @@ select, button, textarea, input {
     display: -webkit-flex;
     display: -moz-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex; }
 
   [layout-md=column] {
-    -webkit-box-orient: vertical;
     -webkit-flex-direction: column;
         -ms-flex-direction: column;
             flex-direction: column; }
 
   [layout-md=row] {
-    -webkit-box-orient: horizontal;
     -webkit-flex-direction: row;
         -ms-flex-direction: row;
             flex-direction: row; }
@@ -1734,13 +1707,11 @@ select, button, textarea, input {
 
   [flex-md] {
     box-sizing: border-box;
-    -webkit-box-flex: 1;
     -webkit-flex: 1;
         -ms-flex: 1;
             flex: 1; }
 
   [flex-md="0"] {
-    -webkit-box-flex: 0;
     -webkit-flex: 0 0 0%;
         -ms-flex: 0 0 0%;
             flex: 0 0 0%; }
@@ -2044,7 +2015,6 @@ select, button, textarea, input {
             order: 9; }
 
   [layout-align-gt-md="center"], [layout-align-gt-md="center center"], [layout-align-gt-md="center start"], [layout-align-gt-md="center end"] {
-    -webkit-box-pack: center;
     -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center; }
@@ -2065,7 +2035,6 @@ select, button, textarea, input {
             justify-content: space-between; }
 
   [layout-align-gt-md="center center"], [layout-align-gt-md="start center"], [layout-align-gt-md="end center"], [layout-align-gt-md="space-between center"], [layout-align-gt-md="space-around center"] {
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
@@ -2085,17 +2054,14 @@ select, button, textarea, input {
     display: -webkit-flex;
     display: -moz-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex; }
 
   [layout-gt-md=column] {
-    -webkit-box-orient: vertical;
     -webkit-flex-direction: column;
         -ms-flex-direction: column;
             flex-direction: column; }
 
   [layout-gt-md=row] {
-    -webkit-box-orient: horizontal;
     -webkit-flex-direction: row;
         -ms-flex-direction: row;
             flex-direction: row; }
@@ -2165,13 +2131,11 @@ select, button, textarea, input {
 
   [flex-gt-md] {
     box-sizing: border-box;
-    -webkit-box-flex: 1;
     -webkit-flex: 1;
         -ms-flex: 1;
             flex: 1; }
 
   [flex-gt-md="0"] {
-    -webkit-box-flex: 0;
     -webkit-flex: 0 0 0%;
         -ms-flex: 0 0 0%;
             flex: 0 0 0%; }
@@ -2481,7 +2445,6 @@ select, button, textarea, input {
             order: 9; }
 
   [layout-align-lg="center"], [layout-align-lg="center center"], [layout-align-lg="center start"], [layout-align-lg="center end"] {
-    -webkit-box-pack: center;
     -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center; }
@@ -2502,7 +2465,6 @@ select, button, textarea, input {
             justify-content: space-between; }
 
   [layout-align-lg="center center"], [layout-align-lg="start center"], [layout-align-lg="end center"], [layout-align-lg="space-between center"], [layout-align-lg="space-around center"] {
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
@@ -2522,17 +2484,14 @@ select, button, textarea, input {
     display: -webkit-flex;
     display: -moz-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex; }
 
   [layout-lg=column] {
-    -webkit-box-orient: vertical;
     -webkit-flex-direction: column;
         -ms-flex-direction: column;
             flex-direction: column; }
 
   [layout-lg=row] {
-    -webkit-box-orient: horizontal;
     -webkit-flex-direction: row;
         -ms-flex-direction: row;
             flex-direction: row; }
@@ -2602,13 +2561,11 @@ select, button, textarea, input {
 
   [flex-lg] {
     box-sizing: border-box;
-    -webkit-box-flex: 1;
     -webkit-flex: 1;
         -ms-flex: 1;
             flex: 1; }
 
   [flex-lg="0"] {
-    -webkit-box-flex: 0;
     -webkit-flex: 0 0 0%;
         -ms-flex: 0 0 0%;
             flex: 0 0 0%; }
@@ -2915,7 +2872,6 @@ select, button, textarea, input {
             order: 9; }
 
   [layout-align-gt-lg="center"], [layout-align-gt-lg="center center"], [layout-align-gt-lg="center start"], [layout-align-gt-lg="center end"] {
-    -webkit-box-pack: center;
     -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center; }
@@ -2936,7 +2892,6 @@ select, button, textarea, input {
             justify-content: space-between; }
 
   [layout-align-gt-lg="center center"], [layout-align-gt-lg="start center"], [layout-align-gt-lg="end center"], [layout-align-gt-lg="space-between center"], [layout-align-gt-lg="space-around center"] {
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }
@@ -2956,17 +2911,14 @@ select, button, textarea, input {
     display: -webkit-flex;
     display: -moz-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex; }
 
   [layout-gt-lg=column] {
-    -webkit-box-orient: vertical;
     -webkit-flex-direction: column;
         -ms-flex-direction: column;
             flex-direction: column; }
 
   [layout-gt-lg=row] {
-    -webkit-box-orient: horizontal;
     -webkit-flex-direction: row;
         -ms-flex-direction: row;
             flex-direction: row; }
@@ -3036,13 +2988,11 @@ select, button, textarea, input {
 
   [flex-gt-lg] {
     box-sizing: border-box;
-    -webkit-box-flex: 1;
     -webkit-flex: 1;
         -ms-flex: 1;
             flex: 1; }
 
   [flex-gt-lg="0"] {
-    -webkit-box-flex: 0;
     -webkit-flex: 0 0 0%;
         -ms-flex: 0 0 0%;
             flex: 0 0 0%; }
@@ -3605,14 +3555,12 @@ md-bottom-sheet {
   md-bottom-sheet md-list-item {
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
     outline: none; }
     md-bottom-sheet md-list-item:hover {
       cursor: pointer; }
   md-bottom-sheet.md-list md-list-item {
     padding: 0;
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center;
@@ -3628,9 +3576,7 @@ md-bottom-sheet {
     md-bottom-sheet.md-grid md-list {
       display: -webkit-flex;
       display: -ms-flexbox;
-      display: -webkit-box;
       display: flex;
-      -webkit-box-orient: horizontal;
       -webkit-flex-direction: row;
           -ms-flex-direction: row;
               flex-direction: row;
@@ -3638,16 +3584,13 @@ md-bottom-sheet {
           -ms-flex-wrap: wrap;
               flex-wrap: wrap;
       transition: all 0.5s;
-      -webkit-box-align: center;
       -webkit-align-items: center;
           -ms-flex-align: center;
               align-items: center; }
     md-bottom-sheet.md-grid md-list-item {
-      -webkit-box-orient: vertical;
       -webkit-flex-direction: column;
           -ms-flex-direction: column;
               flex-direction: column;
-      -webkit-box-align: center;
       -webkit-align-items: center;
           -ms-flex-align: center;
               align-items: center;
@@ -3691,13 +3634,10 @@ md-bottom-sheet {
       md-bottom-sheet.md-grid md-list-item .md-list-item-content {
         display: -webkit-flex;
         display: -ms-flexbox;
-        display: -webkit-box;
         display: flex;
-        -webkit-box-orient: vertical;
         -webkit-flex-direction: column;
             -ms-flex-direction: column;
                 flex-direction: column;
-        -webkit-box-align: center;
         -webkit-align-items: center;
             -ms-flex-align: center;
                 align-items: center;
@@ -3707,13 +3647,10 @@ md-bottom-sheet {
         border: 1px solid transparent;
         display: -webkit-flex;
         display: -ms-flexbox;
-        display: -webkit-box;
         display: flex;
-        -webkit-box-orient: vertical;
         -webkit-flex-direction: column;
             -ms-flex-direction: column;
                 flex-direction: column;
-        -webkit-box-align: center;
         -webkit-align-items: center;
             -ms-flex-align: center;
                 align-items: center;
@@ -3864,16 +3801,13 @@ md-bottom-sheet {
 .md-button-group {
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-flex: 1;
   -webkit-flex: 1;
       -ms-flex: 1;
           flex: 1;
   width: 100%; }
 
 .md-button-group > .md-button {
-  -webkit-box-flex: 1;
   -webkit-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -3900,9 +3834,7 @@ md-card {
   box-sizing: border-box;
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-orient: vertical;
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
@@ -4176,13 +4108,10 @@ md-content {
 .md-dialog-container {
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-pack: center;
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
@@ -4203,9 +4132,7 @@ md-dialog {
   box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-orient: vertical;
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column; }
@@ -4221,9 +4148,7 @@ md-dialog {
   md-dialog > form {
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
-    -webkit-box-orient: vertical;
     -webkit-flex-direction: column;
         -ms-flex-direction: column;
             flex-direction: column;
@@ -4232,7 +4157,6 @@ md-dialog {
     -webkit-order: 1;
         -ms-flex-order: 1;
             order: 1;
-    -webkit-box-orient: vertical;
     -webkit-flex-direction: column;
         -ms-flex-direction: column;
             flex-direction: column;
@@ -4255,13 +4179,11 @@ md-dialog {
   md-dialog .md-actions {
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
     -webkit-order: 2;
         -ms-flex-order: 2;
             order: 2;
     box-sizing: border-box;
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center;
@@ -4304,13 +4226,10 @@ md-grid-list {
     md-grid-list md-grid-tile figure {
       display: -webkit-flex;
       display: -ms-flexbox;
-      display: -webkit-box;
       display: flex;
-      -webkit-box-align: center;
       -webkit-align-items: center;
           -ms-flex-align: center;
               align-items: center;
-      -webkit-box-pack: center;
       -webkit-justify-content: center;
           -ms-flex-pack: center;
               justify-content: center;
@@ -4325,13 +4244,10 @@ md-grid-list {
     md-grid-list md-grid-tile md-grid-tile-header, md-grid-list md-grid-tile md-grid-tile-footer {
       display: -webkit-flex;
       display: -ms-flexbox;
-      display: -webkit-box;
       display: flex;
-      -webkit-box-orient: horizontal;
       -webkit-flex-direction: row;
           -ms-flex-direction: row;
               flex-direction: row;
-      -webkit-box-align: center;
       -webkit-align-items: center;
           -ms-flex-align: center;
               align-items: center;
@@ -4379,10 +4295,8 @@ md-icon {
 md-input-container {
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-inline-box;
   display: flex;
   position: relative;
-  -webkit-box-orient: vertical;
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
@@ -4545,7 +4459,6 @@ md-list-item.md-proxy-focus.md-focused .md-no-style {
 md-list-item.md-no-proxy, md-list-item .md-no-style {
   position: relative;
   padding: 0px 16px;
-  -webkit-box-flex: 1;
   -webkit-flex: 1;
       -ms-flex: 1;
           flex: 1; }
@@ -4575,12 +4488,10 @@ md-list-item md-divider {
 md-list-item, md-list-item .md-list-item-inner {
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
   -webkit-justify-content: flex-start;
       -ms-flex-pack: start;
           justify-content: flex-start;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
@@ -4635,7 +4546,6 @@ md-list-item, md-list-item .md-list-item-inner {
     margin-left: 0px;
     position: static; }
   md-list-item > p, md-list-item > .md-list-item-inner > p, md-list-item .md-list-item-inner > p, md-list-item .md-list-item-inner > .md-list-item-inner > p {
-    -webkit-box-flex: 1;
     -webkit-flex: 1;
         -ms-flex: 1;
             flex: 1;
@@ -4646,7 +4556,6 @@ md-list-item.md-2-line, md-list-item.md-2-line > .md-no-style, md-list-item.md-3
       -ms-flex-align: start;
           align-items: flex-start; }
   md-list-item.md-2-line .md-list-item-text, md-list-item.md-2-line > .md-no-style .md-list-item-text, md-list-item.md-3-line .md-list-item-text, md-list-item.md-3-line > .md-no-style .md-list-item-text {
-    -webkit-box-flex: 1;
     -webkit-flex: 1;
         -ms-flex: 1;
             flex: 1;
@@ -4672,7 +4581,6 @@ md-list-item.md-2-line > md-icon:first-child, md-list-item.md-2-line > .md-no-st
       -ms-flex-item-align: start;
           align-self: flex-start; }
 md-list-item.md-2-line .md-list-item-text, md-list-item.md-2-line > .md-no-style .md-list-item-text {
-  -webkit-box-flex: 1;
   -webkit-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -6481,9 +6389,7 @@ md-select {
 .md-select-label {
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
@@ -6495,7 +6401,6 @@ md-select {
   box-sizing: border-box;
   min-width: 64px; }
   .md-select-label *:first-child {
-    -webkit-box-flex: 1;
     -webkit-flex: 1;
         -ms-flex: 1;
             flex: 1;
@@ -6522,9 +6427,7 @@ md-select {
 md-select-menu {
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-orient: vertical;
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
@@ -6559,9 +6462,7 @@ md-option {
   position: relative;
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
@@ -6605,7 +6506,6 @@ md-sidenav {
   z-index: 60;
   background-color: white;
   overflow: auto;
-  -webkit-box-orient: vertical;
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column; }
@@ -6618,7 +6518,6 @@ md-sidenav {
   md-sidenav.md-closed-add, md-sidenav.md-closed-remove {
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
     /* this is required as of 1.3x to properly
        apply all styling in a show/hide animation */
@@ -6629,7 +6528,6 @@ md-sidenav {
     position: static;
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
     -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0); }
@@ -6641,7 +6539,6 @@ md-sidenav {
     position: static;
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
     -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0); }
@@ -6793,13 +6690,10 @@ md-slider {
     /* Center the children (slider-thumb-text) */
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center;
-    -webkit-box-pack: center;
     -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center;
@@ -6987,9 +6881,7 @@ md-slider {
 md-switch {
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
@@ -7199,14 +7091,11 @@ md-tabs-wrapper {
     width: 100%;
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
-    -webkit-box-orient: horizontal;
     -webkit-flex-direction: row;
         -ms-flex-direction: row;
             flex-direction: row; }
     md-tabs-wrapper.md-stretch-tabs md-pagination-wrapper md-tab-item {
-      -webkit-box-flex: 1;
       -webkit-flex: 1;
           -ms-flex: 1;
               flex: 1; }
@@ -7229,9 +7118,7 @@ md-tabs-canvas {
   md-tabs-canvas.md-center-tabs {
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
-    -webkit-box-orient: vertical;
     -webkit-flex-direction: column;
         -ms-flex-direction: column;
             flex-direction: column; }
@@ -7252,7 +7139,6 @@ md-pagination-wrapper {
   md-pagination-wrapper.md-center-tabs {
     position: relative;
     width: initial;
-    -webkit-box-flex: 1;
     -webkit-flex: 1;
         -ms-flex: 1;
             flex: 1;
@@ -7367,11 +7253,9 @@ md-toolbar + md-tabs {
 md-toast {
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
   position: absolute;
   box-sizing: border-box;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
@@ -7487,9 +7371,7 @@ md-toolbar {
   box-sizing: border-box;
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-orient: vertical;
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
@@ -7525,13 +7407,10 @@ md-toolbar {
   font-weight: 400;
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-orient: horizontal;
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
@@ -7550,9 +7429,7 @@ md-toolbar {
   .md-toolbar-tools .fill-height {
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: -webkit-box;
     display: flex;
-    -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; }

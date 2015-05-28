@@ -28,6 +28,10 @@
     "angular-i18n": ">=1.4",
     "angulartics": "master",
     "annyang": ">=1.5.0",
-    "popcorn-js": ">=1.5.10"
+    "popcorn-js": ">=1.5.10",
+    "ag-grid": "~1.6.0"
+  },
+  "resolutions": {
+    "angular": ">=1.4"
   }
 }
