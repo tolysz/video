@@ -36,6 +36,8 @@ import qualified Database.Esqueleto as E
 import qualified Data.UUID.V4 as UUID
 import qualified Data.UUID    as UUID
 
+import Network.Wai.Middleware.Cors (simpleCors)
+
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
 -- starts running, such as database connections. Every handler will have
@@ -86,7 +88,7 @@ instance Yesod App where
     makeSessionBackend _ = bool sslOnlySessions id compiledAsDevel $ Just <$> defaultClientSessionBackend
                                                         120    -- timeout in minutes
                                                         "config/client_session_key.aes"
-    yesodMiddleware = bool (sslOnlyMiddleware 240) id  compiledAsDevel . defaultYesodMiddleware
+    yesodMiddleware =  bool (sslOnlyMiddleware 240) id  compiledAsDevel . defaultYesodMiddleware
 
     defaultLayout widget = do
         master <- getYesod
@@ -216,6 +218,7 @@ instance YesodAuth App where
                     , userName      = Nothing
                     , userFriendly  = Nothing
                     , userAvatar    = Nothing
+                    , userDeleted   = False
                     }
                   insert Email
                     { emailEmail = credsIdent creds

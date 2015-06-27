@@ -54,3 +54,6 @@ one can run the command bellow for any user on a server which hosts your databas
     mongo
     use somedatabase
     db.User.update({ident: "tolysz@gmail.com"},{$set:{siteAdmin:true}},{})
+
+npm install --global postcss-cli autoprefixer
+postcss --use autoprefixer *.css -d build/

@@ -20,10 +20,19 @@ import Yesod.Default.Util         --  (WidgetFileSettings, widgetFileNoReload,
 import qualified Facebook as FB
 import  Database.Neo.Rest (Neo4jConf)
 
+import Text.Lucius (luciusFile, luciusFileReload)
 
 import Text.Coffee
 
 import Types
+
+-- Old minifier
+import qualified Data.Text.Lazy as TL
+import System.Process              (readProcess)
+import Language.Haskell.TH.Syntax (qRunIO)
+-- import Text.Lucius (luciusRTMinified)
+-- import qualified Data.Text.Lazy.Encoding as TLE
+-- errorIntro fps s = "Error minifying " ++ show fps ++ ": " ++ s
 
 -- | Runtime settings to configure this application. These settings can be
 -- loaded from various sources: defaults, environment variables, config files,
@@ -133,10 +142,31 @@ widgetFileSettings :: WidgetFileSettings
 -- widgetFileSettings = def
 widgetFileSettings = def { wfsLanguages = \hset -> defaultTemplateLanguages hset ++
     [ TemplateLanguage True  "coffee"  Text.Coffee.coffeeFile   Text.Coffee.coffeeFileReload
+--     , TemplateLanguage True  "lucius"  (\fp -> do
+--          x <- luciusFile fp
+--          xx <- $(x)
+--          qRunIO (processCSS xx ))   luciusFileReload
     ] }
 -- | How static files should be combined.
+
+processCSS :: String -> IO String
+processCSS = readProcess "postcss" ["--use", "autoprefixer"]
+
 combineSettings :: CombineSettings
-combineSettings = def
+combineSettings = def {
+--   csCssPreProcess :: TL.Text -> IO TL.Text
+        csCssPreProcess =
+              fmap TL.pack
+                  . processCSS
+                  . TL.unpack
+                  . TL.replace "'/static/" "'../"
+                  . TL.replace "\"/static/" "\"../"
+
+-- csCssPostProcess = \fps ->
+--         either (error . (errorIntro fps)) (return . TLE.encodeUtf8)
+--        . flip luciusRTMinified []
+--       . TLE.decodeUtf8
+      }
 
 -- The rest of this file contains settings which rarely need changing by a
 -- user.

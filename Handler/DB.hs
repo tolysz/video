@@ -21,6 +21,9 @@ import Network.Google.Api.Youtube.Playlists
 import qualified Database.Esqueleto as E
 
 import Data.String.QM
+import qualified Database.PostgreSQL.Simple     as TQ
+import qualified Database.PostgreSQL.Simple.TypedQuery   as TQ
+import qualified Database.Persist.Sql as P
 
 -- import Database.MongoDB.Query (MongoContext(..))
 -- import Data.Aeson.Types (emptyObject)
@@ -92,41 +95,113 @@ deleteSiteGroup1R = deleteByReturn UniqueSiteGroup
 getUserR :: ApiReq [ User ]
 getUserR = listsOfAll
 
+
+getUserbyEmail :: Maybe Text -> Handler (Maybe Text)
+getUserbyEmail Nothing = return Nothing
+getUserbyEmail (Just email) = do
+   uid <- P.fromSqlKey <$> requireAuthId
+   safeHead <$> runRawDB $(TQ.genTypedQuery [qq|
+    select uuid     -- Text
+    from "user"
+    left join "email" on "user".id = "email".user
+    where
+     "email".email = ?  -- < email
+   |])
+
+safeHead []    = Nothing
+safeHead (a:_) = Just a
+
 postUserR :: ApiReq User
 postUserR = do
         guardAllAdmin
-        restOpenM $ \(v :: Value) -> runMaybeT $ do
-            userUuid      <- liftMaybe (v ^? key "uuid"     . _String )
+        restOpenM $ \(v :: Value) -> do
+         liftIO $ print v
+         ~uem <- getUserbyEmail (v ^? key "email" . _String )
+         ~uuu <- (Just <$> newUUID)
+         let userUuid' = (v ^? key "uuid" . _String ) <|> uem <|> uuu
+
+         runMaybeT $ do
+            userUuid      <- liftMaybe userUuid'
             userName      <- liftJust  (v ^? key "name"     . _String )
             userFriendly  <- liftJust  (v ^? key "friendly" . _String )
 --             userSiteAdmin <- liftJust  False -- (v ^? key "siteAdmin" . _Bool )
             userAvatar    <- liftJust  (v ^? key "avatar"   . _String )
+            let userDeleted = False
             let us = User {..}
             MaybeT $ runDB $ getBy (UniqueUser userUuid) >>= \case
                  -- keep the old admin privs
                 Just (Entity uid old) -> replace uid us >> return (Just $ TC us)
-                Nothing -> insert us >> return (Just $ TC us)
+                Nothing -> do
+                  let Just userEmail  =  (v ^? key "email" . _String )
+                  uu <- insert us
+                  insert $ Email userEmail uu
+                  return (Just $ TC us)
 
 getUser1R :: EmailQuery -> ApiReq User
 getUser1R = jsonDB1 . getBy404 . UniqueUser
 
 deleteUser1R :: EmailQuery -> ApiReq User
-deleteUser1R = deleteByReturn UniqueUser
+deleteUser1R em = jsonDB1 $ do
+     us@(Entity userId user) <- getBy404 $ UniqueUser em
+     update userId [UserDeleted =. True]
+--      deleteWhere [EmailUser  ==. userId]
+--      deleteWhere [SiteGroupMemberUser  ==. userId]
+--      deleteWhere [UserThemeUser  ==. userId]
+--      deleteWhere [SiteAdminUser  ==. userId]
+--      deleteWhere [OAuthAccessUser  ==. userId]
+--      deleteWhere [GroupFriendUser  ==. userId]
+--      delete userId
+--      se
+     return us
 
 -- | REST For Group membreship
+
+deleteSiteGroupUser0R :: ApiReq SiteGroupMember
+deleteSiteGroupUser0R = do
+   guardAllAdmin
+   restOpenM $ \(v :: Value) -> do
+--     liftIO $ print v
+--     userUuid' <- safeHead <$> maybe (return []) getUserbyEmail  (v ^? key "email"     . _String )
+--     liftIO $ print userUuid'
+    runMaybeT $ do
+--        userUuid      <- liftMaybe userUuid'
+       textGroup <- liftMaybe (v ^? key "group"      . _String )
+--        guard (textGroup == gid)
+       userUuid  <- liftMaybe  (v ^? key "user"       . _String )
+       siteGroupMemberFullMember <- liftJust  (v ^? key "fullMember" . _Bool ^. non False)
+       siteGroupMemberUserAdmin  <- liftJust  (v ^? key "userAdmin"  . _Bool ^. non False)
+       siteGroupMemberVideoAdmin <- liftJust  (v ^? key "videoAdmin" . _Bool ^. non False) -- False if not a site admin
+       Just (siteGroupMemberGroup, siteGroupMemberUser) <- MaybeT $ runDB $ return . Just <$> (
+              (,) <$> getDBKey (UniqueSiteGroup textGroup)
+                  <*> getDBKey (UniqueUser userUuid)
+                  )
+       let us = SiteGroupMember {..}
+       MaybeT $ runDB $ do
+         deleteBy (UniqueSiteGroupMember siteGroupMemberGroup siteGroupMemberUser)
+--          >>= \case
+--            Just (Entity uid _) -> replace uid us
+--            Nothing             -> void $ insert us
+         return (Just $ TC us)
+
 postSiteGroupUser0R :: ApiReq SiteGroupMember
 postSiteGroupUser0R = do
    guardAllAdmin
-   restOpenM $ \(v :: Value) -> runMaybeT $ do
+   restOpenM $ \(v :: Value) -> do
+    liftIO $ print v
+    uem <-  getUserbyEmail  (v ^? key "email"     . _String )
+    let userUuid' = uem <|> (v ^? key "user"     . _String )
+    liftIO $ print userUuid'
+    runMaybeT $ do
+       userUuid      <- liftMaybe userUuid'
        textGroup <- liftMaybe (v ^? key "group"      . _String )
 --        guard (textGroup == gid)
-       textUser  <- liftMaybe  (v ^? key "user"       . _String )
+--        textUser  <- liftMaybe  (v ^? key "user"       . _String )
        siteGroupMemberFullMember <- liftJust  (v ^? key "fullMember" . _Bool ^. non False)
        siteGroupMemberUserAdmin  <- liftJust  (v ^? key "userAdmin"  . _Bool ^. non False)
-       siteGroupMemberVideoAdmin <- liftJust  (v ^? key "videoAdmin" . _Bool ^. non False)
+       siteGroupMemberVideoAdmin <- liftJust  (v ^? key "videoAdmin" . _Bool ^. non False) -- False if not a site admin
        Just (siteGroupMemberGroup, siteGroupMemberUser) <- MaybeT $ runDB $ return . Just <$> (
               (,) <$> getDBKey (UniqueSiteGroup textGroup)
-                  <*> getDBKey (UniqueUser textUser)
+                  <*> getDBKey (UniqueUser userUuid)
                   )
        let us = SiteGroupMember {..}
        MaybeT $ runDB $ do
@@ -135,14 +210,36 @@ postSiteGroupUser0R = do
            Nothing             -> void $ insert us
          return (Just $ TC us)
 
-getSiteGroupUserR :: GUUID -> ApiReq [SiteGroupMemberResolved]
-getSiteGroupUserR gid =
-   jsonDBNaked $ do
-     groupKey <- getDBKey (UniqueSiteGroup gid)
-     memberList <- selectList [SiteGroupMemberGroup ==. groupKey] []
-     forM memberList $ \m@(Entity k SiteGroupMember{..}) -> do
-          us <- fmap userUuid <$> get siteGroupMemberUser
-          return (SiteGroupMemberResolved (Just gid) us siteGroupMemberFullMember siteGroupMemberUserAdmin siteGroupMemberVideoAdmin)
+getSiteGroupUserR :: Text -> ApiReq [Value]
+getSiteGroupUserR gid = do
+   guardAllAdmin >> TC <$> runRawDB $(TQ.genJsonQuery [qq|
+     select g.uuid      as group        -- Text
+          , u.uuid      as user         -- Text
+          , full_member as fullMember   -- Bool
+          , video_admin as videoAdmin   -- Bool
+          , user_admin  as userAdmin    -- Bool
+          , u.name      as name         -- Text
+          , friendly                    -- Text
+          , avatar                      -- Maybe  Text
+          , emails                      -- Maybe [Text]
+     from "site_group_member" as gm
+     left join "site_group"   as g on g.id = gm.group
+     left join "user"         as u on u.id = gm.user
+     left outer join (select e.user as id
+          , array_agg(e.email) as emails
+          from "email" as e
+          group by e.user
+          ) as em on u.id = em.id
+     where
+      g.uuid = ? -- < gid
+      and not u.deleted
+   |])
+--    jsonDBNaked $ do
+--      groupKey <- getDBKey (UniqueSiteGroup gid)
+--      memberList <- selectList [SiteGroupMemberGroup ==. groupKey] []
+--      forM memberList $ \m@(Entity k SiteGroupMember{..}) -> do
+--           us <- fmap userUuid <$> get siteGroupMemberUser
+--           return (SiteGroupMemberResolved (Just gid) us siteGroupMemberFullMember siteGroupMemberUserAdmin siteGroupMemberVideoAdmin)
 
 getUserGroupsR :: ApiReq [(SiteGroup,SiteGroupMember)]
 getUserGroupsR =

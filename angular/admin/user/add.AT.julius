@@ -3,7 +3,7 @@ function($scope, $state, User, title) {
     $scope.save = function()
     {
      User.save($scope.user).$promise.then( function(newUser){
-         $scope.users.push(newUser);
-         $state.go('admin.user');})
+         if(_.isDefined($scope.users)) $scope.users.push(newUser);
+         $scope.back() || $state.go('admin.user');})
     }
 }

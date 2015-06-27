@@ -61,7 +61,7 @@
 
 -- REST access 2 urls per resource
 -- /api/login                            LoginCheckR  GET
-/api/admin/user                       UserR  GET POST
+/api/admin/user                        UserR  GET POST
 /api/admin/user/#GUUID                 User1R GET DELETE
 
 /api/admin/group                      SiteGroupR  GET POST
@@ -73,7 +73,7 @@
 -- backup restore for the whole site... needed for db upgrade change...
 /api/backup             BackupR GET POST
 
-/api/admin/group-user                     SiteGroupUser0R POST
+/api/admin/group-user                     SiteGroupUser0R POST DELETE
 /api/admin/group-user/#GUUID              SiteGroupUserR  GET
 /api/admin/group-user/#GUUID/#Text        SiteGroupUser1R GET DELETE
 

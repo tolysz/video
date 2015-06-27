@@ -143,6 +143,8 @@ library
                  , http-client-extra-oauth2
                  , uuid
                  , blaze-markup
+                 , process
+                 , wai-cors
                -- CMap
                  , stm-containers
                  , list-t

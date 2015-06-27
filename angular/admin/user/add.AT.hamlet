@@ -1,7 +1,7 @@
 <md-content .md-padding>
   <md-input-container>
     <label>_{SomeMessage MsgUserEmail}
-    <input ng-model=user.ident>
+    <input ng-model=user.email type=email>
   <md-input-container>
     <label>_{SomeMessage MsgUserName}
     <input ng-model=user.name>

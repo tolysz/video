@@ -8,12 +8,14 @@ function($scope, $state, $stateParams, User, $log, title) {
     {
         var i = $scope.user.uuid;
         User.delete($scope.user).$promise.then( function() {
-            for (var ix = $scope.users.length - 1; ix >= 0; ix--) {
+            if(! _.isUndefined($scope.users)) {
+                for (var ix = $scope.users.length - 1; ix >= 0; ix--) {
                     if ($scope.users[ix].uuid === i) {
                         $scope.users.splice(ix, 1);
                     }
                 }
-            $scope.back();
+            }
+            $scope.back() || $state.go('admin.user');;
             //$state.go('admin.user');
         })
     }
@@ -29,7 +31,7 @@ function($scope, $state, $stateParams, User, $log, title) {
             } else{
                 $scope.users = User.query();
               }
-          $scope.back();
+          $scope.back() || $state.go('admin.user') ;
           //$state.go('admin.user');
           });
     }

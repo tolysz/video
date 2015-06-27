@@ -1,13 +1,16 @@
 <md-input-container>
     <label>_{SomeMessage MsgGroup}
     <input ng-model="group.name" disabled>
-<md-autocomplete
-        md-selected-item=select
-        md-search-text=searchText
-        md-item-text=display
-        md-items="user in querySearch(searchText)"
-        placeholder="_{SomeMessage MsgEmailLong}">
-      <span md-highlight-text=searchText >{{user.display}}
+<md-input-container>
+    <label>_{SomeMessage MsgUserEmail}
+    <input ng-model="member.email" >
+$# <md-autocomplete
+$#         md-selected-item=select
+$#         md-search-text=searchText
+$#         md-item-text=display
+$#         md-items="user in querySearch(searchText)"
+$#         placeholder="_{SomeMessage MsgEmailLong}">
+$#       <span md-highlight-text=searchText >{{user.display}}
 <md-checkbox ng-model="member.fullMember" aria-label="full group member">
      _{SomeMessage MsgFullMember}
 $if isAdmin
@@ -25,7 +28,7 @@ $if isDebugger
       {{ member | json }}
     <pre ng-show=appDebug>
         \  group         SiteGroupId
-        \  user          UserId
+        \  email          UserId
         \  fullMember    Bool
         \  userAdmin     Bool
         \  videoAdmin    Bool

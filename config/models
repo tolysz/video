@@ -4,6 +4,7 @@ User
     friendly      Text Maybe
     avatar        Text Maybe
 --    photo         Photo Maybe
+    deleted       Bool default=False
     UniqueUser    uuid
     deriving Show Typeable Generic
 

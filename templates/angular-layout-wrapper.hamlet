@@ -6,14 +6,6 @@ $newline never
 \<!--[if gt IE 8]><!-->
 <html class="no-js" data-ng-app=#{ngApp} data-ng-controller=AppCtrl lang="#{mrender MsgLangId}" ng-cloak> <!--<![endif]-->
     <head>
-        <script type="text/javascript" src="@{StaticR webcomponents_js}">
-        <script type="text/javascript" src="@{StaticR modernizr_js}">
-
-        <!--[if lt IE 9]>
-        <script type="text/javascript" src="@{StaticR webcomponents_js}">
-        <script type="text/javascript" src="@{StaticR modernizr_js}">
-        <script src="//html5shiv-printshiv.googlecode.com/svn/trunk/html5shiv-printshiv.js"></script>
-        <![endif]-->
         <meta charset="UTF-8">
         <title ng-bind-html=title.get>
            #{pageTitle pc}
@@ -28,13 +20,18 @@ $newline never
         <base href="@{HomeR []}" >
         <link rel="icon" href="@{StaticR polish_your_polish_124_gif}" sizes="124x141" type="image/gif">
         ^{pageHead pc}
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="@{StaticR webcomponents_js}"></script>
+        <script type="text/javascript" src="@{StaticR modernizr_js}"></script>
+        <script src="//html5shiv-printshiv.googlecode.com/svn/trunk/html5shiv-printshiv.js"></script>
+        <![endif]-->
         <script type="text/javascript" src="@{StaticR app_min_js}">
         <script type="text/javascript" src="@{langI18Ang}">
 
     <body layout=row>
-        ^{pageBody pc}
         <script>
           document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
+        ^{pageBody pc}
         $maybe analytics <- appAnalytics $ appSettings master
             <script>
               (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '#{analytics}', 'auto');

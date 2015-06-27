@@ -8,7 +8,9 @@ rm -r static/*
 
 cd static
 bash ../test.sh
-cleancss app.css > app.min.css
+
+
+cleancss app.css | postcss -u autoprefixer -c ../autopref.json > app.min.css
 cd angular-i18n
 mkdir save
 

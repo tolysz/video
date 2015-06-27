@@ -46,6 +46,8 @@
   line-height: 40px;
   margin: 0;
   max-height: 40px;
+  align-items: stretch;
+  font-size: 16px;
   overflow: hidden;
   padding: 0px 16px;
   text-align: left;
@@ -53,9 +55,22 @@
   white-space: normal;
   width: 100%;
 }
+.md-button .fa {
+    font-family: FontAwesome;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    font-stretch: normal;
+}
 
+.md-button .md-fab .fa {
+line-height: 59px!important;
+}
+
+.md-button .md-fab .fa .md-mini .font-2x {
+line-height: 30px!important;
+}
 .docs-menu md-select {
-
  /* Override md-select margins.  With margins the menu will look incorrect and causes mobile list
     to not be scrollable.
   */

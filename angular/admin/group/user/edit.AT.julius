@@ -10,12 +10,14 @@ function($scope, $state, $stateParams, Group, User, GroupUser, title, $log) {
         $scope.member.user  = $scope.user.uuid;
         $scope.member.group = $scope.group.uuid;
 
-        GroupUser.save($scope.member).$promise.then( $scope.back )
+        GroupUser.save($scope.member).$promise.then( function () { $scope.back() || $state.go('admin.group.user', {uuid:$stateParams.uuid});})
     };
 
     $scope.delete = function()
     {
-        GroupUser.delete($scope.member).$promise.then( $scope.back )
+        GroupUser.delete({uuid: $stateParams.uuid, uuuid: $stateParams.uuuid}).$promise.then(function () {
+            $scope.back() || $state.go('admin.group.user', {uuid:$stateParams.uuid})
+        } )
     }
 
 

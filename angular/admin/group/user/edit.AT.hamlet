@@ -2,13 +2,13 @@
     <label>_{SomeMessage MsgGroup}
     <input ng-model="group.name" disabled>
 <md-input-container>
-    <label>_{SomeMessage MsgGroup}
+    <label>_{SomeMessage MsgUserName}
     <input ng-model="user.name" disabled>
 
 <md-checkbox ng-model="member.fullMember" aria-label="full group member">
      _{SomeMessage MsgFullMember}
 $if isAdmin
-    <md-checkbox ng-model="member.userAdmin" aria-label="member is videoAdmin">
+    <md-checkbox ng-model="member.userAdmin" aria-label="member is userAdmin">
          _{SomeMessage MsgUserAdmin}
     <md-checkbox ng-model="member.videoAdmin" aria-label="member is videoAdmin">
          _{SomeMessage MsgVideoAdmin}
