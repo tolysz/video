@@ -2,6 +2,8 @@ language: sh # Halcyon will handle all Haskell dependencies
 
 env:
   global:
+     - HALCYON_GHC_VERSION=7.10.2-rc1 HALCYON_CABAL_VERSION=1.22.6.0
+#     - HALCYON_GHC_VERSION=7.8.4 HALCYON_CABAL_VERSION=1.20.6.0
     # http://docs.travis-ci.com/user/environment-variables/#Secure-Variables
 #    - secure: ... # HALCYON_AWS_ACCESS_KEY_ID
 #    - secure: ... # HALCYON_AWS_SECRET_ACCESS_KEY
