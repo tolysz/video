@@ -218,8 +218,8 @@ getSiteGroupUserR gid = do
           , full_member as fullMember   -- Bool
           , video_admin as videoAdmin   -- Bool
           , user_admin  as userAdmin    -- Bool
-          , u.name      as name         -- Text
-          , friendly                    -- Text
+          , u.name      as name         -- Maybe  Text
+          , friendly                    -- Maybe  Text
           , avatar                      -- Maybe  Text
           , emails                      -- Maybe [Text]
      from "site_group_member" as gm

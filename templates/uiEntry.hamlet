@@ -104,15 +104,17 @@ $newline never
           _{SomeMessage MsgClosePanel}
 
       <div>
-          <span .fa .language .font-lg .font-menu-icon>
-          <md-select ng-model="lang">
-              <md-option value=en-GB>English (GB)
-              <md-option value=pl>Polski
-              <md-option value=de-DE>Deutsch
-              <md-option value=fr-FR>Français
-              <md-option value=ru>Русский
-              <md-option value=it>Italiano
-              <md-option value=en-US>English (US)
+          <md-input-container>
+              <label>
+                <span .fa .language .font-lg .font-menu-icon>
+              <md-select ng-model="lang" aria-label="select language">
+                  <md-option value=en-GB>English (GB)
+                  <md-option value=pl>Polski
+                  <md-option value=de-DE>Deutsch
+                  <md-option value=fr-FR>Français
+                  <md-option value=ru>Русский
+                  <md-option value=it>Italiano
+                  <md-option value=en-US>English (US)
           <md-button ng-click="changeLang()">_{SomeMessage MsgSwitch}
       <div>&nbsp;
       <div>&nbsp;

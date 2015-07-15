@@ -1,77 +1,21 @@
-env:
- - GHCVER=7.8.4 CABALVER=1.22
-# - GHCVER=7.10.1 CABALVER=1.22
-# - GHCVER=head  CABALVER=head
+language: sh # Halcyon will handle all Haskell dependencies
 
-matrix:
-  allow_failures:
-   - env: GHCVER=7.8.4  CABALVER=1.22
-   - env: GHCVER=7.10.1 CABALVER=1.22
-   - env: GHCVER=head  CABALVER=head
+env:
+  global:
+    # http://docs.travis-ci.com/user/environment-variables/#Secure-Variables
+#    - secure: ... # HALCYON_AWS_ACCESS_KEY_ID
+#    - secure: ... # HALCYON_AWS_SECRET_ACCESS_KEY
+#    - secure: ... # HALCYON_S3_BUCKET
 
 before_install:
- - travis_retry sudo add-apt-repository -y ppa:hvr/ghc
- - travis_retry sudo apt-get update
- - travis_retry sudo apt-get install nodejs npm cabal-install-$CABALVER ghc-$GHCVER
- - npm install -g npm@1 && npm install -g npm@2 && npm install coffee-script
- - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
- # Update happy when building with GHC head
- - |
-   if [ $GHCVER = "head" ] || [ ${GHCVER%.*} = "7.8" ] || [ ${GHCVER%.*} = "7.10" ]; then
-     travis_retry sudo apt-get install happy-1.19.4 alex-3.1.3
-     export PATH=/opt/alex/3.1.3/bin:/opt/happy/1.19.4/bin:$PATH
-   else
-     travis_retry sudo apt-get install happy alex
-   fi
+  - sudo mkdir -p /app
+  - sudo chown $USER /app
+  - git clone https://github.com/mietek/halcyon.git /app/halcyon
 
 install:
- - cabal --version
- - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
- - travis_retry cabal update
- - cd /home/travis
- - git clone --depth=50 --branch=MissingDefault2 https://github.com/tolysz/aeson tolysz/aeson
- - git clone --depth=50 --branch=fixAtto         https://github.com/tolysz/fb    tolysz/fb
-
- - git clone --depth=50 --branch=master https://github.com/tolysz/google-api tolysz/google-api
- - git clone --depth=50 --branch=master https://github.com/tolysz/http-client-extra tolysz/http-client-extra
- - git clone --depth=50 --branch=master https://github.com/tolysz/http-client-extra-oauth2 tolysz/http-client-extra-oauth2
- - git clone --depth=50 --branch=master https://github.com/tolysz/yesod-websockets-extra tolysz/yesod-websockets-extra
- - git clone --depth=50 --branch=master https://github.com/tolysz/yesod-angular-ui tolysz/yesod-angular-ui
- - git clone --depth=50 --branch=master https://github.com/tolysz/typedquery tolysz/typedquery
- - git clone --depth=50 --branch=master https://github.com/tolysz/postgresql-simple-typed tolysz/postgresql-simple-typed
-
- - cd $TRAVIS_BUILD_DIR
- - cabal sandbox init
- - cabal sandbox add-source /home/travis/tolysz/aeson
- - cabal sandbox add-source /home/travis/tolysz/fb
-
- - cabal sandbox add-source /home/travis/tolysz/google-api
- - cabal sandbox add-source /home/travis/tolysz/http-client-extra
- - cabal sandbox add-source /home/travis/tolysz/http-client-extra-oauth2
- - cabal sandbox add-source /home/travis/tolysz/yesod-websockets-extra
- - cabal sandbox add-source /home/travis/tolysz/yesod-angular-ui
- - cabal sandbox add-source /home/travis/tolysz/typedquery
- - cabal sandbox add-source /home/travis/tolysz/postgresql-simple-typed
- - cabal install -j1 --only-dependencies
- # --enable-tests --enable-benchmarks
+  - /app/halcyon/halcyon build
+  - /app/halcyon/halcyon paths > halcyon-env
+  - ln -sf /app/sandbox/cabal.sandbox.config cabal.sandbox.config
 
 script:
- - if [ -f configure.ac ]; then autoreconf -i; fi
- - cabal configure
- # --enable-tests --enable-library-coverage || cabal configure --enable-tests --enable-coverage
- - cabal build
- # - cabal test
- - cabal sdist
-# The following scriptlet checks that the resulting source distribution can be built & installed
- - export SRC_TGZ=$(cabal info . | awk '{print $2 ".tar.gz";exit}') ;
-   cd dist/;
-   if [ -f "$SRC_TGZ" ]; then
-      cabal install --force-reinstalls "$SRC_TGZ";
-   else
-      echo "expected '$SRC_TGZ' not found";
-      exit 1;
-   fi
-
-# after_script:
-# - cabal install hpc-coveralls
-# - hpc-coveralls --exclude-dir=test test
+  - source halcyon-env && cabal configure --enable-tests && cabal test

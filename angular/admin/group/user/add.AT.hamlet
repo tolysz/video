@@ -3,7 +3,7 @@
     <input ng-model="group.name" disabled>
 <md-input-container>
     <label>_{SomeMessage MsgUserEmail}
-    <input ng-model="member.email" >
+    <input ng-model="member.email" type=email>
 $# <md-autocomplete
 $#         md-selected-item=select
 $#         md-search-text=searchText

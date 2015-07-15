@@ -19,12 +19,16 @@
                    ng-show="site[1].videoAdmin"
                    ui-sref="oauth2.channels({uuid:site[0].uuid})"
                    aria-label="video admin" >
+                   <md-tooltip>
+                      Browse youtube directly
                    <span ng-show="site[1].videoAdmin" .fa .font-2x .file-video-o >
 
                 <md-button .md-primary .md-fab .md-mini
                    ng-show="site[1].videoAdmin"
                    ui-sref="oauth2.refresh({uuid:site[0].uuid})"
                    aria-label="reload raw videos" >
+                   <md-tooltip>
+                       Reload videos from YT
                    <span ng-show="site[1].videoAdmin" .fa .font-2x .refresh >
 
                 <md-button .md-primary .md-fab .md-mini
@@ -32,6 +36,8 @@
                    ng-show="site[1].videoAdmin"
                    ng-href="@{RootOAuth2R}/google/login/{{site[0].uuid}}"
                    aria-label="login oauth2">
+                   <md-tooltip>
+                     Manage OAuth2 access to channel.
                    <span .fa .youtube-square .font-2x .fix-top5 >
 
                 $# <span ng-show="site[1].userAdmin"  .fa .font-2x .group>
@@ -39,6 +45,8 @@
                 <md-button .md-primary .md-fab .md-mini ng-show="site[1].userAdmin"
                    ui-sref="admin.group.edit({uuid:site[0].uuid})"
                    aria-label="edit group" >
+                   <md-tooltip>
+                     Edit group infos
                    <span .font-stack>
                       <span .fa .pencil-square-o  .font-stack-2x .text-danger-blur>
                       <span .fa .users .fix-users .font-stack-1x >
@@ -46,10 +54,14 @@
                 <md-button .md-primary .md-fab .md-mini ng-show="site[1].userAdmin"
                    ui-sref="admin.group.user({uuid:site[0].uuid})"
                    aria-label="group's users" >
+                   <md-tooltip>
+                      View group users
                    <span .fa .users >
 
                 <md-button .md-primary .md-fab .md-mini ng-show="site[1].userAdmin" ui-sref="admin.group.user.add({uuid:site[0].uuid})"
                    aria-label="add users">
+                   <md-tooltip>
+                      Add new users
                    <span .font-stack>
                       <span .fa .users     .font-stack-2x .text-danger-blur>
                       <span .fa .user-plus .font-stack-2x >
