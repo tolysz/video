@@ -146,6 +146,7 @@ library
                  , blaze-markup
                  , process
                  , wai-cors
+                 , connection
                -- CMap
                  , stm-containers
                  , list-t

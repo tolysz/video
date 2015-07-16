@@ -48,9 +48,10 @@ import qualified Data.Text                as T
 import qualified Data.Text.Lazy           as TL
 import qualified Data.Text.Lazy.Builder   as TL
 import           Network.HTTP.Client      (parseUrl, requestHeaders,
-                                           responseBody, urlEncodedBody)
-import           Network.HTTP.Conduit     (http)
+                                           responseBody, urlEncodedBody, newManager)
+import           Network.HTTP.Conduit     (http, withManagerSettings, withManager, mkManagerSettings)
 import           Network.HTTP.Types       (renderQueryText)
+import Network.Connection (TLSSettings (..))
 import           Network.Mail.Mime        (randomString)
 import           System.Random            (newStdGen)
 import           Yesod.Auth               (Auth, AuthPlugin (AuthPlugin),
@@ -100,6 +101,7 @@ getCreateCsrfToken = do
             setSession csrfKey token
             return token
 
+settingsSsl = mkManagerSettings (TLSSettingsSimple True False False) Nothing
 authGoogleEmail :: (YesodAuth m, YesodGoogleAuth m)
                 => AuthPlugin m
 authGoogleEmail =
@@ -192,9 +194,11 @@ authGoogleEmail =
                     req'
                         { requestHeaders = []
                         }
-        manager <- liftM authHttpManager $ lift getYesod
-        res <- http req manager
-        value <- responseBody res $$+- sinkParser json'
+
+        value <- withManagerSettings settingsSsl $ \manager -> do
+           -- manager <- newManager -- liftM authHttpManager $ lift getYesod
+           res <- http req manager
+           responseBody res $$+- sinkParser json'
         Tokens accessToken tokenType <-
             case parseEither parseJSON value of
                 Left e -> error e
@@ -208,8 +212,9 @@ authGoogleEmail =
                     [ ("Authorization", encodeUtf8 $ "Bearer " `mappend` accessToken)
                     ]
                 }
-        res2 <- http req2 manager
-        value2 <- responseBody res2 $$+- sinkParser json'
+        value2 <- withManagerSettings settingsSsl $ \manager -> do
+             res2 <- http req2 manager
+             responseBody res2 $$+- sinkParser json'
         Person emails <-
             case parseEither parseJSON value2 of
                 Left e -> error e
