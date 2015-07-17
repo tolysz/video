@@ -17,8 +17,10 @@ module Yesod.Auth.Facebook2
 import Prelude
 import Control.Applicative ((<$>))
 import Control.Monad (when)
+import Control.Arrow ((***), second)
+import Data.Maybe (fromJust, isNothing, isJust)
 import Control.Monad.Trans.Maybe (MaybeT(..))
-import Data.Monoid (mappend)
+import Data.Monoid (mappend, (<>))
 import Data.Text (Text)
 import Network.Wai (queryString)
 import Yesod.Auth
@@ -43,6 +45,8 @@ facebookLogin = PluginR "fb" ["login"]
 facebookLogout :: AuthRoute
 facebookLogout = PluginR "fb" ["logout"]
 
+catMaybes1 :: [(a, Maybe b)] -> [(a, b)]
+catMaybes1 = map ( second fromJust ) . filter ( isJust . snd )
 
 -- | Yesod authentication plugin using Facebook.
 authFacebook :: (YesodAuth site, YF.YesodFacebook site)
@@ -144,9 +148,9 @@ semicolon = ";"
 -- @'FB.UserAccessToken'@.
 createCreds :: FB.UserAccessToken -> FB.User -> Maybe (Creds m)
 createCreds (FB.UserAccessToken (FB.Id uid) _ _) FB.User{..} = case userEmail of
-                  Just e -> Just $ Creds "fb" e [("graph",id_ )]
+                  Just e -> Just $ Creds "fb" e $ catMaybes1 [("graph", Just id_ ), ("full_name", userName), ("avatar",  Just $ id_ <>"/picture") ]
                   Nothing -> Nothing
-  where id_ = "http://graph.facebook.com/" `mappend` uid
+  where id_ = "https://graph.facebook.com/" <> uid
 
 
 -- | Set the Facebook's user access token on the user's session.

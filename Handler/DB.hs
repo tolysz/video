@@ -92,8 +92,24 @@ deleteSiteGroup1R :: Text  -> ApiReq SiteGroup
 deleteSiteGroup1R = deleteByReturn UniqueSiteGroup
 
 -- | REST For User
-getUserR :: ApiReq [ User ]
-getUserR = listsOfAll
+getUserR :: ApiReq [Value]
+getUserR = do
+      guardAllAdmin
+      TC <$> runRawDB $(TQ.genJsonQuery [qq|
+       select uuid     as uuid     -- Text
+            , name     as name     -- Maybe  Text
+            , friendly as friendly -- Maybe  Text
+            , avatar   as avatar   -- Maybe  Text
+            , deleted  as deleted  -- Bool
+            , emails   as emails   -- Maybe [Text]
+       from "user"
+       left outer join (select "email".user as id
+             , array_agg("email".email) as emails
+             from "email"
+             group by "email".user
+             ) as "em" on "user".id = em.id
+      |])
+-- listsOfAll
 
 
 getUserbyEmail :: Maybe Text -> Handler (Maybe Text)
@@ -101,7 +117,7 @@ getUserbyEmail Nothing = return Nothing
 getUserbyEmail (Just email) = do
    uid <- P.fromSqlKey <$> requireAuthId
    safeHead <$> runRawDB $(TQ.genTypedQuery [qq|
-    select uuid     -- Text
+    select uuid  as uuid   -- Text
     from "user"
     left join "email" on "user".id = "email".user
     where
@@ -219,9 +235,9 @@ getSiteGroupUserR gid = do
           , video_admin as videoAdmin   -- Bool
           , user_admin  as userAdmin    -- Bool
           , u.name      as name         -- Maybe  Text
-          , friendly                    -- Maybe  Text
-          , avatar                      -- Maybe  Text
-          , emails                      -- Maybe [Text]
+          , friendly    as friendly     -- Maybe  Text
+          , avatar      as avatar       -- Maybe  Text
+          , emails      as emails       -- Maybe [Text]
      from "site_group_member" as gm
      left join "site_group"   as g on g.id = gm.group
      left join "user"         as u on u.id = gm.user

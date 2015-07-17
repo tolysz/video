@@ -11,6 +11,7 @@ import Yesod.Default.Util       (addStaticContentExternal)
 import Yesod.AngularUI
 
 import Data.Maybe (fromJust, isJust)
+import qualified Data.List as DL
 import Types
 
 import           Yesod.Auth.BrowserId        (authBrowserId)
@@ -19,7 +20,7 @@ import Yesod.Auth.GoogleEmail3                  (authGoogleEmail, YesodGoogleAut
 import qualified Yesod.Auth.GoogleEmail3  as GId( forwardUrl )
 import Yesod.Facebook
 import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
-import qualified Data.Text as T (split)
+import qualified Data.Text as T (split, pack)
 import Control.Applicative
 import Data.Bool
 import Control.Monad
@@ -199,25 +200,35 @@ instance YesodAuth App where
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer _ = False
 
-    getAuthId creds = runDB $ do
+    getAuthId creds = do
+--         $(logError) $ T.pack . show $ credsExtra creds
+        runDB $ do
 --         x <- getBy $ UniqueUser $ credsIdent creds
         x <- E.select $
              E.from $ \(p `E.LeftOuterJoin` e) -> do
              E.on $ (p E.^. UserId) E.==. e E.^. EmailUser
              E.where_ $ (e E.^. EmailEmail ) E.==. E.val (credsIdent creds)
              return p
+        let nn = DL.lookup "full_name" $ credsExtra creds
+            na = DL.lookup "avatar"    $ credsExtra creds
         case x of
-            [Entity uid _] -> return $ Just uid
+            [Entity uid User{..}] -> do
+                when (isNothing userName && isJust nn) $
+                   update uid [UserName =. nn]
+                when (isNothing userAvatar && isJust na) $
+                   update uid [UserAvatar =. na]
+                when (userDeleted) $
+                   update uid [UserDeleted =. False]
+
+                return $ Just uid
             [] -> do
                 ruuid <- newUUID
                 Just <$> do
                   uu <- insert User
                     { userUuid = ruuid
---                     credsIdent creds
-          --          , userPassword  = Nothing
-                    , userName      = Nothing
+                    , userName      = nn
                     , userFriendly  = Nothing
-                    , userAvatar    = Nothing
+                    , userAvatar    = na
                     , userDeleted   = False
                     }
                   insert Email

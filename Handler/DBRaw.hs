@@ -16,10 +16,10 @@ getUserMeR :: ApiReq [Value]
 getUserMeR = do
    uid <- P.fromSqlKey <$> requireAuthId
    TC <$> runRawDB $(TQ.genJsonQuery [qq|
-    select name     -- Text
-         , friendly -- Text
-         , avatar   -- Maybe  Text
-         , emails   -- Maybe [Text]
+    select name     as name     -- Text
+         , friendly as friendly -- Text
+         , avatar   as avatar   -- Maybe  Text
+         , emails   as emails   -- Maybe [Text]
     from "user"
     left outer join (select "email".user as id
           , array_agg("email".email) as emails

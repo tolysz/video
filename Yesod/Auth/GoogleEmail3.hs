@@ -37,11 +37,20 @@ import qualified Data.Aeson.Encode        as A
 import           Data.Aeson.Parser        (json')
 import           Data.Aeson.Types         (FromJSON (parseJSON), parseEither,
                                            withObject)
+import Data.Maybe (fromJust, isNothing)
+--- import Control.Arrow ((***), second)
+
+import           Data.Aeson.Lens
+-- import Data.Aeson.Lens
+-- import           Control.Lens.Operators   ((^?))
+import Control.Lens ((^?) , (^.))
+import Control.Lens.Iso (non)
+
 import           Data.Conduit             (($$+-))
 import           Data.Conduit.Attoparsec  (sinkParser)
 import qualified Data.HashMap.Strict      as M
 import           Data.Monoid              (mappend)
-import           Data.Maybe               (fromJust)
+import           Data.Maybe               (fromJust, isJust)
 import           Data.Text                (Text)
 import qualified Data.Text                as T
 -- import           Data.Text.Encoding       (decodeUtf8, encodeUtf8)
@@ -66,6 +75,10 @@ import           Yesod.Core               (HandlerSite, MonadHandler,
                                            lookupSession, notFound, redirect,
                                            setSession, whamlet, (.:),
                                            TypedContent, HandlerT, liftIO, Yesod(..), toWidget, lucius)
+
+
+catMaybes1 :: [(a, Maybe b)] -> [(a, b)]
+catMaybes1 = map ( second fromJust ) . filter ( isJust . snd )
 
 class  Yesod site => YesodGoogleAuth site where
   googleClientID     :: site -> Maybe Text
@@ -215,7 +228,7 @@ authGoogleEmail =
         value2 <- withManagerSettings settingsSsl $ \manager -> do
              res2 <- http req2 manager
              responseBody res2 $$+- sinkParser json'
-        Person emails <-
+        Person emails fullName <-
             case parseEither parseJSON value2 of
                 Left e -> error e
                 Right x -> return x
@@ -224,7 +237,7 @@ authGoogleEmail =
                 [e] -> return e
                 [] -> error "No account email"
                 x -> error $ "Too many account emails: " ++ show x
-        lift $ setCredsRedirect $ Creds pid email $ allPersonInfo value2
+        lift $ setCredsRedirect $ Creds pid email $ (catMaybes1 [("full_name",fullName), ("avatar", value2 ^? key "image" . key "url"  . _String )]) <> allPersonInfo value2
 
     dispatch _ _ = notFound
 
@@ -237,16 +250,25 @@ instance FromJSON Tokens where
         <$> o .: "access_token"
         <*> o .: "token_type"
 
-data Person = Person [Email]
+type FullName = Maybe Text
+type Avatar   = Maybe Text
+
+data Person = Person [Email] FullName
+-- Avatar
+
 instance FromJSON Person where
     parseJSON = withObject "Person" $ \o -> Person
         <$> o .: "emails"
+        <*> o A..:? "displayName"
+--        <*> ((o .:? "url") >>= (A..:? "image"))
+--        <*> (fmap (\a -> a ^? key "url") <$> o A..:? "image" )
 
 data Email = Email
     { emailValue :: Text
     , emailType  :: Text
     }
     deriving Show
+
 instance FromJSON Email where
     parseJSON = withObject "Email" $ \o -> Email
         <$> o .: "value"
