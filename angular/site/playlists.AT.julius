@@ -22,7 +22,6 @@ function($scope,$log,$http, $location,$stateParams , title){
         $scope.curr_title = pl.title;
         title.getImg ( pl.thumbnails.default.url );
         title.set( <a href="' + $location.path() + '/' + pl.uuid +'" >' + pl.title + '</a>');
-
         //ytPlayer.curr_vars = $scope.curr_vars;
     };
 
