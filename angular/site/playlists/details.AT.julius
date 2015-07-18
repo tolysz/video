@@ -1,5 +1,7 @@
 function($scope, $log, $http, $stateParams){
 
+    $scope.debug = {};
+    $scope.debug['params'] = $stateParams;
     $scope.uuid = $stateParams.uuid;
     $scope.getList = function(){
         $log.debug($stateParams.pluuid);
