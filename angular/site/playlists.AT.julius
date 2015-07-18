@@ -20,7 +20,8 @@ function($scope,$log,$http, $location,$stateParams , title){
         $scope.curr_id = pl.id;
         $scope.curr_vars = { list: pl.id };
         $scope.curr_title = pl.title;
-        title.set( '<img style="height: 3em;" src="' + pl.thumbnails.default.url + '" alt="' +pl.title + '"  /><a href="' + $location.path() + '/' + pl.uuid +'" >' + pl.title + '</a>');
+        title.getImg ( pl.thumbnails.default.url );
+        title.set( <a href="' + $location.path() + '/' + pl.uuid +'" >' + pl.title + '</a>');
 
         //ytPlayer.curr_vars = $scope.curr_vars;
     };
