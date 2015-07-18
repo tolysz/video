@@ -19,3 +19,5 @@ extra-bower
 bower_components
 why.md
 case.md
+.idea
+.idea/*
