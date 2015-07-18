@@ -5,9 +5,10 @@ function($scope, $log, $http, $stateParams){
     $scope.uuid = $stateParams.uuid;
     $scope.getList = function(){
         $log.debug($stateParams.pluuid);
-        $http.get('@{YTPlaylistItemBaseR}' + "/" + $scope.uuid + "/" + $stateParams.pluuid)
+        $http.get('@{UserRootR}' + "/group/" + $scope.uuid + "/playlists/" + $stateParams.pluuid)
             .success( function(data){
                 $log.debug(data);
+                $scope.debug['data'] = data;
                 $scope.playlist = data;
             }
         );

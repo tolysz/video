@@ -22,9 +22,9 @@ function ($scope, $log, $http, $location, $stateParams, title){
         $scope.curr_vars = { list: pl.id };
         $scope.curr_title = pl.title;
         title.setImg( pl.thumbnails.default.url );
-        title.set( '<a href="' + $location.path() + '/' + pl.uuid +'" >' + pl.title + '</a>');
+        title.setLink( $location.path() + '/' + pl.uuid );
+        title.set( pl.title );
         //ytPlayer.curr_vars = $scope.curr_vars;
-
     };
 
     $scope.flipSort = function(){

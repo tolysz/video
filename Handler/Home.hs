@@ -293,6 +293,9 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
               , set: function (nt){ this.get = nt; }
               , getImg: ""
               , setImg: function (nt){ this.getImg = nt; }
+              , getLink: ""
+              , setLink: function (nt){ this.getLink = nt; }
+
               }
      }
     |]

@@ -33,10 +33,6 @@ getUserChannelsR =
         runDB $ selectList [ChannelMemberUserId ==. uid] []
           >>= mapM (\(Entity _ q) -> get $ channelMemberRef q )
 
--- liftMaybe :: Monad m => Maybe a -> MaybeT m a
--- liftMaybe = MaybeT . return
-
-getBackupR :: ApiReq Backup
 getBackupR = TC <$> ( Backup <$> listsOfAllNaked
                              <*> listsOfAllNaked
                              <*> listsOfAllNaked
@@ -452,21 +448,6 @@ updateYTPlaylistItms gr gu i _ rq =
 
       )
    _ -> return $ TC [(DBApiFail, i)]
-{-
-  runRawDB (\c -> $(TQ.genJsonQuery [qq|
-  insert y_t_video_playlist
-    ( ref         -- Text  -- < i
-    , etag        -- Text  -- < e
-    , snippet     -- Value -- < toJSON (Just $ TC v)
-    , google_user -- Text  -- < gu
-    , group_id    -- < P.fromSqlKey gr
-    ) |]) c  )
-  -}
---   undefined
-
-
-
--- handleYTPlaylistsR
 
 {-
      rawrecs <- runDB $ find (select

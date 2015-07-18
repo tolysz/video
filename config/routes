@@ -32,13 +32,14 @@
 /api/oauth2/youtube/sync/#GUUID        UpdateVideosR GET
 
 -- normal authentication level
-/api/user                             UserRootR
-/api/user/me                          UserMeR GET
-/api/user/theme                       UserThemeR GET POST DELETE
-/api/user/channels                    UserChannelsR GET
-/api/user/groups                      UserGroupsR   GET
-/api/user/groups-public               UserGroupsPublicR   GET
-/api/user/group/#GUUID/playlists      UserPlaylistsGroupR GET
+/api/user                                UserRootR
+/api/user/me                             UserMeR GET
+/api/user/theme                          UserThemeR GET POST DELETE
+/api/user/channels                       UserChannelsR GET
+/api/user/groups                         UserGroupsR   GET
+/api/user/groups-public                  UserGroupsPublicR   GET
+/api/user/group/#GUUID/playlists         UserPlaylistsGroupR GET
+/api/user/group/#GUUID/playlists/#GUUID  UserPlaylistsGroupItemsR GET
 
 /api/test/db/0  Test0R GET
 /api/test/db/1  Test1R GET

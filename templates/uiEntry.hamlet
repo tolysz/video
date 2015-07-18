@@ -64,13 +64,17 @@ $newline never
          <div .md-toolbar-tools tabindex="0" >
             <md-button .md-primary .menu-icon aria-label="Toggle Menu" hide-gt-md ng-click="toggleLeft()">
                <span .fa .font-2x .indent >
-            <div layout=row flex .fill-height  ng-click="toggleLeft()">
+            $# ng-click="toggleLeft()"
+            <div layout=row flex .fill-height>
                <div ui-view=title-menu>
                   <div .md-toolbar-item .md-breadcrumb flex layout=row>
                      <div ng-show=title.getImg style="height: 2em;">
                        <img ng-src="{{title.getImg}}" style="height: inherit;">
-                     <div>
+                     <div ng-show=title.getLink>
                        <span style="display: inline-block;" ng-bind-html="title.get">
+                     <div ng-hide=title.getLink>
+                       <a ng-href="{{title.getLink}}"
+                         <span style="display: inline-block;" ng-bind-html="title.get">
 
             $if not (isLogged perms)
                 <div flex hide-sm>
