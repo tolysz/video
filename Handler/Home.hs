@@ -290,6 +290,8 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     addFactory "title" [js| function($log, $timeout){
        return { get: ""
               , set: function (nt){ this.get = nt; }
+              , getImg: ""
+              , setImg: function (nt){ this.getImg = nt; }
               }
      }
     |]
