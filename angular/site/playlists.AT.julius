@@ -24,6 +24,7 @@ function($scope,$log,$http, $location,$stateParams , title){
         title.set( <a href="' + $location.path() + '/' + pl.uuid +'" >' + pl.title + '</a>');
         //ytPlayer.curr_vars = $scope.curr_vars;
 
+
     };
 
     $scope.flipSort = function(){
