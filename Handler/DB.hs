@@ -8,7 +8,6 @@ import qualified Data.Aeson as A
 import Data.Aeson.Types
 import Control.Lens ((^?) , (^.))
 import Control.Lens.Iso (non)
--- import Database.Persist.MongoDB
 import Data.ByteString.UTF8 (toString)
 import Model as M
 import Control.Arrow ((***))
@@ -18,16 +17,13 @@ import Data.Maybe (fromJust)
 
 import Network.Google.Api.Youtube.Videos
 import Network.Google.Api.Youtube.Playlists
+import Network.Google.Api.Youtube.PlaylistItems
 import qualified Database.Esqueleto as E
 
 import Data.String.QM
 import qualified Database.PostgreSQL.Simple     as TQ
 import qualified Database.PostgreSQL.Simple.TypedQuery   as TQ
 import qualified Database.Persist.Sql as P
-
--- import Database.MongoDB.Query (MongoContext(..))
--- import Data.Aeson.Types (emptyObject)
-
 
 -- Module dedicated to accessing Database
 getUserChannelsR :: ApiReq [YTChannel]
@@ -58,7 +54,6 @@ liftJust = return
 -- | REST For Group
 getSiteGroupR :: ApiReq [   SiteGroup   ]
 getSiteGroupR = listsOfAll
-
 
 -- todo: now broken
 postSiteGroupR :: ApiReq SiteGroup
@@ -194,9 +189,6 @@ deleteSiteGroupUser0R = do
        let us = SiteGroupMember {..}
        MaybeT $ runDB $ do
          deleteBy (UniqueSiteGroupMember siteGroupMemberGroupId siteGroupMemberUserId)
---          >>= \case
---            Just (Entity uid _) -> replace uid us
---            Nothing             -> void $ insert us
          return (Just $ TC us)
 
 postSiteGroupUser0R :: ApiReq SiteGroupMember
@@ -250,12 +242,6 @@ getSiteGroupUserR gid = do
       g.uuid = ? -- < gid
       and not u.deleted
    |])
---    jsonDBNaked $ do
---      groupKey <- getDBKey (UniqueSiteGroup gid)
---      memberList <- selectList [SiteGroupMemberGroup ==. groupKey] []
---      forM memberList $ \m@(Entity k SiteGroupMember{..}) -> do
---           us <- fmap userUuid <$> get siteGroupMemberUser
---           return (SiteGroupMemberResolved (Just gid) us siteGroupMemberFullMember siteGroupMemberUserAdmin siteGroupMemberVideoAdmin)
 
 getUserGroupsR :: ApiReq [(SiteGroup,SiteGroupMember)]
 getUserGroupsR =
@@ -398,7 +384,6 @@ updateYTPlaylist gr gu i e rq =
               , google_user -- Text  -- < gu
               , group_id    -- < P.fromSqlKey gr
               ) |])
-
 --             runDB $ insert $ YTPlaylist i e (Just $ TC v) gu gr
             return $ TC (DBAdd, i)
         _ -> return $ TC (DBApiFail, i)
@@ -411,6 +396,75 @@ updateYTPlaylist gr gu i e rq =
                     runDB $ update (entityKey a) [YTPlaylistEtag =. e, YTPlaylistSnippet =. Just (TC v)]
                     return $ TC (DBUpdate, i)
                 _ -> return $ TC (DBApiFail, i)
+
+{--
+-- un classified
+select *
+from y_t_video as v
+ where id not in (select video from y_t_video_playlist as pl where pl.group_id = v.group_id)
+ and v.group_id = 2
+ and (v.snippet->'status'->>'uploadStatus') = 'processed'
+
+
+-}
+updateYTPlaylistItms :: Key SiteGroup -> Text -> Text -> Text -> ApiReq [YoutubePlaylistItem] -> ApiReq [(DBAction,Text)]
+updateYTPlaylistItms gr gu i _ rq =
+  rq >>= \case
+   (TC lis) -> do
+     TC <$> forM lis ( \li@YoutubePlaylistItem{..} -> do
+       runRawDB $(TQ.genTypedQuery [qq|
+          select v.id, pl.id
+           from y_t_video as v
+              , y_t_playlist as pl
+          where v.ref  = ? -- < (toJSON _ypiSnippet) ^? key "resourceId" . key "videoId" . _String ^. non "fail"
+            and pl.ref = ? -- < i
+                |])
+       >>= \case
+           []              -> return (DBNoop, _ypiId)
+           ((vid, plid):_) ->
+               runDB ( E.select $
+                    E.from   $ \yv -> do
+                    E.where_
+                       (yv E.^. YTVideoPlaylistRef E.==. E.val _ypiId)
+                    return yv )
+                 >>= \case
+                   [] -> do
+                        runRawDB $(TQ.genJsonQuery [qq|
+                             insert into y_t_video_playlist
+                               ( ref         -- Text    -- < _ypiId
+                               , etag        -- Text    -- < _ypiEtag
+                               , snippet     -- Value   -- < toJSON (Just $ TC li)
+                               , video       -- Integer -- < vid
+                               , playlist    -- Integer -- < plid
+                               , google_user -- Text    -- < gu
+                               , group_id    -- Int64 -- < P.fromSqlKey gr
+                               ) |])
+                        return $ (DBAdd, _ypiId)
+
+                   (a:_) -> if (==) _ypiEtag . yTVideoPlaylistEtag . entityVal $ a
+                             then
+                               return $ (DBNoop, _ypiId)
+                             else do
+                               runDB $ update (entityKey a) [YTVideoPlaylistEtag =. _ypiEtag, YTVideoPlaylistSnippet =. Just (TC li)]
+                               return $ (DBUpdate, _ypiId)
+
+
+
+      )
+   _ -> return $ TC [(DBApiFail, i)]
+{-
+  runRawDB (\c -> $(TQ.genJsonQuery [qq|
+  insert y_t_video_playlist
+    ( ref         -- Text  -- < i
+    , etag        -- Text  -- < e
+    , snippet     -- Value -- < toJSON (Just $ TC v)
+    , google_user -- Text  -- < gu
+    , group_id    -- < P.fromSqlKey gr
+    ) |]) c  )
+  -}
+--   undefined
+
+
 
 -- handleYTPlaylistsR
 
@@ -454,7 +508,6 @@ getEventR = listsOfAll
 -- deleteEvent1R :: ObjectId -> ApiReq Event
 -- deleteEvent1R = undefined
 -- deleteEvent1R (oidToKey -> eid) = deleteReturn eid
-
 
 -- | todo: find out how to cut this boilerplate!
 --   force compiler not to disply signature missing if the type is fully defined otherwise

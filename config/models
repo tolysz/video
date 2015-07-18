@@ -4,7 +4,7 @@ Users
     friendly      Text Maybe
     avatar        Text Maybe
     deleted       Bool default=false
-    UniqueUsers    uuid
+    UniqueUsers   uuid
     deriving Show Typeable Generic
 
 Email
@@ -98,14 +98,21 @@ YTPlaylist
     googleUser    Text
     groupId     SiteGroupId
     UniqueYTPlaylist ref
+    UniqueYTPlaylistUUID uuid
     deriving Show Typeable Generic
 
 YTVideoPlaylist
-     playlist     YTPlaylistId
-     video        YTVideoId
-     snippet      (TC YoutubePlaylistItem) Maybe
-     UniqueYTVideoPlaylist playlist video
-     deriving Show Typeable Generic
+    ref          Text
+    etag         Text
+    snippet      (TC YoutubePlaylistItem) Maybe
+    video        YTVideoId
+    playlist     YTPlaylistId
+    googleUser   Text
+    groupId      SiteGroupId
+    UniqueYTVideoPlaylist playlist video
+    UniqueYTVideoPlaylistRef ref
+
+    deriving Show Typeable Generic
 
 YTVideo json
     ref           Text
@@ -115,6 +122,7 @@ YTVideo json
     googleUser    Text
     groupId       SiteGroupId
     UniqueYTVideo ref
+    UniqueYTVideoUUID uuid
     deriving Show Typeable Generic
 
 YTVideoUser

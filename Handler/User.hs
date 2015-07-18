@@ -51,10 +51,13 @@ getUpdateVideosR gid = do
 
   let ggg = possible (error "no user") (error "no user") id $ guid ^. googleUserId
   -- todo: unsafe
-  TC u1 <- unTC <$> (forM vds (\(e,i) -> updateYTVideo     gr ggg i e (fmap listToMaybe <$> getYTVideoR    gid [i])))
-  TC u2 <- unTC <$> (forM pls (\(e,i) -> updateYTPlaylist  gr ggg i e (fmap listToMaybe <$> getYTPlaylistR gid [i])))
+  TC u1 <- unTC <$> (forM vds (\(e,i) -> updateYTVideo         gr ggg i e (fmap listToMaybe <$> getYTVideoR    gid [i])))
+  TC u2 <- unTC <$> (forM pls (\(e,i) -> updateYTPlaylist      gr ggg i e (fmap listToMaybe <$> getYTPlaylistR gid [i])))
+  TC u3 <- unTC <$> (forM pls (\(e,i) -> updateYTPlaylistItms  gr ggg i e (handleYTPlaylistItemR gid (T.unpack i))))
+----
 
-  return $ TC (u1 ++ u2)
+---
+  return $ TC (u1 ++ u2 ++ Import.concat u3)
 
    where
      unTC a = TC (Import.map (\(TC a)-> a) a)
@@ -62,7 +65,7 @@ getUpdateVideosR gid = do
      processPL (TC a) = catMaybes (Import.map extrPL a)
      extr :: Value -> Maybe (Text,Text)
      extr a = do
-         ma <- a ^? key "etag" . _String
+         ma <- a ^? key "etag"               . _String
          mb <- a ^? key "id" . key "videoId" . _String
          return (ma,mb)
      extrPL :: Value -> Maybe (Text,Text)
