@@ -2,8 +2,8 @@ function($scope, $log, $http, $stateParams){
 
     $scope.uuid = $stateParams.uuid;
     $scope.getList = function(){
-        $log.debug($stateParams.pid)
-        $http.get('@{YTPlaylistItemBaseR}' + "/" + $scope.uuid + "/" + $stateParams.pid)
+        $log.debug($stateParams.pluuid);
+        $http.get('@{YTPlaylistItemBaseR}' + "/" + $scope.uuid + "/" + $stateParams.pluuid)
             .success( function(data){
                 $log.debug(data);
                 $scope.playlist = data;

@@ -1,4 +1,5 @@
-function($scope,$log,$http, $location,$stateParams , title){
+function ($scope, $log, $http, $location, $stateParams, title){
+
     $scope.sort = 0;
     $scope.uuid = $stateParams.uuid;
     $scope.getList = function(){
@@ -11,7 +12,7 @@ function($scope,$log,$http, $location,$stateParams , title){
                 title.set("Playlists for channel");
 
             }
-        )
+        );
     };
 
     $scope.setThose = function (pl){

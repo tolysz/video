@@ -191,6 +191,7 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     state $(utcVFile "/edit/:uuid"     "admin.user.edit" "@" )  -- require special permissions
     state $(utcFile  "/site"           "site"                )  -- will be per user
     state $(utcVFile "/:uuid/playlists"  "site.playlists" "@" )  -- will be per user
+    state $(utcVFile "/:pluuid"        "site.playlists.detail" "@" )  -- will be per user
     state $(utcFile  "/auth/logout"    "logout"              )
     state $(utcFile  "/auth/login"     "login"               )
 
