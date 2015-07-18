@@ -67,8 +67,8 @@ $newline never
             <div layout=row flex .fill-height  ng-click="toggleLeft()">
                <div ui-view=title-menu>
                   <div .md-toolbar-item .md-breadcrumb flex layout=column>
-                     <div ng-show=title.getImg>
-                       <img ng-src="{{title.getImg}}">
+                     <div ng-show=title.getImg style="height: 2em;">
+                       <img ng-src="{{title.getImg}}" style="height: inherit;">
                      <div>
                        <span style="display: inline-block;" ng-bind-html="title.get">
 
