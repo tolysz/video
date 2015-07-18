@@ -161,6 +161,15 @@ instance Yesod App where
 
     makeLogger = return . appLogger
 
+    errorHandler NotFound = fmap toTypedContent $ defaultLayout $ do
+        setTitle "Request page not located"
+        toWidget [hamlet|
+<h1>Not Found
+<p>We apologize for the inconvenience, but the requested page could not be located.
+|]
+    errorHandler other = defaultErrorHandler other
+
+
 -- How to run database actions.
 instance YesodPersist App where
     type YesodPersistBackend App = SqlBackend
@@ -192,7 +201,7 @@ instance YesodGoogleAuth App where
 newUUID = decodeUtf8 . UUID.toASCIIBytes <$> liftIO UUID.nextRandom
 
 instance YesodAuth App where
-    type AuthId App = UserId
+    type AuthId App = UsersId
 
     -- Where to send a user after successful login
     loginDest a = HomeR []
@@ -206,34 +215,34 @@ instance YesodAuth App where
 --         x <- getBy $ UniqueUser $ credsIdent creds
         x <- E.select $
              E.from $ \(p `E.LeftOuterJoin` e) -> do
-             E.on $ (p E.^. UserId) E.==. e E.^. EmailUser
+             E.on $ (p E.^. UsersId) E.==. e E.^. EmailUserId
              E.where_ $ (e E.^. EmailEmail ) E.==. E.val (credsIdent creds)
              return p
         let nn = DL.lookup "full_name" $ credsExtra creds
             na = DL.lookup "avatar"    $ credsExtra creds
         case x of
-            [Entity uid User{..}] -> do
-                when (isNothing userName && isJust nn) $
-                   update uid [UserName =. nn]
-                when (isNothing userAvatar && isJust na) $
-                   update uid [UserAvatar =. na]
-                when (userDeleted) $
-                   update uid [UserDeleted =. False]
+            [Entity uid Users{..}] -> do
+                when (isNothing usersName && isJust nn) $
+                   update uid [UsersName =. nn]
+                when (isNothing usersAvatar && isJust na) $
+                   update uid [UsersAvatar =. na]
+                when (usersDeleted) $
+                   update uid [UsersDeleted =. False]
 
                 return $ Just uid
             [] -> do
                 ruuid <- newUUID
                 Just <$> do
-                  uu <- insert User
-                    { userUuid = ruuid
-                    , userName      = nn
-                    , userFriendly  = Nothing
-                    , userAvatar    = na
-                    , userDeleted   = False
+                  uu <- insert Users
+                    { usersUuid = ruuid
+                    , usersName      = nn
+                    , usersFriendly  = Nothing
+                    , usersAvatar    = na
+                    , usersDeleted   = False
                     }
                   insert Email
                     { emailEmail = credsIdent creds
-                    , emailUser  = uu
+                    , emailUserId  = uu
                     }
                   return uu
 
@@ -304,7 +313,7 @@ angularUILayout ngApp widget = do
 --  fromString a = [js|^{rawJS a}|]
 
 -- get user identity from the DB, maybe this is already cached?
-getUserIdent :: Handler (Key User)
+getUserIdent :: Handler (Key Users)
 getUserIdent = requireAuthId
 
 getGroupKey :: GUUID -> AppM (Key SiteGroup)
@@ -318,8 +327,8 @@ getUserAdmin =
           runDB $
              E.select (
              E.from $ \(p `E.InnerJoin` e) -> do
-             E.on $ (p E.^. UserId) E.==. e E.^. SiteAdminUser
-             E.where_ $ (p E.^. UserId ) E.==. E.val aid
+             E.on $ (p E.^. UsersId) E.==. e E.^. SiteAdminUserId
+             E.where_ $ (p E.^. UsersId ) E.==. E.val aid
              return e)
              >>= return . \case
                [Entity _ v] -> siteAdminIsAdmin v

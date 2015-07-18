@@ -34,7 +34,7 @@ getUserChannelsR :: ApiReq [YTChannel]
 getUserChannelsR =
   TC . catMaybes <$> do
         uid <- getUserIdent
-        runDB $ selectList [ChannelMemberUser ==. uid] []
+        runDB $ selectList [ChannelMemberUserId ==. uid] []
           >>= mapM (\(Entity _ q) -> get $ channelMemberRef q )
 
 -- liftMaybe :: Monad m => Maybe a -> MaybeT m a
@@ -102,12 +102,12 @@ getUserR = do
             , avatar   as avatar   -- Maybe  Text
             , deleted  as deleted  -- Bool
             , emails   as emails   -- Maybe [Text]
-       from "user"
-       left outer join (select "email".user as id
-             , array_agg("email".email) as emails
-             from "email"
-             group by "email".user
-             ) as "em" on "user".id = em.id
+       from users
+       left outer join (select email.user_id as id
+             , array_agg(email.email) as emails
+             from email
+             group by email.user_id
+             ) as em on users.id = em.id
       |])
 -- listsOfAll
 
@@ -118,16 +118,16 @@ getUserbyEmail (Just email) = do
    uid <- P.fromSqlKey <$> requireAuthId
    safeHead <$> runRawDB $(TQ.genTypedQuery [qq|
     select uuid  as uuid   -- Text
-    from "user"
-    left join "email" on "user".id = "email".user
+    from users
+    left join email on users.id = email.user_id
     where
-     "email".email = ?  -- < email
+     email.email = ?  -- < email
    |])
 
 safeHead []    = Nothing
 safeHead (a:_) = Just a
 
-postUserR :: ApiReq User
+postUserR :: ApiReq Users
 postUserR = do
         guardAllAdmin
         restOpenM $ \(v :: Value) -> do
@@ -137,29 +137,29 @@ postUserR = do
          let userUuid' = (v ^? key "uuid" . _String ) <|> uem <|> uuu
 
          runMaybeT $ do
-            userUuid      <- liftMaybe userUuid'
-            userName      <- liftJust  (v ^? key "name"     . _String )
-            userFriendly  <- liftJust  (v ^? key "friendly" . _String )
+            usersUuid      <- liftMaybe userUuid'
+            usersName      <- liftJust  (v ^? key "name"     . _String )
+            usersFriendly  <- liftJust  (v ^? key "friendly" . _String )
 --             userSiteAdmin <- liftJust  False -- (v ^? key "siteAdmin" . _Bool )
-            userAvatar    <- liftJust  (v ^? key "avatar"   . _String )
-            let userDeleted = False
-            let us = User {..}
-            MaybeT $ runDB $ getBy (UniqueUser userUuid) >>= \case
+            usersAvatar    <- liftJust  (v ^? key "avatar"   . _String )
+            let usersDeleted = False
+            let us = Users {..}
+            MaybeT $ runDB $ getBy (UniqueUsers usersUuid) >>= \case
                  -- keep the old admin privs
                 Just (Entity uid old) -> replace uid us >> return (Just $ TC us)
                 Nothing -> do
-                  let Just userEmail  =  (v ^? key "email" . _String )
+                  let Just usersEmail  =  (v ^? key "email" . _String )
                   uu <- insert us
-                  insert $ Email userEmail uu
+                  insert $ Email usersEmail uu
                   return (Just $ TC us)
 
-getUser1R :: EmailQuery -> ApiReq User
-getUser1R = jsonDB1 . getBy404 . UniqueUser
+getUser1R :: EmailQuery -> ApiReq Users
+getUser1R = jsonDB1 . getBy404 . UniqueUsers
 
-deleteUser1R :: EmailQuery -> ApiReq User
+deleteUser1R :: EmailQuery -> ApiReq Users
 deleteUser1R em = jsonDB1 $ do
-     us@(Entity userId user) <- getBy404 $ UniqueUser em
-     update userId [UserDeleted =. True]
+     us@(Entity userId user) <- getBy404 $ UniqueUsers em
+     update userId [UsersDeleted =. True]
 --      deleteWhere [EmailUser  ==. userId]
 --      deleteWhere [SiteGroupMemberUser  ==. userId]
 --      deleteWhere [UserThemeUser  ==. userId]
@@ -183,17 +183,17 @@ deleteSiteGroupUser0R = do
 --        userUuid      <- liftMaybe userUuid'
        textGroup <- liftMaybe (v ^? key "group"      . _String )
 --        guard (textGroup == gid)
-       userUuid  <- liftMaybe  (v ^? key "user"       . _String )
+       usersUuid  <- liftMaybe  (v ^? key "user"       . _String )
        siteGroupMemberFullMember <- liftJust  (v ^? key "fullMember" . _Bool ^. non False)
        siteGroupMemberUserAdmin  <- liftJust  (v ^? key "userAdmin"  . _Bool ^. non False)
        siteGroupMemberVideoAdmin <- liftJust  (v ^? key "videoAdmin" . _Bool ^. non False) -- False if not a site admin
-       Just (siteGroupMemberGroup, siteGroupMemberUser) <- MaybeT $ runDB $ return . Just <$> (
+       Just (siteGroupMemberGroupId, siteGroupMemberUserId) <- MaybeT $ runDB $ return . Just <$> (
               (,) <$> getDBKey (UniqueSiteGroup textGroup)
-                  <*> getDBKey (UniqueUser userUuid)
+                  <*> getDBKey (UniqueUsers usersUuid)
                   )
        let us = SiteGroupMember {..}
        MaybeT $ runDB $ do
-         deleteBy (UniqueSiteGroupMember siteGroupMemberGroup siteGroupMemberUser)
+         deleteBy (UniqueSiteGroupMember siteGroupMemberGroupId siteGroupMemberUserId)
 --          >>= \case
 --            Just (Entity uid _) -> replace uid us
 --            Nothing             -> void $ insert us
@@ -215,13 +215,13 @@ postSiteGroupUser0R = do
        siteGroupMemberFullMember <- liftJust  (v ^? key "fullMember" . _Bool ^. non False)
        siteGroupMemberUserAdmin  <- liftJust  (v ^? key "userAdmin"  . _Bool ^. non False)
        siteGroupMemberVideoAdmin <- liftJust  (v ^? key "videoAdmin" . _Bool ^. non False) -- False if not a site admin
-       Just (siteGroupMemberGroup, siteGroupMemberUser) <- MaybeT $ runDB $ return . Just <$> (
+       Just (siteGroupMemberGroupId, siteGroupMemberUserId) <- MaybeT $ runDB $ return . Just <$> (
               (,) <$> getDBKey (UniqueSiteGroup textGroup)
-                  <*> getDBKey (UniqueUser userUuid)
+                  <*> getDBKey (UniqueUsers userUuid)
                   )
        let us = SiteGroupMember {..}
        MaybeT $ runDB $ do
-         getBy (UniqueSiteGroupMember siteGroupMemberGroup siteGroupMemberUser) >>= \case
+         getBy (UniqueSiteGroupMember siteGroupMemberGroupId siteGroupMemberUserId) >>= \case
            Just (Entity uid _) -> replace uid us
            Nothing             -> void $ insert us
          return (Just $ TC us)
@@ -238,13 +238,13 @@ getSiteGroupUserR gid = do
           , friendly    as friendly     -- Maybe  Text
           , avatar      as avatar       -- Maybe  Text
           , emails      as emails       -- Maybe [Text]
-     from "site_group_member" as gm
-     left join "site_group"   as g on g.id = gm.group
-     left join "user"         as u on u.id = gm.user
-     left outer join (select e.user as id
+     from site_group_member as gm
+     left join site_group   as g on g.id = gm.group_id
+     left join users         as u on u.id = gm.user_id
+     left outer join (select e.user_id as id
           , array_agg(e.email) as emails
-          from "email" as e
-          group by e.user
+          from email as e
+          group by e.user_id
           ) as em on u.id = em.id
      where
       g.uuid = ? -- < gid
@@ -264,8 +264,8 @@ getUserGroupsR =
   runDB $
      E.select (
      E.from   $ \(sgm `E.InnerJoin` sg) -> do
-     E.on     $ sg  E.^. SiteGroupId         E.==. sgm E.^. SiteGroupMemberGroup
-     E.where_ $ sgm E.^. SiteGroupMemberUser E.==. E.val aid
+     E.on     $ sg  E.^. SiteGroupId         E.==. sgm E.^. SiteGroupMemberGroupId
+     E.where_ $ sgm E.^. SiteGroupMemberUserId E.==. E.val aid
      return (sg, sgm)
      )
 
@@ -301,7 +301,7 @@ getUserThemeR = maybeAuthId >>= \case
   Just u ->  runDB ( E.select $
                  E.from   $ \yv -> do
                  E.where_
-                    (yv E.^. UserThemeUser E.==. E.val u)
+                    (yv E.^. UserThemeUserId E.==. E.val u)
                  return yv )
               >>= \case
                [Entity _ (UserTheme _ (Just t)) ] -> return t
@@ -335,8 +335,8 @@ getUserGroupsPublicR =
          E.from   $ \sg -> do
          E.where_ $ (sg  E.^. SiteGroupPublic E.==. E.val True)
             E.&&. E.notExists ( E.from $ \sgm -> E.where_ (
-               (sg  E.^. SiteGroupId  E.==. sgm E.^. SiteGroupMemberGroup)
-               E.&&. (sgm E.^. SiteGroupMemberUser E.==. E.val aid) ))
+               (sg  E.^. SiteGroupId  E.==. sgm E.^. SiteGroupMemberGroupId)
+               E.&&. (sgm E.^. SiteGroupMemberUserId E.==. E.val aid) ))
          return sg
    Nothing ->
       runDB $
@@ -359,7 +359,14 @@ updateYTVideo gr gu i e rq =
    [] ->
       rq >>= \case
         TC (Just v) -> do
-            runDB $ insert $ YTVideo i e (Just $ TC v) gu gr
+            runRawDB $(TQ.genJsonQuery [qq|
+            insert into y_t_video
+              ( ref         -- Text  -- < i
+              , etag        -- Text  -- < e
+              , snippet     -- Value -- < toJSON (Just $ TC v)
+              , google_user -- Text  -- < gu
+              , group_id    -- < P.fromSqlKey gr
+              ) |])
             return $ TC (DBAdd, i)
         _ -> return $ TC (DBApiFail, i)
    (a:_) -> if (==) e . yTVideoEtag . entityVal $ a
@@ -383,7 +390,16 @@ updateYTPlaylist gr gu i e rq =
    [] ->
       rq >>= \case
         TC (Just v) -> do
-            runDB $ insert $ YTPlaylist i e (Just $ TC v) gu gr
+            runRawDB $(TQ.genJsonQuery [qq|
+            insert into y_t_playlist
+              ( ref         -- Text  -- < i
+              , etag        -- Text  -- < e
+              , snippet     -- Value -- < toJSON (Just $ TC v)
+              , google_user -- Text  -- < gu
+              , group_id    -- < P.fromSqlKey gr
+              ) |])
+
+--             runDB $ insert $ YTPlaylist i e (Just $ TC v) gu gr
             return $ TC (DBAdd, i)
         _ -> return $ TC (DBApiFail, i)
    (a:_) -> if (==) e . yTPlaylistEtag . entityVal $ a
@@ -415,13 +431,13 @@ updateYTPlaylist gr gu i e rq =
 getSiteGroupUser1R :: GUUID -> GUUID -> ApiReq SiteGroupMember
 getSiteGroupUser1R gid e = do
   (groupKey, userKey) <- runDB $ (,) <$> getDBKey (UniqueSiteGroup gid)
-                                     <*> getDBKey (UniqueUser e)
+                                     <*> getDBKey (UniqueUsers e)
   jsonDB1 . getBy404 $ UniqueSiteGroupMember groupKey userKey
 
 deleteSiteGroupUser1R :: GUUID -> GUUID -> ApiReq SiteGroupMember
 deleteSiteGroupUser1R gid e = do
   (groupKey, userKey) <- runDB $ (,) <$> getDBKey (UniqueSiteGroup gid)
-                                     <*> getDBKey (UniqueUser e)
+                                     <*> getDBKey (UniqueUsers e)
   deleteByReturn (UniqueSiteGroupMember groupKey) userKey
 
 -- REST for events

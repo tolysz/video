@@ -1,34 +1,33 @@
-User
-    uuid          Text
+Users
+    uuid          Text default=gen_random_uuid()
     name          Text Maybe
     friendly      Text Maybe
     avatar        Text Maybe
---    photo         Photo Maybe
-    deleted       Bool default=False
-    UniqueUser    uuid
+    deleted       Bool default=false
+    UniqueUsers    uuid
     deriving Show Typeable Generic
 
 Email
     email         Text
-    user          UserId
+    userId        UsersId
     UniqueEmail   email
     deriving Show Typeable Generic
 
 SiteAdmin
-    user            UserId
+    userId          UsersId
     isAdmin         Bool
-    UniqueSiteAdmin user
+    UniqueSiteAdmin userId
     deriving Show Typeable Generic
 
 UserTheme
-    user            UserId
+    userId          UsersId
     theme           (TC Theme) Maybe
-    UniqueUserTheme user
+    UniqueUserTheme userId
     deriving Show Typeable Generic
 
 OAuthAccess
-    owner         UserId
-    group         SiteGroupId
+    owner         UsersId
+    groupId       SiteGroupId
     realm         Text
     identity      Text Maybe
     accessToken   Text Maybe
@@ -37,24 +36,18 @@ OAuthAccess
     tokenType     Text Maybe
     scope         Texts
     -- OnePerRealm   owner group
-    UniqueOAuthAccess owner group
+    UniqueOAuthAccess owner groupId
     deriving Show Typeable Generic
 
 -- Let start the other end
 SiteGroupMember
-  group         SiteGroupId
-  user          UserId
+  groupId       SiteGroupId
+  userId        UsersId
   fullMember    Bool
   userAdmin     Bool
   videoAdmin    Bool
-  UniqueSiteGroupMember group user
+  UniqueSiteGroupMember groupId userId
   deriving Show Typeable Generic
-
-GroupFriend
-  group         SiteGroupId
-  userMaster    UserId
-  userSlave     UserId
-  oauth         Bool
 
 SiteGroup
   uuid            Text
@@ -66,22 +59,24 @@ SiteGroup
   UniqueSiteGroup uuid
   deriving Show Typeable Generic
 
+
 -- todo: revisit
+-- ----------------
 
 VirtualVideo
-  raw     YTVideoId
-  users   [UserId]
+  rawVideoId YTVideoId
+  users   [UsersId]
   votes   [Int]
   note    Text
-  start   Int
-  end     Int
-  UniqueVirtualVideo raw start
+  startTime   Int
+  endTime     Int
+  UniqueVirtualVideo rawVideoId startTime
   deriving Show Typeable Generic
 
 Event
-  title   Text
-  time    UTCTime
-  group   SiteGroupId
+  title     Text
+  startTime UTCTime
+  groupId     SiteGroupId
 
 PlaylistEven
   type     PlaylistType
@@ -98,39 +93,48 @@ YTChannel json
 YTPlaylist
     ref           Text
     etag          Text
+    uuid          Text default=gen_random_uuid()
     snippet       (TC YoutubePlaylist) Maybe
     googleUser    Text
-    group         SiteGroupId
+    groupId     SiteGroupId
     UniqueYTPlaylist ref
     deriving Show Typeable Generic
 
 YTVideoPlaylist
      playlist     YTPlaylistId
      video        YTVideoId
+     snippet      (TC YoutubePlaylistItem) Maybe
      UniqueYTVideoPlaylist playlist video
      deriving Show Typeable Generic
 
 YTVideo json
     ref           Text
     etag          Text
+    uuid          Text default=gen_random_uuid()
     snippet       (TC YoutubeVideo) Maybe
     googleUser    Text
-    group         SiteGroupId
+    groupId       SiteGroupId
     UniqueYTVideo ref
     deriving Show Typeable Generic
 
 YTVideoUser
     video         YTVideoId
-    user          UserId
+    userId        UsersId
     created       UTCTime default=now()
     eventPerm     EventParticipants default='EventParticipantsRegardless'
     viewPerms     ViewPerm          default='VPChanMembers'
-    UniqueYTVideoUser video user
+    UniqueYTVideoUser video userId
     deriving Show Typeable Generic
 
 ChannelMember
     owner         Bool
     ref           YTChannelId
-    user          UserId
-    UniqueChannelMember ref user
+    userId        UsersId
+    UniqueChannelMember ref userId
     deriving Show Typeable Generic
+
+GroupFriend
+  groupId       SiteGroupId
+  userMaster    UsersId
+  userSlave     UsersId
+  oauth         Bool

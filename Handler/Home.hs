@@ -41,7 +41,7 @@ handleHomeR _ =  do
                xip = maybe ip ( ( <> (T.drop 9 ip)) . E.decodeUtf8) $ lookup "X-Real-IP" (Wai.requestHeaders req)
            (maid, loggedIn) <- maybeAuthId >>= \case
                Nothing ->  return  ( "not logged in" , False)
-               Just n ->   return . (,True ) . maybe xip userUuid =<< (runDB . get $ n)
+               Just n ->   return . (,True ) . maybe xip usersUuid =<< (runDB . get $ n)
            langI18Ang <- getUserLang
            webSockets ( chatApp (bool xip maid loggedIn))
 

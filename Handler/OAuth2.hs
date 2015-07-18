@@ -111,7 +111,7 @@ googleKey uuid = do
 getTokenG :: Text -> Handler AuthToken
 getTokenG gid = flip getToken gid =<< getUserIdent
 
-getToken :: Key User -> Text -> Handler AuthToken
+getToken :: Key Users -> Text -> Handler AuthToken
 getToken uid gid = do
   now <- liftIO getCurrentTime
   runDB ( do

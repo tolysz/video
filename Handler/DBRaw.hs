@@ -20,14 +20,14 @@ getUserMeR = do
          , friendly as friendly -- Text
          , avatar   as avatar   -- Maybe  Text
          , emails   as emails   -- Maybe [Text]
-    from "user"
-    left outer join (select "email".user as id
-          , array_agg("email".email) as emails
-          from "email"
-          group by "email".user
-          ) as "em" on "user".id = em.id
+    from users
+    left outer join (select email.user_id as id
+          , array_agg(email.email) as emails
+          from email
+          group by email.user_id
+          ) as em on users.id = em.id
     where
-     "user".id = ?  -- < uid
+     users.id = ?  -- < uid
    |])
 
 getUserPlaylistsGroupR :: GUUID -> ApiReq [Value]
@@ -36,12 +36,13 @@ getUserPlaylistsGroupR gr = do
     gid <- P.fromSqlKey <$> getGroupKey gr
     TC <$> runRawDB $(TQ.genJsonQuery [qq|
     select ref                                     as id         -- Text
+         , uuid                                    as uuid       -- Text
          , snippet->'snippet'->'thumbnails'        as thumbnails -- Maybe Value
          , snippet->'snippet'->>'title'            as title      -- Text
          , (snippet->'contentDetails'->>'itemCount') :: integer as count -- Int
-    from "y_t_playlist"
+    from y_t_playlist
     where
-      "group" = ? -- < gid
+      group_id = ? -- < gid
   |])
 
 

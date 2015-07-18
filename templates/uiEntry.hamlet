@@ -65,8 +65,9 @@ $newline never
             <md-button .md-primary .menu-icon aria-label="Toggle Menu" hide-gt-md ng-click="toggleLeft()">
                <span .fa .font-2x .indent >
             <div layout=row flex .fill-height  ng-click="toggleLeft()">
-               <div .md-toolbar-item .md-breadcrumb>
-                  <span style="display: inline-block;" ng-bind-html="title.get">
+               <div ui-view=title-menu>
+                  <div .md-toolbar-item .md-breadcrumb>
+                     <span style="display: inline-block;" ng-bind-html="title.get">
 
             $if not (isLogged perms)
                 <div flex hide-sm>

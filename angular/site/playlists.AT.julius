@@ -1,4 +1,4 @@
-function($scope,$log,$http,$stateParams /*, ytPlayer */, title){
+function($scope,$log,$http, $location,$stateParams , title){
     $scope.sort = 0;
     $scope.uuid = $stateParams.uuid;
     $scope.getList = function(){
@@ -13,23 +13,21 @@ function($scope,$log,$http,$stateParams /*, ytPlayer */, title){
             }
         )
     };
-    //$scope.curr_vars = ytPlayer.curr_vars;
-    //$scope.player = ytPlayer.player;
 
     $scope.setThose = function (pl){
         $log.debug (pl);
         $scope.curr_pl = pl;
         $scope.curr_id = pl.id;
-        $scope.curr_vars = { list: pl.id }
+        $scope.curr_vars = { list: pl.id };
         $scope.curr_title = pl.title;
-        title.set(pl.title);
+        title.set( '<img style="height: 3em;" src="' + pl.thumbnails.default.url + '" alt="' +pl.title + '"  /><a href="' + $location.path() + '/' + pl.uuid +'" >' + pl.title + '</a>');
 
         //ytPlayer.curr_vars = $scope.curr_vars;
-    }
+    };
 
     $scope.flipSort = function(){
-        $log.debug($scope.sort)
+        $log.debug($scope.sort);
         $scope.sort = ! $scope.sort
-    }
+    };
     $scope.getList()
 }

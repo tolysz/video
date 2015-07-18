@@ -11,6 +11,7 @@ import Types
 import Network.Google.Api.Utils
 import Network.Google.Api.Youtube.Videos
 import Network.Google.Api.Youtube.Playlists
+import Network.Google.Api.Youtube.PlaylistItems
 
 
 import Data.Aeson.TH       (deriveJSON)
@@ -38,7 +39,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"]
 -- instance FromJSON YTChannel
 -- instance ToJSON   YTChannel
 
-deriveJSON (optsL 4)  ''User
+deriveJSON (optsL 4)  ''Users
 deriveJSON (optsL 9)  ''SiteGroup
 deriveJSON (optsL 15) ''SiteGroupMember
 
@@ -54,7 +55,7 @@ data SiteGroupMemberResolved =
 deriveJSON (optsL 23) ''SiteGroupMemberResolved
 
 data Backup = Backup
-  { bMembers         :: [User           ]
+  { bMembers         :: [Users          ]
   , bSiteGroup       :: [SiteGroup      ]
   , bSiteGroupMember :: [SiteGroupMember]
   }
