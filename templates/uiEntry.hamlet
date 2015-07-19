@@ -71,9 +71,9 @@ $newline never
                      <div ng-show=title.getImg style="height: 2em;">
                        <img ng-src="{{title.getImg}}" style="height: inherit;">
                      <div ng-show=title.getLink>
-                       <span style="display: inline-block;" ng-bind-html="title.get">
+                       <a ng-href="{{title.getLink}}">
+                         <span style="display: inline-block;" ng-bind-html="title.get">
                      <div ng-hide=title.getLink>
-                       <a ng-href="{{title.getLink}}"
                          <span style="display: inline-block;" ng-bind-html="title.get">
 
             $if not (isLogged perms)

@@ -21,7 +21,7 @@ import Network.Wai.Middleware.RequestLogger (Destination (Logger),
                                              mkRequestLogger, outputFormat)
 import System.Log.FastLogger                (defaultBufSize, newStdoutLoggerSet,
                                              toLogStr)
-
+import Data.Text as T (pack)
 -- Import all relevant handler modules here.
 -- Don't forget to add new modules to your cabal file!
 import Handler.Common
@@ -51,6 +51,7 @@ makeFoundation appSettings = do
         (appStaticDir appSettings)
 
     -- My Specific ones
+    appVersion   <- T.pack . show <$> getCurrentTime
     userChannels <- newCMapIO
     -- add RabbitMQ Broadcast
 

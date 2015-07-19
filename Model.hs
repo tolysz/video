@@ -39,7 +39,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"]
 -- instance FromJSON YTChannel
 -- instance ToJSON   YTChannel
 
-deriveJSON (optsL 4)  ''Users
+deriveJSON (optsL 5)  ''Users
 deriveJSON (optsL 9)  ''SiteGroup
 deriveJSON (optsL 15) ''SiteGroupMember
 

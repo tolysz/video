@@ -51,6 +51,7 @@ data App = App
     , appHttpManager :: Manager
     , appLogger      :: Logger
     , userChannels   :: CMap MsgBus
+    , appVersion     :: Text
 --     , appOAuth2      :: OAuth2App
     }
 

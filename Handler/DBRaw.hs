@@ -48,7 +48,22 @@ getUserPlaylistsGroupR gr = do
 getUserPlaylistsGroupItemsR :: GUUID -> GUUID -> ApiReq [Value]
 getUserPlaylistsGroupItemsR gr pli = do
     uid <- P.fromSqlKey <$> requireAuthId
---     gid <- P.fromSqlKey <$> getGroupKey gr
+--     guard =<< getUserAdmin
+    TC <$> runRawDB $(TQ.genTypedQuery [qq|
+         select vp.snippet        -- Value
+         from y_t_video_playlist as vp
+    left join site_group as sg on sg.id = vp.group_id
+    left join y_t_playlist as pl on pl.id = playlist
+    left join site_group_member as sgm on sg.id = sgm.group_id
+        where sg.uuid = ? -- Text -- < gr
+          and pl.uuid = ? -- Text -- < pli
+          and sgm.user_id = ? -- < uid
+          and sgm.video_admin = true
+      order by (vp.snippet->'snippet'->>'position')
+    |])
+
+{-
+
     TC <$> runRawDB $(TQ.genJsonQuery [qq|
      select vp.ref                                     as id         -- Text
           , vp.uuid                                    as uuid       -- Text
@@ -62,6 +77,11 @@ left join y_t_playlist as pl on pl.id = playlist
     where sg.uuid = ? -- < gr
       and pl.uuid = ? -- < pli
   |])
+
+-}
+
+
+
 
 
 getTest0R :: ApiReq [Int]

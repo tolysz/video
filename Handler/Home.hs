@@ -46,6 +46,7 @@ handleHomeR _ =  do
            webSockets ( chatApp (bool xip maid loggedIn))
 
            perms <- userPerms
+           appVers <- appVersion <$> getYesod
            hasCache  <- isJust . join . fmap (Map.lookup langI18Ang) <$> tryReadMVar anonCache
 
            if ((not hasCache && not loggedIn) || loggedIn)
@@ -60,6 +61,7 @@ handleHomeR _ =  do
                    res <- genAngularBind
                        perms
                        jsi18n   -- ^ javascript convertor for messages
+                       appVers
                        langI18Ang -- ^ user languages
                        thm -- ^ user theme
                        maid -- loggedIn
@@ -77,12 +79,13 @@ handleHomeR _ =  do
                   m1 <- readMVar anonCache
                   maybe (handleHomeR []) return $ Map.lookup langI18Ang m1
 
-genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> LangId -> Theme-> Text -> Bool  ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
+genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> Text -> LangId -> Theme-> Text -> Bool  ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
+genAngularBind (perm@Permssions{..}) jsi18n appVers appLang thm maid development = do
   runAngularUI $ cached $ do
     addConstant "maid"    [js|#{rawJS $ show maid}|]
     addConstant "appLang" [js|#{toJSON appLang}|]
     addConstant "perms"   [js|#{toJSON perm}|]
+    addConstant "appVers"   [js|#{toJSON appVers}|]
 
     addConstant "thm"   [js|#{toJSON thm}|]
     addConstant "thmColours" [js|['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey']|]
@@ -178,22 +181,22 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     state $(utcVFile "/:uuid/playlists/:cid" "oauth2.playlists" "@")
     state $(utcVFile "/:uuid/playlist/:pid"  "oauth2.playlist"  "@")
     state $(utcVFile "/:uuid/video/:vid"     "oauth2.video"     "@")
-    state $(utcFile  "/admin"          "admin"               )  -- only channel admin
-    state $(utcFile  "/video"          "admin.video"         )
-    state $(utcFile  "/group"          "admin.group"         )  -- require special permissions
-    state $(utcFile  "/add"            "admin.group.add"     )  -- require special permissions
-    state $(utcFile  "/:uuid/edit"     "admin.group.edit"    )  -- require special permissions
-    state $(utcFile  "/:uuid/user"     "admin.group.user"    )  -- require special permissions
-    state $(utcVFile "/add"            "admin.group.user.add" "@")
-    state $(utcVFile "/:uuuid/edit"    "admin.group.user.edit" "@")
-    state $(utcFile  "/user"           "admin.user"          )  -- require special permissions
-    state $(utcVFile "/add"            "admin.user.add"  "@" )  -- require special permissions
-    state $(utcVFile "/edit/:uuid"     "admin.user.edit" "@" )  -- require special permissions
-    state $(utcFile  "/site"           "site"                )  -- will be per user
-    state $(utcVFile "/:uuid/playlists"  "site.playlists" "@" )  -- will be per user
-    state $(utcVFile "/:pluuid"        "site.playlists.detail" "@" )  -- will be per user
-    state $(utcFile  "/auth/logout"    "logout"              )
-    state $(utcFile  "/auth/login"     "login"               )
+    state $(utcFile  "/admin"           "admin"               )  -- only channel admin
+    state $(utcFile  "/video"           "admin.video"         )
+    state $(utcFile  "/group"           "admin.group"         )  -- require special permissions
+    state $(utcFile  "/add"             "admin.group.add"     )  -- require special permissions
+    state $(utcFile  "/:uuid/edit"      "admin.group.edit"    )  -- require special permissions
+    state $(utcFile  "/:uuid/user"      "admin.group.user"    )  -- require special permissions
+    state $(utcVFile "/add"             "admin.group.user.add" "@")
+    state $(utcVFile "/:uuuid/edit"     "admin.group.user.edit" "@")
+    state $(utcFile  "/user"            "admin.user"          )  -- require special permissions
+    state $(utcVFile "/add"             "admin.user.add"  "@" )  -- require special permissions
+    state $(utcVFile "/edit/:uuid"      "admin.user.edit" "@" )  -- require special permissions
+    state $(utcFile  "/site"            "site"                )  -- will be per user
+    state $(utcVFile "/:uuid/playlists" "site.playlists" "@" )  -- will be per user
+    state $(utcVFile "/:pluuid"         "site.playlists.details" "@" )  -- will be per user
+    state $(utcFile  "/auth/logout"     "logout"              )
+    state $(utcFile  "/auth/login"      "login"               )
 
     when (isLogged) $ do
         state $(utcFile  "/chat"       "chat"                )  -- will be per user
@@ -222,7 +225,7 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     addFactory "Group"     [js| function($resource) { return $resource("@{SiteGroupR}/:uuid"); }|]
     addFactory "GroupUser" [js| function($resource) { return $resource("@{SiteGroupUser0R}/:uuid/:uuuid"); }|]
 
-    addFactory "wsLink" [js| function($rootScope, $log, maid, $mdToast, $timeout, $interval, appLang) {
+    addFactory "wsLink" [js| function($rootScope, $log, maid, $mdToast, $timeout, $interval, $window, appVers, appLang) {
       // Open a WebSocket connection
       var methods = {};
       var collection = [];
@@ -260,6 +263,8 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
 
                 if (buffer.tag == 'Shout')
                   toast(buffer.contents[0] + " -> " + buffer.contents[2]);
+                if (buffer.tag == 'MsgVersion' && buffer.contents[1] !== appVers)
+                    $window.location.reload(); // possibly add msg
               })
             });
       }
@@ -377,8 +382,11 @@ chatApp :: Text  ->  WebSocketsT Handler ()
 chatApp name = do
     lid <- lift getUserLang
     chans <- userChannels <$> getYesod
+    appVers <- appVersion <$> getYesod
     now1 <- liftIO getCurrentTime
     runInnerHandler <- lift handlerToIO
+
+    sendBinaryData $ MsgVersion now1 appVers
     sendBinaryData $ MsgInfo now1 ("Welcome, " <> name) lid
 
     (rChan, keepWS) <- atomically $ do
