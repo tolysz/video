@@ -199,7 +199,7 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     when (isLogged) $ do
         state $(utcFile  "/chat"       "chat"                )  -- will be per user
         state $(utcFile  "/settings"   "settings"            )
-        state $(utcVFile "/settings"   "settings.theme"   "@")
+        state $(utcVFile "/theme"   "settings.theme"   "@")
         state $(utcVFile "/me"         "settings.me"      "@")
 
     setDefaultRoute "site"
