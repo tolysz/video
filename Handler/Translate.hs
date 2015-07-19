@@ -27,7 +27,6 @@ taggedRequest Nothing (toGoogleTrans -> slid) (BS8.toString . urlEncode False . 
 taggedResult :: (LangId, Request) -> Handler (LangId, Response LBS.ByteString)
 taggedResult (lid, req) = (lid, ) <$> httpLbs req
 
-
 toGoogleTrans :: LangId -> String
 toGoogleTrans LangEnGB = "en"
 toGoogleTrans LangEnUs = "en"
@@ -49,8 +48,6 @@ translate fromLang cont = do
              return $ case responseStatus rs of
                 ok200 -> Just (lang, responseBody rs)
                 _     -> Nothing
-
-
 
 --translate fromLang toLang cont
 --   'https://www.googleapis.com/language/translate/v2?key=&q=hello%20world&source=en&target=de' -O -

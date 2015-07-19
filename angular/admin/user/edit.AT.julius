@@ -15,24 +15,25 @@ function($scope, $state, $stateParams, User, $log, title) {
                     }
                 }
             }
-            $scope.back() || $state.go('admin.user');;
+            $scope.back() || $state.go('admin.user');
             //$state.go('admin.user');
-        })
-    }
+        });
+    };
 
     $scope.save = function()
     {
       User.save($scope.user).$promise.then(function(d){
 
-          var match = _.find($scope.users, function(item) { return item.uuid === d.uuid });
+          var match = _.find($scope.users, function(item) { return item.uuid === d.uuid; });
 
           if (match) {
                 _.extend(match,d);
             } else{
                 $scope.users = User.query();
               }
-          $scope.back() || $state.go('admin.user') ;
+          //$scope.back() ||
+          $state.go('admin.user') ;
           //$state.go('admin.user');
           });
-    }
+    };
 }

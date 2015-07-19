@@ -144,8 +144,29 @@ postUserR = do
                   insert $ Email usersEmail uu
                   return (Just $ TC us)
 
-getUser1R :: EmailQuery -> ApiReq Users
-getUser1R = jsonDB1 . getBy404 . UniqueUsers
+getUser1R :: GUUID -> ApiReq [Value]
+getUser1R uuid = do
+--    uid <- P.fromSqlKey <$> requireAuthId
+   guardAllAdmin
+   runRawDB $(TQ.genJsonQuery [qq|
+    select uuid     as uuid     -- Text
+         , name     as name     -- Text
+         , friendly as friendly -- Text
+         , avatar   as avatar   -- Maybe  Text
+         , emails   as emails   -- Maybe [Text]
+    from users
+    left outer join (select email.user_id as id
+          , array_agg(email.email) as emails
+          from email
+          group by email.user_id
+          ) as em on users.id = em.id
+    where
+     users.uuid = ? -- Text -- < uuid
+   |]) >>= \case
+    [u] -> return $ TC u
+    _   -> notFound
+
+-- jsonDB1 . getBy404 . UniqueUsers
 
 deleteUser1R :: EmailQuery -> ApiReq Users
 deleteUser1R em = jsonDB1 $ do
