@@ -144,9 +144,8 @@ postUserR = do
                   insert $ Email usersEmail uu
                   return (Just $ TC us)
 
-getUser1R :: GUUID -> ApiReq [Value]
+getUser1R :: GUUID -> ApiReq Value
 getUser1R uuid = do
---    uid <- P.fromSqlKey <$> requireAuthId
    guardAllAdmin
    runRawDB $(TQ.genJsonQuery [qq|
     select uuid     as uuid     -- Text
