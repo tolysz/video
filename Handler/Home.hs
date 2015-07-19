@@ -46,7 +46,6 @@ handleHomeR _ =  do
            webSockets ( chatApp (bool xip maid loggedIn))
 
            perms <- userPerms
-           appVers <- appVersion <$> getYesod
            hasCache  <- isJust . join . fmap (Map.lookup langI18Ang) <$> tryReadMVar anonCache
 
            if ((not hasCache && not loggedIn) || loggedIn)
@@ -61,7 +60,6 @@ handleHomeR _ =  do
                    res <- genAngularBind
                        perms
                        jsi18n   -- ^ javascript convertor for messages
-                       appVers
                        langI18Ang -- ^ user languages
                        thm -- ^ user theme
                        maid -- loggedIn
@@ -79,13 +77,13 @@ handleHomeR _ =  do
                   m1 <- readMVar anonCache
                   maybe (handleHomeR []) return $ Map.lookup langI18Ang m1
 
-genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> Text -> LangId -> Theme-> Text -> Bool  ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind (perm@Permssions{..}) jsi18n appVers appLang thm maid development = do
+genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> LangId -> Theme-> Text -> Bool  ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
+genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
   runAngularUI $ cached $ do
     addConstant "maid"    [js|#{rawJS $ show maid}|]
     addConstant "appLang" [js|#{toJSON appLang}|]
     addConstant "perms"   [js|#{toJSON perm}|]
-    addConstant "appVers"   [js|#{toJSON appVers}|]
+    addConstant "appVers"   [js|#{toJSON permVers}|]
 
     addConstant "thm"   [js|#{toJSON thm}|]
     addConstant "thmColours" [js|['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey']|]

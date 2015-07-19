@@ -26,7 +26,7 @@ import Data.Bool
 import Control.Monad
 import Database.Persist.Postgresql          (pgConnStr)
 
-import qualified Database.PostgreSQL.Simple as PGS (connect)
+import qualified Database.PostgreSQL.Simple as PGS (connect, withTransaction)
 import qualified Database.PostgreSQL.Simple.Internal as PGS
 
 import Data.Map.Strict (Map)
@@ -191,6 +191,10 @@ runRawDB cc = do
    conn <- getConn
    liftIO (cc conn)
 
+runRawDBT cc = do
+   conn <- getConn
+   liftIO $ PGS.withTransaction conn (cc conn)
+
 instance YesodFacebook App where
  fbHttpManager = appHttpManager
  fbCredentials = appFbCredentials . appSettings
@@ -346,6 +350,7 @@ type AppM x = HandlerT App IO x
 
 userPerms :: AppM Permssions
 userPerms = do
+         permVers <- appVersion <$> getYesod
          isAdmin <-  getUserAdmin
          let isDebugger = isAdmin
          isLogged <- isJust <$> maybeAuthId

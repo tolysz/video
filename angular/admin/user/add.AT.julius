@@ -1,9 +1,10 @@
-function($scope, $state, User, title) {
+function($scope, $state, $stateParams, User, title) {
     title.set( "#{jsi18n (SomeMessage MsgAddNewUser)}");
     $scope.save = function()
     {
      User.save($scope.user).$promise.then( function(newUser){
-         if(_.isDefined($scope.users)) $scope.users.push(newUser);
+         //$state.go(admin.group.user $stateParams);
+         if(!_.isUndefined($scope.users)) $scope.users.push(newUser);
          $scope.back() || $state.go('admin.user');})
     }
 }

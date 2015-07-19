@@ -105,6 +105,8 @@ $newline never
         <h1 .md-toolbar-tools>
           Sidenav Right
         $if (isDebugger perms)
+          <md-content style="font-size: 16px;">
+            #{permVers perms}
           <md-switch ng-model=appDebug  ng-change="setDebug(appDebug)" aria-label=appDebug>
              debug mode
       <div hide-gt-sm>
@@ -127,7 +129,7 @@ $newline never
       <div>&nbsp;
       <div>&nbsp;
       <div>
-          $if loggedIn
+          $if (isLogged perms)
              <a  ui-sref="logout" md-ink-ripple="#bbb">
                 <span .glyphicon .log-out .font-lg .font-menu-icon >
                 _{SomeMessage MsgLogout}

@@ -181,16 +181,28 @@ instance FromJSON  ViewPerm
 data Permssions = Permssions
   { isAdmin   :: Bool
   , isLogged  :: Bool
-  , isDebugger  :: Bool
+  , isDebugger :: Bool
+  , permVers   :: Text
   , userGroup :: !(Map Text Bool)
   }
    deriving (Show, Typeable, Generic)
 
 instance Default Permssions where
-  def = Permssions False False False Map.empty
+  def = Permssions False False False "" Map.empty
 
 instance FromJSON Permssions
 instance ToJSON   Permssions
+
+
+data EmailLogin = EmailLogin
+  { elUser     :: Text
+  , elPassword :: Text
+  , elName     :: Maybe Text
+  , elEmail    :: Text
+  }
+ deriving (Show, Typeable, Generic)
+
+deriveJSON (optsL 2) ''EmailLogin
 
 -- newtype Photo = Photo ByteString
 
@@ -199,6 +211,7 @@ data DBAction
   | DBAdd
   | DBUpdate
   | DBDelete
+  | DBMissing
   | DBApiFail
 
  deriving (Show, Typeable, Generic)

@@ -7,7 +7,7 @@
    <div flex  layout-align="center center" >
       <div layout=column>
          <youtube-video player-vars="curr_vars" player=player ng-style="style()" >
-         <h3>
+         <div>
             {{ curr_vars.videoId }}
          $if isAdmin
             <pre ng-show=appDebug>

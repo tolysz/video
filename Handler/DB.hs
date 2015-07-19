@@ -187,19 +187,45 @@ deleteSiteGroupUser0R = do
          deleteBy (UniqueSiteGroupMember siteGroupMemberGroupId siteGroupMemberUserId)
          return (Just $ TC us)
 
+-- createUserFromEmail :: Maybe Text -> AppM Maybe
+
+getUserbyEmailOrUUIDorCreate :: Maybe Text -> Maybe Text -> AppM Text
+-- user uuid -- email
+getUserbyEmailOrUUIDorCreate Nothing Nothing   = invalidArgs ["user", "email"]
+getUserbyEmailOrUUIDorCreate (Just u) Nothing  = return u
+getUserbyEmailOrUUIDorCreate (Just u) memail = getUserbyEmail memail >>= \case
+   Just euuid -> if u == euuid
+                  then
+                    return u
+                  else
+                    notFound -- maybe merge users
+   Nothing -> notFound -- maybe add email to user
+getUserbyEmailOrUUIDorCreate Nothing memail@(Just email) = getUserbyEmail memail >>= \case
+   Just euuid -> return euuid
+   Nothing -> do
+      uuu <- newUUID
+      runRawDBT $ \ c -> do
+       $(TQ.genTypedQuery [qq|
+          insert into users
+            (uuid -- Text -- < uuu
+            )
+         |]) c
+       $(TQ.genTypedQuery [qq|
+          insert into email
+              ( email   -- Text -- < email
+              , user_id -- ~ CURRVAL('users_id_seq'::regclass)
+              ) |]) c
+      return uuu
+
 postSiteGroupUser0R :: ApiReq SiteGroupMember
 postSiteGroupUser0R = do
    guardAllAdmin
    restOpenM $ \(v :: Value) -> do
     liftIO $ print v
-    uem <-  getUserbyEmail  (v ^? key "email"     . _String )
-    let userUuid' = uem <|> (v ^? key "user"     . _String )
-    liftIO $ print userUuid'
+    userUuid <- getUserbyEmailOrUUIDorCreate (v ^? key "user"  . _String ) (v ^? key "email" . _String )
     runMaybeT $ do
-       userUuid      <- liftMaybe userUuid'
        textGroup <- liftMaybe (v ^? key "group"      . _String )
 --        guard (textGroup == gid)
---        textUser  <- liftMaybe  (v ^? key "user"       . _String )
        siteGroupMemberFullMember <- liftJust  (v ^? key "fullMember" . _Bool ^. non False)
        siteGroupMemberUserAdmin  <- liftJust  (v ^? key "userAdmin"  . _Bool ^. non False)
        siteGroupMemberVideoAdmin <- liftJust  (v ^? key "videoAdmin" . _Bool ^. non False) -- False if not a site admin

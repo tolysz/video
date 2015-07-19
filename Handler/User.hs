@@ -177,7 +177,7 @@ handleYTAllPlaylistsR gid = TC <$> next HaveNull []
        next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- example how rto use lenses, kill soon
--- vvv ^.. ggrResults . traverse . ggrtGeometry . to ( \v -> ( v ^. gggLocation, v ^. gggLocationType  ))
+-- vvv ^.. ggrResults . traverse . ggrtGeometry . to ( \v -> ( v ^. gggLocation, yesod lov ^. gggLocationType  ))
 -- Prelude.and $ Prelude.map isJust (Prelude.map decode dir :: [Maybe GGResponse])
 -- Prelude.map decode dir :: [Maybe GGResponse]
 -- dir <- (getDirectoryContents "data/geoCache/"  >>= mapM ( B.readFile . ("data/geoCache/" ++ ))  . Prelude.filter (\a -> Prelude.length a > 2 ))
