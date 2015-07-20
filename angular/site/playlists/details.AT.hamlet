@@ -10,16 +10,23 @@
          <div>
             {{ curr_vars.videoId }}
          <md-content class="md-padding autocomplete" layout="column">
-             <md-contact-chips ng-model="contacts" md-contacts="querySearch($query)" md-contact-name="name" md-contact-image="avatar" md-contact-email="email" md-require-match="" filter-selected="filterSelected" placeholder="Who is visible">
+             <md-contact-chips ng-model="contacts"
+                 md-contacts="querySearch($query)"
+                 md-contact-name="name"
+                 md-contact-image="avatar"
+                 md-contact-email="email"
+                 md-require-match=""
+                 filter-selected="filterSelected"
+                 placeholder="Who is visible">
              <md-list class="fixedRows">
                <md-subheader class="md-no-sticky">Performer
                <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in allContacts" ng-if="contacts.indexOf(contact) < 0">
-                 <img ng-src="{{avatar}}" class="md-avatar" alt="{{contact.name}}">
+                 <img ng-src="{{contact.avatar}}" class="md-avatar" alt="{{contact.name}}">
                  <div class="md-list-item-text compact">
                    <h3>{{contact.name}}
                    <p>{{contact.email}}
                <md-list-item class="md-2-line contact-item selected" ng-repeat="(index, contact) in contacts">
-                 <img ng-src="{{contact.image}}" class="md-avatar" alt="{{contact.name}}">
+                 <img ng-src="{{contact.avatar}}" class="md-avatar" alt="{{contact.name}}">
                  <div class="md-list-item-text compact">
                    <h3>{{contact.name}}
                    <p>{{contact.email}}
