@@ -16,8 +16,8 @@ getUserMeR :: ApiReq [Value]
 getUserMeR = do
    uid <- P.fromSqlKey <$> requireAuthId
    TC <$> runRawDB $(TQ.genJsonQuery [qq|
-    select name     as name     -- Text
-         , friendly as friendly -- Text
+    select name     as name     -- Maybe  Text
+         , friendly as friendly -- Maybe  Text
          , avatar   as avatar   -- Maybe  Text
          , emails   as emails   -- Maybe [Text]
     from users

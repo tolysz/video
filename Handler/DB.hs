@@ -149,8 +149,8 @@ getUser1R uuid = do
    guardAllAdmin
    runRawDB $(TQ.genJsonQuery [qq|
     select uuid     as uuid     -- Text
-         , name     as name     -- Text
-         , friendly as friendly -- Text
+         , name     as name     -- Maybe  Text
+         , friendly as friendly -- Maybe  Text
          , avatar   as avatar   -- Maybe  Text
          , emails   as emails   -- Maybe [Text]
     from users
