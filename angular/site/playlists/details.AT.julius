@@ -34,7 +34,7 @@ function($scope, $log, $http, $stateParams, $timeout, $q){
 
     $scope.querySearch = function(query){
         var results = query ?
-            $scope.allContacts.filter(createFilterFor(query)) : [];
+            $scope.allContacts().filter(createFilterFor(query)) : [];
         return results;
     };
 
@@ -60,8 +60,8 @@ function($scope, $log, $http, $stateParams, $timeout, $q){
         };
         contact._lowername = contact.name.toLowerCase();
         return contact;
-    });
-};
+        });
+        };
         $scope.contacts = [$scope.allContacts[0]];
         $scope.filterSelected = true;
 
