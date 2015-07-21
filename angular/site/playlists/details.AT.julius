@@ -1,8 +1,22 @@
-function($scope, $log, $http, $stateParams, $timeout, $q){
+function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
+
+    $scope.allContacts = [];
+
+    $scope.members = GroupUser.query({uuid:$stateParams.uuid}, function(users){
+        $scope.allContacts = _.map( users, function(u){
+            u.email = _.first(u.emails) || "(nope)";
+            u.name = u.name || u.friendly || u.email;
+            u._lowername = u.name.toLowerCase();
+
+            u.avatar = u.avatar || 'https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=50';
+            return u;
+        });
+    });
 
     $scope.debug = {};
     $scope.debug['params'] = $stateParams;
     $scope.uuid = $stateParams.uuid;
+    $scope.pluuid = $stateParams.pluuid;
     $scope.getList = function(){
         $log.debug($stateParams.pluuid);
         $http.get('@{UserRootR}' + "/group/" + $scope.uuid + "/playlists/" + $stateParams.pluuid)
@@ -28,54 +42,41 @@ function($scope, $log, $http, $stateParams, $timeout, $q){
     };
     $scope.getList();
 
-    /**
-     * Search for contacts.
-     */
-
     $scope.querySearch = function(query){
         var results = query ?
-            $scope.allContacts().filter(createFilterFor(query)) : [];
+            _.filter($scope.allContacts, createFilterFor(query)) : [];
+
         return results;
     };
 
-    $scope.allContacts = function (){
-        var contacts = [
-            'Marina Augustine',
-            'Oddr Sarno',
-            'Nick Giannopoulos',
-            'Narayana Garner',
-            'Anita Gros',
-            'Megan Smith',
-            'Tsvetko Metzger',
-            'Hector Simek',
-            'Some-guy withalongalastaname'
-        ];
 
-    return contacts.map(function (c, index) {
-        var cParts = c.split(' ');
-        var contact = {
-            name: c,
-            email: cParts[0][0].toLowerCase() + '.' + cParts[1].toLowerCase() + '@example.com',
-            avatar: 'http://lorempixel.com/50/50/people?' + index
-        };
-        contact._lowername = contact.name.toLowerCase();
-        return contact;
-        });
-        };
-        $scope.contacts = [$scope.allContacts[0]];
+        $scope.cc={};
+        $scope.cc.contacts = [];
+
         $scope.filterSelected = true;
 
-
-        /**
-         * Create filter function for a query string
-         */
         function createFilterFor(query) {
             var lowercaseQuery = angular.lowercase(query);
 
             return function filterFn(contact) {
-                return (contact._lowername.indexOf(lowercaseQuery) != -1);;
+                return (contact._lowername.indexOf(lowercaseQuery) != -1);
             };
 
         }
+    $scope.userUuid = [];
+    $scope.c2 = [];
+    $scope.$watch('cc', function(val, old){
+        $log.debug(val);
 
+        var newcc = _.filter($scope.cc.contacts, _.isObject);
+        $timeout(function() {
+            if (!_.isEqual($scope.cc.contacts, newcc)) {
+                $scope.cc.contacts = newcc;
+            }
+        },0);
+    },true);
+
+    $scope.saveMe = function(){
+        $scope.userUuid = _.map($scope.cc.contacts, function(u){return u['user'];});
+    }
 }

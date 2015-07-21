@@ -63,7 +63,7 @@ handleHomeR _ =  do
                        langI18Ang -- ^ user languages
                        thm -- ^ user theme
                        maid -- loggedIn
-                       compiledAsDevel {- -> ap-> conf -> -} (\y x ->
+                       (compiledAsDevel || (isDebugger perms)){- -> ap-> conf -> -} (\y x ->
                          angularUILayout y $ do
                            setTitle "Video Selector" -- "Welcome To Yesod!"
                            x
@@ -207,6 +207,64 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     addController "LeftCtrl"          $(ncoffeeFile "angular/_lib/Controlers/LeftCtrl.coffee"      )
     addController "RightCtrl"         $(juliusFile  "angular/_lib/Controlers/RightCtrl.julius"     )
     addController "AppCtrl"           $(juliusFile  "angular/_lib/Controlers/AppCtrl.julius"       )
+
+    addController "ContactChipDemoCtrl" [js|  function ($timeout, $q) {
+                             var self = this;
+
+                             self.querySearch = querySearch;
+                             self.allContacts = loadContacts();
+                             self.contacts = [self.allContacts[0]];
+                             self.filterSelected = true;
+
+                             /**
+                              * Search for contacts.
+                              */
+                             function querySearch (query) {
+                               var results = query ?
+                                   self.allContacts.filter(createFilterFor(query)) : [];
+                               return results;
+                             }
+
+                             /**
+                              * Create filter function for a query string
+                              */
+                             function createFilterFor(query) {
+                               var lowercaseQuery = angular.lowercase(query);
+
+                               return function filterFn(contact) {
+                                 return (contact._lowername.indexOf(lowercaseQuery) != -1);;
+                               };
+
+                             }
+
+                             function loadContacts() {
+                               var contacts = [
+                                 'Marina Augustine',
+                                 'Oddr Sarno',
+                                 'Nick Giannopoulos',
+                                 'Narayana Garner',
+                                 'Anita Gros',
+                                 'Megan Smith',
+                                 'Tsvetko Metzger',
+                                 'Hector Simek',
+                                 'Some-guy withalongalastaname'
+                               ];
+
+                               return contacts.map(function (c, index) {
+                                 var cParts = c.split(' ');
+                                 var contact = {
+                                   name: c,
+                                   email: cParts[0][0].toLowerCase() + '.' + cParts[1].toLowerCase() + '@example.com',
+                                   image: 'http://lorempixel.com/50/50/people?' + index
+                                 };
+                                 contact._lowername = contact.name.toLowerCase();
+                                 return contact;
+                               });
+                             }
+                           }
+    |]
+
+
     addFilter     "splitChars"        $(juliusFile  "angular/_lib/Filters/splitChars.julius"       )
     addFilter     "splitChars2"       $(ncoffeeFile "angular/_lib/Filters/splitChars2.coffee"      )
     addService    "youtubeEmbedUtils" $(juliusFile  "angular/_lib/Service/youtubeEmbedUtils.julius")

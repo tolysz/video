@@ -233,7 +233,7 @@ getUserbyEmailOrUUIDorCreate Nothing memail@(Just email) = getUserbyEmail memail
        $(TQ.genTypedQuery [qq|
           insert into email
               ( email   -- Text -- < email
-              , user_id -- ~ CURRVAL('users_id_seq'::regclass)
+              , user_id -- ~ currval(pg_get_serial_sequence('users', 'id'))
               ) |]) c
       return uuu
 

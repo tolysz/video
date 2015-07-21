@@ -26,9 +26,3 @@ $if isDebugger
       {{ group | json }}
     <pre ng-show=appDebug>
       {{ member | json }}
-    <pre ng-show=appDebug>
-        \  group         SiteGroupId
-        \  email          UserId
-        \  fullMember    Bool
-        \  userAdmin     Bool
-        \  videoAdmin    Bool
