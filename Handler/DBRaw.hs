@@ -49,7 +49,7 @@ getUserPlaylistsGroupItemsR :: GUUID -> GUUID -> ApiReq [Value]
 getUserPlaylistsGroupItemsR gr pli = do
     uid <- P.fromSqlKey <$> requireAuthId
 --     guard =<< getUserAdmin
-    TC . toJSON <$> runRawDB $(TQ.genTypedQuery [qq|
+    TC . map toJSON <$> runRawDB $(TQ.genTypedQuery [qq|
          select yv.ref         -- Text
               , vp.snippet     -- Value
          from y_t_video_playlist as vp
