@@ -57,7 +57,7 @@
 /api/backup             BackupR GET POST
 
 -- /api/admin/video-user                     VideoUser0R     POST
-/api/admin/video-user/#Test               VideoUserR      GET
+-- /api/admin/video-user/#Test               VideoUserR      GET
 
 /api/admin/group-user                     SiteGroupUser0R POST DELETE
 /api/admin/group-user/#GUUID              SiteGroupUserR  GET
