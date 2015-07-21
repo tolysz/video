@@ -41,6 +41,35 @@
 /api/user/group/#GUUID/playlists         UserPlaylistsGroupR GET
 /api/user/group/#GUUID/playlists/#GUUID  UserPlaylistsGroupItemsR GET
 
+
+-- REST access 2 urls per resource
+-- /api/login                            LoginCheckR  GET
+/api/admin/user                          UserR  GET POST
+/api/admin/user/#GUUID                   User1R GET DELETE
+
+/api/admin/group                         SiteGroupR  GET POST
+/api/admin/group/#GUUID                  SiteGroup1R GET DELETE
+
+-- /api/event                            EventR  GET POST
+-- /api/event/#ObjectId                  Event1R GET DELETE
+
+-- backup restore for the whole site... needed for db upgrade change...
+/api/backup             BackupR GET POST
+
+-- /api/admin/video-user                     VideoUser0R     POST
+/api/admin/video-user/#Test               VideoUserR      GET
+
+/api/admin/group-user                     SiteGroupUser0R POST DELETE
+/api/admin/group-user/#GUUID              SiteGroupUserR  GET
+/api/admin/group-user/#GUUID/#Text        SiteGroupUser1R GET DELETE
+
+/api/videos AllYTVideo GET
+
+-- user centric/ creds from the session
+-- /user
+-- /groups
+
+-- some random tests
 /api/test/db/0  Test0R GET
 /api/test/db/1  Test1R GET
 /api/test/db/2  Test2R GET
@@ -59,29 +88,5 @@
 /api/test/db/15 Test15R GET
 /api/test/db/16 Test16R GET
 /api/test/db/17 Test17R GET
-
--- REST access 2 urls per resource
--- /api/login                            LoginCheckR  GET
-/api/admin/user                        UserR  GET POST
-/api/admin/user/#GUUID                 User1R GET DELETE
-
-/api/admin/group                      SiteGroupR  GET POST
-/api/admin/group/#GUUID               SiteGroup1R GET DELETE
-
--- /api/event                            EventR  GET POST
--- /api/event/#ObjectId                  Event1R GET DELETE
-
--- backup restore for the whole site... needed for db upgrade change...
-/api/backup             BackupR GET POST
-
-/api/admin/group-user                     SiteGroupUser0R POST DELETE
-/api/admin/group-user/#GUUID              SiteGroupUserR  GET
-/api/admin/group-user/#GUUID/#Text        SiteGroupUser1R GET DELETE
-
-/api/videos AllYTVideo GET
-
--- user centric/ creds from the session
--- /user
--- /groups
 
 !/*Texts  HomeR
