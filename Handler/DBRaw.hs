@@ -36,12 +36,12 @@ getVideoUser0R :: ApiReq [Value]
 getVideoUser0R = do
     uid <- P.fromSqlKey <$> requireAuthId
     TC <$> runRawDB $(TQ.genJsonQuery [qq|
-      select v.ref                             as id          -- Text
-           , v.snippet->'snippet'->>'title'    as title       -- Text
-           , v.uuid                            as uuid        -- Text
-           , snippet->'snippet'->'thumbnails'  as thumbnails  -- Maybe Value
-           , vu.event_perm                     as event_perms -- Text
-           , vu.view_perm                      as view_perms  -- Text
+      select v.ref                            as id          -- Text
+           , v.snippet->'snippet'->>'title'   as title       -- Text
+           , v.uuid                           as uuid        -- Text
+           , snippet->'snippet'->'thumbnails' as thumbnails  -- Maybe Value
+           , vu.event_perm                    as event_perms -- Text
+           , vu.view_perm                     as view_perms  -- Text
         from y_t_video_user as vu
    left join y_t_video      as v on vu.video = v.id
        where vu.id = ? -- < uid
