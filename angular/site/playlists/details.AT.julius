@@ -32,7 +32,7 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
         $log.debug (pl);
         $scope.curr_pl = pl[0];
         $scope.curr_id = pl[0].contentDetails.videoId;
-        $scope.curr_vars = { videoId: pl.contentDetails.videoId};
+        $scope.curr_vars = { videoId: pl[0].contentDetails.videoId};
         $scope.curr_title = pl[0].snippet.title;
         $scope.viduuid = pl[1];
     };
