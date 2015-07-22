@@ -1,15 +1,14 @@
 module Handler.DBRaw where
 
-import Import
-import Types
+import           Import
+import           Types
+import           Data.String.QM
 
-import Data.String.QM
-
-import qualified Database.PostgreSQL.Simple     as TQ
+import qualified Database.PostgreSQL.Simple              as TQ
 import qualified Database.PostgreSQL.Simple.TypedQuery   as TQ
-import Network.Google.Api.Youtube.Videos
-import Network.Google.Api.Youtube.Playlists
-import qualified Database.Persist.Sql as P
+import           Network.Google.Api.Youtube.Videos
+import           Network.Google.Api.Youtube.Playlists
+import qualified Database.Persist.Sql                    as P
 
 
 getUserMeR :: ApiReq [Value]
