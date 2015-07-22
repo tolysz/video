@@ -130,7 +130,7 @@ YTVideoUser
     userId        UsersId
     created       UTCTime default=now()
     eventPerm     EventParticipants default='EventParticipantsRegardless'
-    viewPerm     ViewPerm          default='VPChanMembers'
+    viewPerm      ViewPerm          default='VPChanMembers'
     UniqueYTVideoUser video userId
     deriving Show Typeable Generic
 
