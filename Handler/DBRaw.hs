@@ -30,6 +30,32 @@ getUserMeR = do
      users.id = ?  -- < uid
    |])
 
+
+-- | return all videos for a given user.
+getVideoUser0R :: ApiReq [Value]
+getVideoUser0R = do
+    uid <- P.fromSqlKey <$> requireAuthId
+    TC <$> runRawDB $(TQ.genJsonQuery [qq|
+      select v.ref                             as id          -- Text
+           , v.snippet->'snippet'->>'title'    as title       -- Text
+           , v.uuid                            as uuid        -- Text
+           , snippet->'snippet'->'thumbnails'  as thumbnails  -- Maybe Value
+           , vu.event_perm                     as event_perms -- Text
+           , vu.view_perm                      as view_perms  -- Text
+        from y_t_video_user as vu
+   left join y_t_video      as v on vu.video = v.id
+       where vu.id = ? -- < uid
+    |])
+--       ref                                     as id         -- Text
+--            , uuid                                    as uuid       -- Text
+--            , snippet->'snippet'->'thumbnails'        as thumbnails -- Maybe Value
+--            , snippet->'snippet'->>'title'            as title      -- Text
+--            , (snippet->'contentDetails'->>'itemCount') :: integer as count -- Int
+--       from y_t_playlist
+--       where
+--         group_id = ? -- < gid
+
+
 getUserPlaylistsGroupR :: GUUID -> ApiReq [Value]
 getUserPlaylistsGroupR gr = do
     uid <- P.fromSqlKey <$> requireAuthId
@@ -38,7 +64,7 @@ getUserPlaylistsGroupR gr = do
     select ref                                     as id         -- Text
          , uuid                                    as uuid       -- Text
          , snippet->'snippet'->'thumbnails'        as thumbnails -- Maybe Value
-         , snippet->'snippet'->>'title'            as title      -- Text
+         , snippet->'snippet'->>'title'            as title      -- Maybe Text
          , (snippet->'contentDetails'->>'itemCount') :: integer as count -- Int
     from y_t_playlist
     where
@@ -50,8 +76,8 @@ getUserPlaylistsGroupItemsR gr pli = do
     uid <- P.fromSqlKey <$> requireAuthId
 --     guard =<< getUserAdmin
     TC . map toJSON <$> runRawDB $(TQ.genTypedQuery [qq|
-         select vp.snippet     -- Value
-              , yv.uuid        -- Maybe Text
+         select vp.snippet                                -- Value
+              , yv.uuid                                   -- Maybe Text
               , vp.snippet->'snippet'->>'position' as pos -- Maybe Text
          from y_t_video_playlist as vp
     left join site_group         as sg  on sg.id  = vp.group_id

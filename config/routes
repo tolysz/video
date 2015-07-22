@@ -56,7 +56,8 @@
 -- backup restore for the whole site... needed for db upgrade change...
 /api/backup             BackupR GET POST
 
--- /api/admin/video-user                     VideoUser0R     POST
+/api/admin/video-user                     VideoUser0R
+-- POST
 -- /api/admin/video-user/#Test               VideoUserR      GET
 
 /api/admin/group-user                     SiteGroupUser0R POST DELETE
