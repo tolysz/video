@@ -19,20 +19,27 @@ getUserMeR = do
          , friendly as friendly -- Maybe  Text
          , avatar   as avatar   -- Maybe  Text
          , emails   as emails   -- Maybe [Text]
+         , groups   as groups   -- Maybe [Text]
     from users
     left outer join (select email.user_id as id
           , array_agg(email.email) as emails
           from email
           group by email.user_id
           ) as em on users.id = em.id
+    left outer join (select email.user_id as id
+          , array_agg(email.email) as emails
+          from site_group_member as sgm
+          ) as sg on users.id = em.id
+          group by sgm.user_id
     where
      users.id = ?  -- < uid
    |])
 
 
 -- | return all videos for a given user.
-getVideoUser0R :: ApiReq [Value]
-getVideoUser0R = do
+-- | logged user i.e. miself
+getUserMeVideo0R :: ApiReq [Value]
+getUserMeVideo0R = do
     uid <- P.fromSqlKey <$> requireAuthId
     TC <$> runRawDB $(TQ.genJsonQuery [qq|
       select v.ref                            as id          -- Text
@@ -45,15 +52,22 @@ getVideoUser0R = do
    left join y_t_video      as v on vu.video = v.id
        where vu.id = ? -- < uid
     |])
---       ref                                     as id         -- Text
---            , uuid                                    as uuid       -- Text
---            , snippet->'snippet'->'thumbnails'        as thumbnails -- Maybe Value
---            , snippet->'snippet'->>'title'            as title      -- Text
---            , (snippet->'contentDetails'->>'itemCount') :: integer as count -- Int
---       from y_t_playlist
---       where
---         group_id = ? -- < gid
 
+-- video-user
+-- users for each video
+
+-- user-video
+-- videos per each user
+
+{--
+  input list of IL_IDs
+
+  DB_IDs set inside the DB
+
+  remove := DB_IDs \ IL_IDs
+  insert := IL_IDs \ DB_IDs
+  update := DB_IDs \ (insert u remove)
+-}
 
 getUserPlaylistsGroupR :: GUUID -> ApiReq [Value]
 getUserPlaylistsGroupR gr = do

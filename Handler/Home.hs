@@ -146,7 +146,7 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
       $mdThemingProvider.alwaysWatchTheme(true);
 }|]
 
-
+    -- todo: check lambda.js <- underscore.js
     addModules [ "ui.router"
                , "ngSanitize"
                , "ngAnimate"

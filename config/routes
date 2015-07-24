@@ -32,8 +32,12 @@
 /api/oauth2/youtube/sync/#GUUID        UpdateVideosR GET
 
 -- normal authentication level
+/api/me                                  UserMeR GET
+/api/me/video                            UserMeVideo0R GET
+-- /api/me/groups                           UserMeGroup0R GET
+
+
 /api/user                                UserRootR
-/api/user/me                             UserMeR GET
 /api/user/theme                          UserThemeR GET POST DELETE
 /api/user/channels                       UserChannelsR GET
 /api/user/groups                         UserGroupsR   GET
@@ -56,7 +60,7 @@
 -- backup restore for the whole site... needed for db upgrade change...
 /api/backup             BackupR GET POST
 
-/api/admin/video-user                     VideoUser0R GET
+-- /api/admin/video-user                     VideoUser0R GET
 -- POST
 -- /api/admin/video-user/#Test               VideoUserR      GET
 

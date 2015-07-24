@@ -7,10 +7,10 @@ function($scope, maid, wsLink, $log, title, appLang){
 
     $scope.send = function(s){
       //if(_.isString($scope.shout)) {
-          $log.debug(s)
+          $log.debug(s);
           if(!_.isEmpty(s)) {
               wsLink.shout(s);
-              $scope.inp.shout = ""
+              $scope.inp.shout = "";
           }
       //}
     };

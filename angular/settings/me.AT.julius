@@ -1,6 +1,6 @@
 function($scope, maid, title, $log, $http, appLang, $locale){
     title.set("AboutMe " + maid);
-    $http.get("@{UserMeR}").then(function(v){
+    $http.get("@{UserMeR}" , {cache:true}).then(function(v){
        $log.debug(v);
        $scope.user = v.data[0];
     })}

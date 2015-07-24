@@ -19,7 +19,7 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
     $scope.pluuid = $stateParams.pluuid;
     $scope.getList = function(){
         $log.debug($stateParams.pluuid);
-        $http.get('@{UserRootR}' + "/group/" + $scope.uuid + "/playlists/" + $stateParams.pluuid)
+        $http.get('@{UserRootR}' + "/group/" + $scope.uuid + "/playlists/" + $stateParams.pluuid, {cache:true})
             .success( function(data){
                 $log.debug(data);
                 $scope.debug['data'] = data;
@@ -62,6 +62,7 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
                 return (contact._lowername.indexOf(lowercaseQuery) != -1);
             };
         }
+    // todo: Immutable.fromJS({})
     $scope.userUuid = [];
     $scope.c2 = [];
     $scope.$watch('cc', function(val, old){
