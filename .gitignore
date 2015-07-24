@@ -4,9 +4,11 @@ static/tmp/
 static/combined/
 config/client_session_key.aes
 config/keter.yml
+config/keter-dev.yml
 *.hi
 *.o
 *.sqlite3
+*.keter
 .hsenv*
 cabal-dev/
 yesod-devel/

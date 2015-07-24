@@ -4,7 +4,7 @@
          ng-repeat="pl in playlists | orderBy:'title':sort "
          ng-show=pl.count
          style="width:120px; min-height:90px; overflow: visible;">
-           <img ng-src={{pl.thumbnails.default.url}}  alt="{{pl.title}}" ng-click=setThose(pl) >
+           <img ng-src={{pl.thumbnails.default.url}} width={{pl.thumbnails.default.width}} height={{pl.thumbnails.default.height}} alt="{{pl.title}}" ng-click=setThose(pl) >
    <div flex  layout-align="center center" >
       <div layout=column>
          <youtube-video player-vars="curr_vars" player=player ng-style="style()" >
