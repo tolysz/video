@@ -26,13 +26,14 @@ getUserMeR = do
           from email
           group by email.user_id
           ) as em on users.id = em.id
-    left outer join (select email.user_id as id
-          , array_agg(email.email) as emails
+    left outer join (select sgm.user_id as id
+          , array_agg(sgi.uuid) as groups
           from site_group_member as sgm
-          ) as sg on users.id = em.id
+     left join site_group as sgi on sgm.group_id = sgi.id
           group by sgm.user_id
+          ) as sg on users.id = sg.id
     where
-     users.id = ?  -- < uid
+     users.id = ? -- < uid
    |])
 
 
