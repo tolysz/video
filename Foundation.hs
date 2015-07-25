@@ -90,7 +90,7 @@ instance Yesod App where
     makeSessionBackend _ = bool sslOnlySessions id compiledAsDevel $ Just <$> defaultClientSessionBackend
                                                         120    -- timeout in minutes
                                                         "config/client_session_key.aes"
-    yesodMiddleware =  bool (sslOnlyMiddleware 240) id  compiledAsDevel . defaultYesodMiddleware
+    yesodMiddleware =  bool (sslOnlyMiddleware (180 * 24 * 60)) id  compiledAsDevel . defaultYesodMiddleware
 
     defaultLayout widget = do
         master <- getYesod
