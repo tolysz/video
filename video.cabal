@@ -130,7 +130,7 @@ library
                  , lens-aeson
                  , stm
                  , yesod-websockets
-                 , yesod-websockets-extra
+--                 , yesod-websockets-extra
                  , websockets
                  , transformers
                  , fb
@@ -169,7 +169,7 @@ library
                  , conduit-extra
                  , blaze-builder
                -- wait pull -- https://github.com/yesodweb/yesod/pull/772
-                 , enclosed-exceptions
+--                 , enclosed-exceptions
                -- neo4j
                  , mtl
 

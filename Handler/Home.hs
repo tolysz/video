@@ -7,7 +7,7 @@ import Text.Naked.Coffee
 
 import Yesod.AngularUI
 import Yesod.WebSockets
-import Yesod.WebSockets.Extra
+-- import Yesod.WebSockets.Extra
 
 import qualified Data.Text as T
 import Data.Text.Encoding as E
