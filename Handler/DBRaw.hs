@@ -75,14 +75,21 @@ getUserPlaylistsGroupR gr = do
     uid <- P.fromSqlKey <$> requireAuthId
     gid <- P.fromSqlKey <$> getGroupKey gr
     TC <$> runRawDB $(TQ.genJsonQuery [qq|
-    select ref                                     as id         -- Text
-         , uuid                                    as uuid       -- Text
-         , snippet->'snippet'->'thumbnails'        as thumbnails -- Maybe Value
-         , snippet->'snippet'->>'title'            as title      -- Maybe Text
-         , (snippet->'contentDetails'->>'itemCount') :: integer as count -- Int
-    from y_t_playlist
-    where
-      group_id = ? -- < gid
+   select ref                                     as id         -- Text
+        , uuid                                    as uuid       -- Text
+        , snippet->'snippet'->'thumbnails'        as thumbnails -- Maybe Value
+        , snippet->'snippet'->>'title'            as title      -- Maybe Text
+        , (snippet->'contentDetails'->>'itemCount') :: integer as count -- Int
+     from y_t_playlist as pl
+left join site_group_member as sg on pl.group_id = sg.group_id
+left join site_admin  as s on s.user_id = sg.user_id
+    where pl.group_id   = ? -- < gid
+      and (
+            ( s.is_admin = true
+              and s.user_id = ? -- < uid
+            )
+            or sg.user_id = ? -- < uid
+          )
   |])
 
 getUserPlaylistsGroupItemsR :: GUUID -> GUUID -> ApiReq [Value]
@@ -94,12 +101,12 @@ getUserPlaylistsGroupItemsR gr pli = do
               , yv.uuid                                   -- Maybe Text
               , vp.snippet->'snippet'->>'position' as pos -- Maybe Text
          from y_t_video_playlist as vp
-    left join site_group         as sg  on sg.id  = vp.group_id
-    left join y_t_playlist       as pl  on pl.id  = playlist
-    left join site_group_member  as sgm on sg.id  = sgm.group_id
+    left join site_group         as sg  on sg.id = vp.group_id
+    left join y_t_playlist       as pl  on pl.id = vp.playlist
     left join y_t_video          as yv  on yv.id = vp.video
-        where sg.uuid     = ? -- Text -- < gr
-          and pl.uuid     = ? -- Text -- < pli
+    left join site_group_member  as sgm on sg.id = sgm.group_id
+        where pl.uuid     = ? -- Text -- < pli
+          and sg.uuid     = ? -- Text -- < gr
           and sgm.user_id = ?         -- < uid
           and sgm.video_admin = true
       order by pos
