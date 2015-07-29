@@ -4,6 +4,7 @@ module Handler.DB where
 import Import
 import Permissions
 import Data.Aeson.Lens
+import Data.Int
 import qualified Data.Aeson as A
 import Data.Aeson.Types
 import Control.Lens ((^?) , (^.))
@@ -393,7 +394,7 @@ updateYTVideo gr gu i e rq =
               , etag        -- Text  -- < e
               , snippet     -- Value -- < toJSON (Just $ TC v)
               , google_user -- Text  -- < gu
-              , group_id    -- Int   -- < P.fromSqlKey gr
+              , group_id    -- Int64 -- < P.fromSqlKey gr
               ) |])
             return $ TC (DBAdd, i)
         _ -> return $ TC (DBApiFail, i)
