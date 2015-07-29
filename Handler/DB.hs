@@ -425,7 +425,7 @@ updateYTPlaylist gr gu i e rq =
               , etag        -- Text  -- < e
               , snippet     -- Value -- < toJSON (Just $ TC v)
               , google_user -- Text  -- < gu
-              , group_id    -- < P.fromSqlKey gr
+              , group_id    -- Int64 -- < P.fromSqlKey gr
               ) |])
 --             runDB $ insert $ YTPlaylist i e (Just $ TC v) gu gr
             return $ TC (DBAdd, i)
