@@ -393,7 +393,7 @@ updateYTVideo gr gu i e rq =
               , etag        -- Text  -- < e
               , snippet     -- Value -- < toJSON (Just $ TC v)
               , google_user -- Text  -- < gu
-              , group_id    -- < P.fromSqlKey gr
+              , group_id    -- Int   -- < P.fromSqlKey gr
               ) |])
             return $ TC (DBAdd, i)
         _ -> return $ TC (DBApiFail, i)
