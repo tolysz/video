@@ -8,6 +8,7 @@
 
 -- /oauth/ require additional authorization via @GoogleOAuthLoginR
 /api/notifications/videos/#GUUID       WatchVideosR POST
+-- /api/notifications/videos/#GUUID       WatchVideosR POST
 
 /api/oauth2/                           RootOAuth2R
 /api/oauth2/google/callback            GoogleCallbackR

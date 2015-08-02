@@ -17,6 +17,10 @@ import Network.Google.Api.Youtube.PlaylistItems
 import Network.Google.Api.Youtube.Videos
 import Data.Text as T
 
+import qualified Data.ByteString.Lazy as L
+import Data.Enumerator.List (consume)
+import Data.Text.Lazy.Encoding (decodeUtf8)
+
 import Handler.DB
 
 -- import qualified Data.List as DL (intercalate)
@@ -38,6 +42,9 @@ handleUserRootR = defaultLayout [whamlet||]
 
 postWatchVideosR :: GUUID -> Handler Text
 postWatchVideosR gid = do
+  bss <- lift consume
+  let requestBody = decodeUtf8 $ L.fromChunks bss
+  $(logWarn) requestBody
   return ""
 
 
