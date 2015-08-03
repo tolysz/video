@@ -298,10 +298,36 @@ getUserGroupsR =
      )
 
 
-handleVideoUser0R :: Handler Text
-handleVideoUser0R = do
+postVideoUser0R :: Handler Text
+postVideoUser0R = do
     $(logWarn) =<< requestBodyText
     return ""
+
+-- { "user_uuids":
+--     [ "9cdf7979-2dd6-4107-b9a3-20b3bc2ab4d4"
+--     , "dcd5c0a5-ef5e-4bc1-a0d7-a79ee7245367"
+--     ]
+-- , "video_uuid": "eb8e6ee9-027c-4ca4-9ba1-8bcd3f18821c"
+-- , "playlist_uuid":"fc830ae6-4c71-4548-a085-a35d6ea7f4b0"
+-- , "group_uuid":"7590f9b6-9422-4218-baaa-1d29b8eafa56"
+-- }
+ {-
+    video         YTVideoId
+    userId        UsersId
+    created       UTCTime default=now()
+    eventPerm     EventParticipants default='EventParticipantsRegardless'
+    viewPerm
+    -}
+getVideoUserR :: Text -> ApiReq [Text]
+getVideoUserR vid = do
+  guardAllAdmin >> TC <$> runRawDB $(TQ.genTypedQuery [qq|
+    select u.uuid
+      from y_t_video_user as vu
+      left join users as u on vu.user_id = u.id
+      left join y_t_video as v on vu.video = v.id
+     where
+      v.uuid = ? -- < vid
+ |])
 
 -- Misc
 defTheme :: Theme
