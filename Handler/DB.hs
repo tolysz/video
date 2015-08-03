@@ -183,7 +183,6 @@ deleteUser1R em = jsonDB1 $ do
      return us
 
 -- | REST For Group membreship
-
 deleteSiteGroupUser0R :: ApiReq SiteGroupMember
 deleteSiteGroupUser0R = do
    guardAllAdmin
@@ -298,6 +297,13 @@ getUserGroupsR =
      return (sg, sgm)
      )
 
+
+handleVideoUser0R :: Handle Text
+handleVideoUser0R = do
+    $(logWarn) =<< requestBodyText
+    return ""
+
+-- Misc
 defTheme :: Theme
 defTheme = fromJust $ A.decode [qq|{
  "main-menu": {
@@ -630,3 +636,4 @@ resultToEither (Success a) = Right a
 -- notImplemented = do
 --     w <- waiRequest
 --     failure $ notImplemented501 $ toString $ requestMethod w
+

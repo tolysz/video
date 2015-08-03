@@ -2,6 +2,8 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
 
     $scope.allContacts = [];
 
+    $scope.who = {};
+
     $scope.members = GroupUser.query({uuid:$stateParams.uuid}, function(users){
         $scope.allContacts = _.map( users, function(u){
             u.email = _.first(u.emails) || "(nope)";
@@ -78,5 +80,16 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
 
     $scope.saveMe = function(){
         $scope.userUuid = _.map($scope.cc.contacts, function(u){return u['user'];});
+
+        var who = {};
+        who['user_uuids']    = $scope.userUuid;
+        who['video_uuid']    = $scope.viduuid;
+        who['playlist_uuid'] = $scope.pluuid;
+        who['group_uuid']    = $scope.uuid;
+
+        $http.post("@{VideoUser0R}", who).then(function(){
+            $log.debug("success");
+            //$window.location.reload();
+        });
     }
 }
