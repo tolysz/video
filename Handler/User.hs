@@ -19,7 +19,7 @@ import Data.Text as T
 
 import qualified Data.ByteString.Lazy as L
 -- import Data.Conduit.List (consume)
--- import Data.Text.Lazy.Encoding (decodeUtf8)
+import Data.Text.Lazy.Encoding as TLE (decodeUtf8)
 import qualified Network.Wai as W
 import Handler.DB
 
@@ -44,7 +44,7 @@ postWatchVideosR :: GUUID -> Handler Text
 postWatchVideosR gid = do
   req <- waiRequest
 --   bss <- lift consume
-  requestBody <- decodeUtf8 <$> liftIO (W.strictRequestBody req)
+  requestBody <- TLE.decodeUtf8 <$> liftIO (W.strictRequestBody req)
   $(logWarn) requestBody
   return ""
 
