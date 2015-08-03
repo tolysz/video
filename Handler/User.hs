@@ -17,11 +17,9 @@ import Network.Google.Api.Youtube.PlaylistItems
 import Network.Google.Api.Youtube.Videos
 import Data.Text as T
 
-import qualified Data.ByteString.Lazy as L
+
 -- import Data.Conduit.List (consume)
-import Data.Text.Lazy.Encoding as TLE (decodeUtf8)
-import Data.Text.Lazy as TL (toStrict)
-import qualified Network.Wai as W
+
 import Handler.DB
 
 -- import qualified Data.List as DL (intercalate)
@@ -40,15 +38,9 @@ getUpdateVideosBaseR = defaultLayout [whamlet||]
 handleUserRootR:: Handler Html
 handleUserRootR = defaultLayout [whamlet||]
 
-
-requestBodyLBS = liftIO . W.strictRequestBody =<< waiRequest
-
 postWatchVideosR :: GUUID -> Handler Text
 postWatchVideosR gid = do
---   req <- waiRequest
---   bss <- lift consume
-  requestBody <- TL.toStrict . TLE.decodeUtf8 <$> requestBodyLBS
-  $(logWarn) requestBody
+  $(logWarn) =<< requestBodyText
   return ""
 
 

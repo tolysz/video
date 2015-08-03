@@ -39,6 +39,12 @@ import qualified Data.UUID    as UUID
 
 import Network.Wai.Middleware.Cors (simpleCors)
 
+import Data.Text.Lazy.Encoding as TLE (decodeUtf8)
+import Data.Text.Lazy as TL (toStrict)
+import qualified Network.Wai as W
+import qualified Data.ByteString.Lazy as L
+
+
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
 -- starts running, such as database connections. Every handler will have
@@ -356,3 +362,9 @@ userPerms = do
          isLogged <- isJust <$> maybeAuthId
          let userGroup = Map.empty
          return Permssions{..}
+
+requestBodyLBS :: Handler L.ByteString
+requestBodyLBS = liftIO . W.strictRequestBody =<< waiRequest
+
+requestBodyLBS :: Handler Text
+requestBodyText = TL.toStrict . TLE.decodeUtf8 <$> requestBodyLBS
