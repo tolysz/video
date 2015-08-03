@@ -41,11 +41,13 @@ handleUserRootR:: Handler Html
 handleUserRootR = defaultLayout [whamlet||]
 
 
+requestBodyLBS = liftIO . W.strictRequestBody =<< waiRequest
+
 postWatchVideosR :: GUUID -> Handler Text
 postWatchVideosR gid = do
-  req <- waiRequest
+--   req <- waiRequest
 --   bss <- lift consume
-  requestBody <- TL.toStrict . TLE.decodeUtf8 <$> liftIO (W.strictRequestBody req)
+  requestBody <- TL.toStrict . TLE.decodeUtf8 <$> requestBodyLBS
   $(logWarn) requestBody
   return ""
 
