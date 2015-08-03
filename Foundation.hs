@@ -39,8 +39,8 @@ import qualified Data.UUID    as UUID
 
 import Network.Wai.Middleware.Cors (simpleCors)
 
-import Data.Text.Lazy.Encoding as TLE (decodeUtf8)
-import Data.Text.Lazy as TL (toStrict)
+import qualified Data.Text.Lazy.Encoding as TLE (decodeUtf8)
+import qualified Data.Text.Lazy as TL (toStrict)
 import qualified Network.Wai as W
 import qualified Data.ByteString.Lazy as L
 
