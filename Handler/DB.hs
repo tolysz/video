@@ -187,11 +187,7 @@ deleteSiteGroupUser0R :: ApiReq SiteGroupMember
 deleteSiteGroupUser0R = do
    guardAllAdmin
    restOpenM $ \(v :: Value) -> do
---     liftIO $ print v
---     userUuid' <- safeHead <$> maybe (return []) getUserbyEmail  (v ^? key "email"     . _String )
---     liftIO $ print userUuid'
     runMaybeT $ do
---        userUuid      <- liftMaybe userUuid'
        textGroup <- liftMaybe (v ^? key "group"      . _String )
 --        guard (textGroup == gid)
        usersUuid  <- liftMaybe  (v ^? key "user"       . _String )
@@ -241,7 +237,6 @@ postSiteGroupUser0R :: ApiReq SiteGroupMember
 postSiteGroupUser0R = do
    guardAllAdmin
    restOpenM $ \(v :: Value) -> do
-    liftIO $ print v
     userUuid <- getUserbyEmailOrUUIDorCreate (v ^? key "user"  . _String ) (v ^? key "email" . _String )
     runMaybeT $ do
        textGroup <- liftMaybe (v ^? key "group"      . _String )
@@ -301,16 +296,13 @@ getUserGroupsR =
 postVideoUser0R :: Handler Text
 postVideoUser0R = do
     $(logWarn) =<< requestBodyText
+    restOpenM $ \(v :: Value) -> runMaybeT $ do
+        users  <- liftMaybe (v ^? key "user_uuids"  . _String )
+        video  <- liftMaybe (v ^? key "video_uuid"  & values . _String  )
+
     return ""
 
--- { "user_uuids":
---     [ "9cdf7979-2dd6-4107-b9a3-20b3bc2ab4d4"
---     , "dcd5c0a5-ef5e-4bc1-a0d7-a79ee7245367"
---     ]
--- , "video_uuid": "eb8e6ee9-027c-4ca4-9ba1-8bcd3f18821c"
--- , "playlist_uuid":"fc830ae6-4c71-4548-a085-a35d6ea7f4b0"
--- , "group_uuid":"7590f9b6-9422-4218-baaa-1d29b8eafa56"
--- }
+
  {-
     video         YTVideoId
     userId        UsersId
@@ -323,8 +315,8 @@ getVideoUserR vid = do
   guardAllAdmin >> TC <$> runRawDB $(TQ.genTypedQuery [qq|
     select u.uuid
       from y_t_video_user as vu
-      left join users as u on vu.user_id = u.id
-      left join y_t_video as v on vu.video = v.id
+ left join users          as u on vu.user_id = u.id
+ left join y_t_video      as v on vu.video   = v.id
      where
       v.uuid = ? -- < vid
  |])
