@@ -298,7 +298,7 @@ getUserGroupsR =
      )
 
 
-handleVideoUser0R :: Handle Text
+handleVideoUser0R :: Handler Text
 handleVideoUser0R = do
     $(logWarn) =<< requestBodyText
     return ""
