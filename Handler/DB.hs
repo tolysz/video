@@ -25,6 +25,7 @@ import Data.String.QM
 import qualified Database.PostgreSQL.Simple     as TQ
 import qualified Database.PostgreSQL.Simple.TypedQuery   as TQ
 import qualified Database.Persist.Sql as P
+import qualified Data.Text as T
 
 -- Module dedicated to accessing Database
 getUserChannelsR :: ApiReq [YTChannel]
