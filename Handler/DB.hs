@@ -299,10 +299,19 @@ postVideoUser0R = do
     restOpenM $ \(v :: Value) -> runMaybeT $ do
         users  <- liftMaybe (v ^? key "user_uuids"  . _String )
         video  <- liftMaybe (v ^? key "video_uuid"  & values . _String  )
+        $(logWarn) ( T.pack $ show  (users, video))
+        return $ Just ()
 
     return ""
 
-
+-- { "user_uuids":
+--     [ "9cdf7979-2dd6-4107-b9a3-20b3bc2ab4d4"
+--     , "dcd5c0a5-ef5e-4bc1-a0d7-a79ee7245367"
+--     ]
+-- , "video_uuid": "eb8e6ee9-027c-4ca4-9ba1-8bcd3f18821c"
+-- , "playlist_uuid":"fc830ae6-4c71-4548-a085-a35d6ea7f4b0"
+-- , "group_uuid":"7590f9b6-9422-4218-baaa-1d29b8eafa56"
+-- }
  {-
     video         YTVideoId
     userId        UsersId
