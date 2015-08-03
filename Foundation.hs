@@ -366,5 +366,5 @@ userPerms = do
 requestBodyLBS :: Handler L.ByteString
 requestBodyLBS = liftIO . W.strictRequestBody =<< waiRequest
 
-requestBodyLBS :: Handler Text
+requestBodyText :: Handler Text
 requestBodyText = TL.toStrict . TLE.decodeUtf8 <$> requestBodyLBS
