@@ -7,7 +7,7 @@ import Data.Aeson.Lens
 import Data.Int
 import qualified Data.Aeson as A
 import Data.Aeson.Types
-import Control.Lens ((^?) , (^.))
+import Control.Lens ((^?) , (^.), (&))
 import Control.Lens.Iso (non)
 import Data.ByteString.UTF8 (toString)
 import Model as M
