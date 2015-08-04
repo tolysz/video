@@ -305,18 +305,28 @@ postVideoUser0R = do
         users  <- liftMaybe (catMaybes . map (parseMaybe parseJSON) . V.toList <$> v ^? key "user_uuids" . _Array )
         video  <- liftMaybe (v ^? key "video_uuid" . _String )
         $(logWarn) ( T.pack $ show  (users ::  [Text], video))
-        qr <- runRawDB $(TQ.genTypedQuery [qq|
-select u.id    -- Int64
-     , v.id    -- Int64
-  from users as u
-     , y_t_video as v
- where u.uuid in ? -- < users
-   and v.uuid = ?  -- < video
-     |])
+        runRawDB ( \c -> do
+             qr <- $(TQ.genTypedQuery [qq|
+    select u.id    -- Int64
+         , v.id    -- Int64
+      from users as u
+         , y_t_video as v
+         , (select
+     where u.uuid in ? -- < users
+       and v.uuid = ?  -- < video
+       and u.id not in (select id from y_t_video_user as vu where vu.video = v.id)
+         |]) c
+             TQ.executeMany c [qq|
+              insert into y_t_video_user
+              ( user_id
+              , video
+              ) values (?,?)
+             |]  qr
+         )
 
-        $(logWarn) ( T.pack $ show qr )
         return $ Just ()
 
+--         $(logWarn) ( T.pack $ show qr )
     return ""
 
 -- { "user_uuids":
