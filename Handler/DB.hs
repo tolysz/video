@@ -5,6 +5,7 @@ import Import
 import Permissions
 import Data.Aeson.Lens
 import Data.Int
+-- import qualified Data.Maybe DM
 import qualified Data.Aeson as A
 import Data.Aeson.Types
 import Control.Lens ((^?) , (^.), (&))
@@ -14,7 +15,7 @@ import Model as M
 import Control.Arrow ((***))
 
 
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, Maybe (..))
 
 import Network.Google.Api.Youtube.Videos
 import Network.Google.Api.Youtube.Playlists
@@ -26,6 +27,7 @@ import qualified Database.PostgreSQL.Simple     as TQ
 import qualified Database.PostgreSQL.Simple.TypedQuery   as TQ
 import qualified Database.Persist.Sql as P
 import qualified Data.Text as T
+import qualified Data.Vector as V
 
 -- Module dedicated to accessing Database
 getUserChannelsR :: ApiReq [YTChannel]
@@ -298,9 +300,9 @@ postVideoUser0R :: Handler Text
 postVideoUser0R = do
     $(logWarn) =<< requestBodyText
     restOpenM $ \(v :: Value) -> runMaybeT $ do
-        users  <- liftMaybe (fromJSON <$> v ^? key "user_uuids" )
-        video  <- liftMaybe (v ^? key "video_uuid" . _String    )
-        $(logWarn) ( T.pack $ show  (users :: [Text], video))
+        users  <- liftMaybe (v ^? key "user_uuids" . _Array )
+        video  <- liftMaybe (v ^? key "video_uuid" . _String )
+        $(logWarn) ( T.pack $ show  ((catMaybes $ map (parseMaybe parseJSON) (V.toList users)) ::  [Text], video))
         return $ Just ()
 
     return ""
