@@ -306,12 +306,13 @@ postVideoUser0R = do
         video  <- liftMaybe (v ^? key "video_uuid" . _String )
         $(logWarn) ( T.pack $ show  (users ::  [Text], video))
         qr <- runRawDB $(TQ.genTypedQuery [qq|
-  select id    -- Int64
-       , uuid  -- Text
-    from users
-    where
-       uuid in ? -- < users
-        |])
+select u.id    -- Int64
+     , v.id    -- Int64
+  from users as u
+     , y_t_video as v
+ where u.uuid in ? -- < users
+   and v.uuid = ?  -- < video
+     |])
 
         $(logWarn) ( T.pack $ show qr )
         return $ Just ()
