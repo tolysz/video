@@ -311,7 +311,6 @@ postVideoUser0R = do
          , v.id    -- Int64
       from users as u
          , y_t_video as v
-         , (select
      where u.uuid in ? -- < users
        and v.uuid =  ? -- < video
        and u.id not in (select id from y_t_video_user as vu where vu.video = v.id)
