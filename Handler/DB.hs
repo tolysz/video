@@ -298,9 +298,9 @@ postVideoUser0R :: Handler Text
 postVideoUser0R = do
     $(logWarn) =<< requestBodyText
     restOpenM $ \(v :: Value) -> runMaybeT $ do
-        users  <- liftMaybe (v ^? key "user_uuids"  . _String )
-        video  <- liftMaybe (v ^? key "video_uuid"  & values . _String  )
-        $(logWarn) ( T.pack $ show  (users, video))
+        users  <- liftMaybe (fromJSON <$> v ^? key "user_uuids" )
+        video  <- liftMaybe (v ^? key "video_uuid" . _String    )
+        $(logWarn) ( T.pack $ show  (users :: [Text], video))
         return $ Just ()
 
     return ""
