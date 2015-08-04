@@ -298,7 +298,7 @@ getUserGroupsR =
 
 postVideoUser0R :: Handler Text
 postVideoUser0R = do
-    $(logWarn) =<< requestBodyText
+--     $(logWarn) =<< requestBodyText
     restOpenM $ \(v :: Value) -> runMaybeT $ do
         users  <- liftMaybe (catMaybes . map (parseMaybe parseJSON) . V.toList <$> v ^? key "user_uuids" . _Array )
         video  <- liftMaybe (v ^? key "video_uuid" . _String )
