@@ -1,4 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+--language="PostgreSQL" Pattern=/Query\ \[qq\|(.*)\|\])/
+
 module Handler.DB where
 
 import Import
@@ -303,6 +305,15 @@ postVideoUser0R = do
         users  <- liftMaybe (catMaybes . map (parseMaybe parseJSON) . V.toList <$> v ^? key "user_uuids" . _Array )
         video  <- liftMaybe (v ^? key "video_uuid" . _String )
         $(logWarn) ( T.pack $ show  (users ::  [Text], video))
+        qr <- runRawDB $(TQ.genTypedQuery [qq|
+  select id    -- Int64
+       , uuid  -- Text
+    from users
+    where
+       uuid in ? -- < users
+        |])
+
+        $(logWarn) ( T.pack $ show qr )
         return $ Just ()
 
     return ""
