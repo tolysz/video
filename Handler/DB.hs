@@ -313,15 +313,11 @@ postVideoUser0R = do
          , y_t_video as v
          , (select
      where u.uuid in ? -- < users
-       and v.uuid = ?  -- < video
+       and v.uuid =  ? -- < video
        and u.id not in (select id from y_t_video_user as vu where vu.video = v.id)
          |]) c
-             TQ.executeMany c [qq|
-              insert into y_t_video_user
-              ( user_id
-              , video
-              ) values (?,?)
-             |]  qr
+             liftIO $ print "insert"
+             TQ.executeMany c "insert into y_t_video_user ( user_id, video ) values (?,?)" qr
          )
 
         return $ Just ()
