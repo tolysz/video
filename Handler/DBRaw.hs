@@ -99,7 +99,7 @@ getUserPlaylistsGroupItemsR gr pli = do
     TC . map toJSON <$> runRawDB $(TQ.genTypedQuery [qq|
          select vp.snippet                                -- Value
               , yv.uuid                                   -- Maybe Text
-              , vp.snippet->'snippet'->>'position' as pos -- Maybe Text
+              , (vp.snippet->'snippet'->>'position')::integer as pos -- Maybe Int
          from y_t_video_playlist as vp
     left join site_group         as sg  on sg.id = vp.group_id
     left join y_t_playlist       as pl  on pl.id = vp.playlist
