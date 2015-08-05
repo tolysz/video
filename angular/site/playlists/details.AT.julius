@@ -2,15 +2,15 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
 
     $scope.allContacts = [];
     $scope.who = {};
-    $scope.cc={};
+    $scope.cc = {};
     $scope.cc.contacts = [];
     $scope.filterSelected = true;
 
     function processUser(u) {
-       u.email      = _.first(u.emails) || "(nope)";
-       u.name       = u.name || u.friendly || u.email;
-       u._lowername = u.name.toLowerCase();
-       u.avatar     = u.avatar || 'https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=50';
+       u.email      = _.first(u['emails']) || "(nope)";
+       u.name       = u['name'] || u['friendly'] || u['email'];
+       u._lowername = u['name'].toLowerCase();
+       u.avatar     = u['avatar'] || 'https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=50';
        return u;
     }
 
@@ -48,6 +48,7 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
 
         $http.get("@{VideoUser0R}/"+pl[1]).then(function(u){
             $log.debug("success");
+            $log.debug(u);
             $scope.cc.contacts = _.map( u, processUser );
             //$window.location.reload();
         });
