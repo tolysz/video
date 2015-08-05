@@ -338,13 +338,24 @@ postVideoUser0R = do
     eventPerm     EventParticipants default='EventParticipantsRegardless'
     viewPerm
     -}
-getVideoUserR :: Text -> ApiReq [Text]
+
+getVideoUserR :: Text -> ApiReq [Value]
 getVideoUserR vid = do
   guardAllAdmin >> TC <$> runRawDB $(TQ.genTypedQuery [qq|
-    select u.uuid
-      from y_t_video_user as vu
- left join users          as u on vu.user_id = u.id
- left join y_t_video      as v on vu.video   = v.id
+       select u.uuid     as uuid     -- Text
+            , u.name     as name     -- Maybe  Text
+            , u.friendly as friendly -- Maybe  Text
+            , u.avatar   as avatar   -- Maybe  Text
+            , u.deleted  as deleted  -- Bool
+            , emails   as emails   -- Maybe [Text]
+       from users as u
+       left outer join (select email.user_id as id
+             , array_agg(email.email) as emails
+             from email
+             group by email.user_id
+             ) as em on users.id = em.id
+  left join y_t_video_user as vu on vu.user_id = u.id
+  left join y_t_video      as v on vu.video   = v.id
      where
       v.uuid = ? -- < vid
  |])

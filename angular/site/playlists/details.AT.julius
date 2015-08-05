@@ -1,18 +1,26 @@
 function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
 
     $scope.allContacts = [];
-
     $scope.who = {};
+    $scope.cc={};
+    $scope.cc.contacts = [];
+    $scope.filterSelected = true;
+
+    function processUser(u) {
+       u.email      = _.first(u.emails) || "(nope)";
+       u.name       = u.name || u.friendly || u.email;
+       u._lowername = u.name.toLowerCase();
+       u.avatar     = u.avatar || 'https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=50';
+       return u;
+    }
+
+//    $http.get("@{VideoUser0R}/"+).then(function(u){
+//            $log.debug("success");
+            //$window.location.reload();
+//        });
 
     $scope.members = GroupUser.query({uuid:$stateParams.uuid}, function(users){
-        $scope.allContacts = _.map( users, function(u){
-            u.email = _.first(u.emails) || "(nope)";
-            u.name = u.name || u.friendly || u.email;
-            u._lowername = u.name.toLowerCase();
-
-            u.avatar = u.avatar || 'https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=50';
-            return u;
-        });
+        $scope.allContacts = _.map( users, processUser );
     });
 
     $scope.debug = {};
@@ -37,6 +45,13 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
         $scope.curr_vars = { videoId: pl[0].contentDetails.videoId};
         $scope.curr_title = pl[0].snippet.title;
         $scope.viduuid = pl[1];
+
+        $http.get("@{VideoUser0R}/"+pl[1]).then(function(u){
+            $log.debug("success");
+            $scope.cc.contacts = _.map( u, processUser );
+            //$window.location.reload();
+        });
+
     };
 
     $scope.flipSort = function(){
@@ -53,9 +68,6 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
     };
 
 
-        $scope.cc={};
-        $scope.cc.contacts = [];
-        $scope.filterSelected = true;
 
         function createFilterFor(query) {
             var lowercaseQuery = angular.lowercase(query);
