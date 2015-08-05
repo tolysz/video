@@ -49,7 +49,7 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
         $http.get("@{VideoUser0R}/"+pl[1]).then(function(u){
             $log.debug("success");
             $log.debug(u);
-            $scope.cc.contacts = _.map( u, processUser );
+            $scope.cc.contacts = _.map( u.data, processUser );
             //$window.location.reload();
         });
 
