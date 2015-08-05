@@ -51,7 +51,7 @@ getUserMeVideo0R = do
            , vu.view_perm                     as view_perms  -- Text
         from y_t_video_user as vu
    left join y_t_video      as v on vu.video = v.id
-       where vu.id = ? -- < uid
+       where vu.user_id = ? -- < uid
     |])
 
 -- video-user
