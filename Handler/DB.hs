@@ -341,7 +341,7 @@ postVideoUser0R = do
 
 getVideoUserR :: Text -> ApiReq [Value]
 getVideoUserR vid = do
-  guardAllAdmin >> TC <$> runRawDB $(TQ.genTypedQuery [qq|
+  guardAllAdmin >> TC <$> runRawDB $(TQ.genJsonQuery [qq|
        select u.uuid     as uuid     -- Text
             , u.name     as name     -- Maybe  Text
             , u.friendly as friendly -- Maybe  Text
