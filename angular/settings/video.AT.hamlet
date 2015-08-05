@@ -16,9 +16,9 @@
                     md-contact-name="name"
                     md-contact-image="avatar"
                     md-contact-email="email"
-                    md-require-match="true"
+                    md-require-match="'true'"
                     filter-selected="filterSelected"
-                    readonly=true
+                    readonly="'true'"
                     placeholder="Who is visible">
             <md-button .md-raised .md-primary ng-click="saveMe()">save
 
