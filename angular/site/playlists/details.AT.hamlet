@@ -1,7 +1,7 @@
 <div layout=row>
    <md-content layout=column style="overflow-y: auto; overflow-x:hidden; height:100vh; width:130px;" >
        <div
-         ng-repeat="pl in playlist | orderBy:'snippet.title':sort "
+         ng-repeat="pl in playlist  "
          style="width:120px; min-height:90px; overflow: visible;">
            <img ng-src={{pl[0].snippet.thumbnails.default.url}}  alt="{{pl[0].snippet.title}}" ng-click=setThose(pl) >
    <div flex  layout-align="center center" >

@@ -25,11 +25,11 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
 
     $scope.debug = {};
     $scope.debug['params'] = $stateParams;
-    $scope.uuid = $stateParams.uuid;
-    $scope.pluuid = $stateParams.pluuid;
+    //$scope.uuid = $stateParams.uuid;
+    //$scope.pluuid = $stateParams.pluuid;
 
     $scope.getList = function(){
-        $log.debug($stateParams.pluuid);
+        //$log.debug($stateParams.pluuid);
         //$http.get('@{UserRootR}' + "/group/" + $scope.uuid + "/playlists/" + $stateParams.pluuid, {cache:true})
         $http.get('@{UserMeVideo0R}')
             .success( function(data){
@@ -42,13 +42,13 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
 
     $scope.setThose = function (pl){
         $log.debug (pl);
-        $scope.curr_pl = pl[0];
-        $scope.curr_id = pl[0].contentDetails.videoId;
-        $scope.curr_vars = { videoId: pl[0].contentDetails.videoId};
-        $scope.curr_title = pl[0].snippet.title;
-        $scope.viduuid = pl[1];
+        //$scope.curr_pl = pl[0];
+        $scope.curr_id = pl.id;
+        $scope.curr_vars = { videoId: pl.id};
+        $scope.curr_title = pl.title;
+        $scope.viduuid = pl.uuid;
 
-        $http.get("@{VideoUser0R}/"+pl[1]).then(function(u){
+        $http.get("@{VideoUser0R}/"+pl.uuid).then(function(u){
             $log.debug("success");
             $log.debug(u);
             $scope.cc.contacts = _.map( u.data, processUser );
