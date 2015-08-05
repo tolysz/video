@@ -18,15 +18,15 @@
                     md-contact-email="email"
                     md-require-match="true"
                     filter-selected="filterSelected"
+                    readonly=true
                     placeholder="Who is visible">
             <md-button .md-raised .md-primary ng-click="saveMe()">save
 
             $if isAdmin
                <pre>
-                 group: {{ uuid }}
-                 playl: {{ pluuid }}
                  video: {{ viduuid }}
                  users: {{ userUuid }}
+                 curr_vars: {{ curr_vars }}
                <pre ng-show=appDebug>
                    {{ cc.contacts }}
                    {{ c2 }}
