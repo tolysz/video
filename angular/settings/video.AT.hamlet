@@ -1,0 +1,42 @@
+<div layout=row>
+   <md-content layout=column style="overflow-y: auto; overflow-x:hidden; height:100vh; width:130px;" >
+       <div
+         ng-repeat="pl in playlist | orderBy:'snippet.title':sort "
+         style="width:120px; min-height:90px; overflow: visible;">
+           <img ng-src={{pl[0].snippet.thumbnails.default.url}}  alt="{{pl[0].snippet.title}}" ng-click=setThose(pl) >
+   <div flex  layout-align="center center" >
+      <div layout=column>
+         <youtube-video player-vars="curr_vars" player=player ng-style="style()" >
+         <div ng-show=viduuid>
+            {{ curr_vars.videoId }}
+            <md-content class="md-padding autocomplete" layout="column">
+                <md-contact-chips
+                    ng-model="cc.contacts"
+                    md-contacts="querySearch($query)"
+                    md-contact-name="name"
+                    md-contact-image="avatar"
+                    md-contact-email="email"
+                    md-require-match="true"
+                    filter-selected="filterSelected"
+                    placeholder="Who is visible">
+            <md-button .md-raised .md-primary ng-click="saveMe()">save
+
+            $if isAdmin
+               <pre>
+                 group: {{ uuid }}
+                 playl: {{ pluuid }}
+                 video: {{ viduuid }}
+                 users: {{ userUuid }}
+               <pre ng-show=appDebug>
+                   {{ cc.contacts }}
+                   {{ c2 }}
+                   {{ cc }}
+                   {{ members }}
+                   {{ allContacts }}
+               <pre ng-show=appDebug>
+                   {{ curr_pl | json}}
+            $# <a ui-sref=oauth2.playlist({uuid:uuid,pid:curr_id})> {{curr_title}}
+$if isDebugger
+   <div layout=row ng-show=appDebug>
+      <pre>
+         {{ debug | json }}

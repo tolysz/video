@@ -199,8 +199,9 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     when (isLogged) $ do
         state $(utcFile  "/chat"       "chat"                )  -- will be per user
         state $(utcFile  "/settings"   "settings"            )
-        state $(utcVFile "/theme"   "settings.theme"   "@")
+        state $(utcVFile "/theme"      "settings.theme"   "@")
         state $(utcVFile "/me"         "settings.me"      "@")
+        state $(utcVFile "/video"      "settings.video"   "@")
 
     setDefaultRoute "site"
 
@@ -394,6 +395,7 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
       name:  "%{jsi18n (SomeMessage MsgMenuSettings)}"
       visible : false
       pages: [ { state: "settings.me",     name: "Me",     icon: "fa columns font-menu-icon font-lg" }
+             , { state: "settings.video",  name: "Video",  icon: "fa file-video-o font-menu-icon font-lg" }
              , { state: "settings.theme",  name: "theme",  icon: "fa columns font-menu-icon font-lg" }
              ]
       logged: true
