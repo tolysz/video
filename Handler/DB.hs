@@ -353,7 +353,7 @@ getVideoUserR vid = do
              , array_agg(email.email) as emails
              from email
              group by email.user_id
-             ) as em on users.id = em.id
+             ) as em on u.id = em.id
   left join y_t_video_user as vu on vu.user_id = u.id
   left join y_t_video      as v on vu.video   = v.id
      where
