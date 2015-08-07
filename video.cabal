@@ -168,10 +168,10 @@ library
                  , http-client
                  , conduit-extra
                  , blaze-builder
-               -- wait pull -- https://github.com/yesodweb/yesod/pull/772
---                 , enclosed-exceptions
                -- neo4j
                  , mtl
+               -- db pools
+                 , resource-pool
 
 
 executable         video
