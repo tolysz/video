@@ -4,12 +4,13 @@ import Prelude
 import qualified Data.Pool as DP
 import qualified Database.PostgreSQL.Simple as PGS (connect, withTransaction)
 import qualified Database.PostgreSQL.Simple.Internal as PGS
--- import Data.ByteString (ByteString)
+import Data.ByteString (ByteString)
 -- import
 newtype ConnectionPoolRaw = ConnPoolRaw (DP.Pool PGS.Connection)
 
+type ConnectionString = ByteString
 
-createPostgresqlRawPool :: PGS.ConnectionString -> IO ConnectionPoolRaw
+createPostgresqlRawPool :: ConnectionString -> IO ConnectionPoolRaw
 createPostgresqlRawPool coninf = do
   ConnPoolRaw <$> DP.createPool
     (PGS.connectPostgreSQL  coninf) -- ^ create
