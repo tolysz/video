@@ -17,6 +17,6 @@ createPostgresqlRawPool coninf = do
     10                   -- ^ connections per stripe
 
 
-withRawDBConn :: ConnPoolRaw -> (PG.Connection -> IO a) -> IO a
+withRawDBConn :: ConnPoolRaw -> (PGS.Connection -> IO a) -> IO a
 withRawDBConn (ConnPoolRaw cp) cc =
  DP.withResource cp cc
