@@ -5,7 +5,7 @@ import qualified Data.Pool as DP
 import qualified Database.PostgreSQL.Simple as PGS (connect, withTransaction)
 import qualified Database.PostgreSQL.Simple.Internal as PGS
 -- import
-newtype ConnPoolRaw = ConnPoolRaw (Pool PGS.Connection)
+newtype ConnPoolRaw = ConnPoolRaw (DP.Pool PGS.Connection)
 
 createPostgresqlRawPool :: PGS.ConnectInfo -> IO ConnPoolRaw
 createPostgresqlRawPool coninf = do
