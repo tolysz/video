@@ -1,5 +1,6 @@
 module Types.ConnPoolRaw where
 
+import Prelude
 import qualified Data.Pool as DP
 import qualified Database.PostgreSQL.Simple as PGS (connect, withTransaction)
 import qualified Database.PostgreSQL.Simple.Internal as PGS
