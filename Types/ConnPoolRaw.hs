@@ -4,13 +4,15 @@ import Prelude
 import qualified Data.Pool as DP
 import qualified Database.PostgreSQL.Simple as PGS (connect, withTransaction)
 import qualified Database.PostgreSQL.Simple.Internal as PGS
+-- import Data.ByteString (ByteString)
 -- import
 newtype ConnectionPoolRaw = ConnPoolRaw (DP.Pool PGS.Connection)
 
-createPostgresqlRawPool :: PGS.ConnectInfo -> IO ConnectionPoolRaw
+
+createPostgresqlRawPool :: PGS.ConnectionString -> IO ConnectionPoolRaw
 createPostgresqlRawPool coninf = do
   ConnPoolRaw <$> DP.createPool
-    (PGS.connect coninf) -- ^ create
+    (PGS.connectPostgreSQL  coninf) -- ^ create
     PGS.close            -- ^ destroy
     2                    -- ^ number of stripes
     100                  -- ^ time to keep unused
