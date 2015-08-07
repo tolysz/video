@@ -5,7 +5,7 @@ import qualified Data.Pool as DP
 import qualified Database.PostgreSQL.Simple as PGS (connect, withTransaction)
 import qualified Database.PostgreSQL.Simple.Internal as PGS
 -- import
-newtype ConnPoolRaw = ConnPoolRaw (DP.Pool PGS.Connection)
+newtype ConnectionPoolRaw = ConnPoolRaw (DP.Pool PGS.Connection)
 
 createPostgresqlRawPool :: PGS.ConnectInfo -> IO ConnPoolRaw
 createPostgresqlRawPool coninf = do
@@ -17,6 +17,6 @@ createPostgresqlRawPool coninf = do
     10                   -- ^ connections per stripe
 
 
-withRawDBConn :: ConnPoolRaw -> (PGS.Connection -> IO a) -> IO a
+withRawDBConn :: ConnectionPoolRaw -> (PGS.Connection -> IO a) -> IO a
 withRawDBConn (ConnPoolRaw cp) cc =
  DP.withResource cp cc
