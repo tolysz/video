@@ -12,6 +12,9 @@ $if isAdmin
          _{SomeMessage MsgUserAdmin}
     <md-checkbox ng-model="member.videoAdmin" aria-label="member is videoAdmin">
          _{SomeMessage MsgVideoAdmin}
+    <md-checkbox ng-model="member.videoOAuth" aria-label="member is videoOAuth">
+         $# _{SomeMessage MsgVideoAdmin}
+         Video OAuth Admin
 
 <div layout=row layout-align="space-between center">
          <md-button .md-raised .md-warn ng-click=save()>
