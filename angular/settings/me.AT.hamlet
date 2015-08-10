@@ -9,6 +9,7 @@ About me
       <label>Friendly
       <input ng-model=user.friendly readonly>
     <md-chips ng-model=user.emails readonly=true>
+    <md-chips ng-model=user.groups readonly=true>
 
 $if isDebugger
   <pre ng-show=appDebug>
