@@ -199,6 +199,7 @@ deleteSiteGroupUser0R = do
        siteGroupMemberFullMember <- liftJust  (v ^? key "fullMember" . _Bool ^. non False)
        siteGroupMemberUserAdmin  <- liftJust  (v ^? key "userAdmin"  . _Bool ^. non False)
        siteGroupMemberVideoAdmin <- liftJust  (v ^? key "videoAdmin" . _Bool ^. non False) -- False if not a site admin
+       siteGroupMemberVideoOAuth <- liftJust  (v ^? key "videoOAuth" . _Bool ^. non False) -- False if not a site admin
        Just (siteGroupMemberGroupId, siteGroupMemberUserId) <- MaybeT $ runDB $ return . Just <$> (
               (,) <$> getDBKey (UniqueSiteGroup textGroup)
                   <*> getDBKey (UniqueUsers usersUuid)
