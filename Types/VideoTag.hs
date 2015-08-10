@@ -52,7 +52,7 @@ instance DA.FromJSON VideoTag where
 
 instance DA.ToJSON VideoTag where
  toJSON (VideoTag role ) =
-    DA.object [ "role"  .= DA.toJSON role ]
+    DA.object [ "role"  DA..= DA.toJSON role ]
 
 instance PersistFieldSql VideoTag where
    sqlType _ = SqlOther "JSON"
