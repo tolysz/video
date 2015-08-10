@@ -15,3 +15,4 @@ import Data.Possible             as Import
 import Data.CMap                 as Import
 import Types.MsgBus              as Import
 import Types.Lang                as Import
+import Types.VideoTag            as Import
