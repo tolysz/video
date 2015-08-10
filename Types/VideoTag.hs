@@ -47,6 +47,9 @@ data VideoTag = VideoTag
 
 deriveJSON (optsL 2)  ''VideoTag
 
+instance PersistFieldSql VideoTag where
+   sqlType _ = SqlOther "JSON"
+
 instance PersistField VideoTag where
   toPersistValue a = PersistDbSpecific . L.toStrict . DA.encode $ a
   fromPersistValue (PersistByteString bs) = case DA.decode' $ L.fromStrict bs of
