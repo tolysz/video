@@ -263,15 +263,16 @@ postSiteGroupUser0R = do
 getSiteGroupUserR :: Text -> ApiReq [Value]
 getSiteGroupUserR gid = do
    guardAllAdmin >> TC <$> runRawDB $(TQ.genJsonQuery [qq|
-     select g.uuid      as group        -- Text
-          , u.uuid      as user         -- Text
-          , full_member as fullMember   -- Bool
-          , video_admin as videoAdmin   -- Bool
-          , user_admin  as userAdmin    -- Bool
-          , u.name      as name         -- Maybe  Text
-          , friendly    as friendly     -- Maybe  Text
-          , avatar      as avatar       -- Maybe  Text
-          , emails      as emails       -- Maybe [Text]
+     select g.uuid           as group        -- Text
+          , u.uuid           as user         -- Text
+          , gm.full_member   as fullMember   -- Bool
+          , gm.video_admin   as videoAdmin   -- Bool
+          , gm.user_admin    as userAdmin    -- Bool
+          , gm.video_o_auth  as videoOAuth   -- Bool
+          , u.name           as name         -- Maybe  Text
+          , u.friendly       as friendly     -- Maybe  Text
+          , u.avatar         as avatar       -- Maybe  Text
+          , emails           as emails       -- Maybe [Text]
      from site_group_member as gm
      left join site_group   as g on g.id = gm.group_id
      left join users         as u on u.id = gm.user_id

@@ -113,7 +113,6 @@ derivePersistField "ViewChan"
 -- instance FromJSON YTVideo
 -- instance ToJSON   YTVideo
 
-
 data ThemeRules = ThemeRules
   { themeRulesPrimary    :: !(Maybe Text)
   , themeRulesAccent     :: !(Maybe Text)
@@ -131,14 +130,13 @@ newtype Theme = Theme (Map Text ThemeRules)
 instance ToJSON    Theme
 instance FromJSON  Theme
 
-
-
-data PlaylistType = PLRaw
-                  | PLPresent
-                  | PLMambers
-                  | PLGroup
-                  | PLSite
-                  | PLWorld
+data PlaylistType
+  = PLRaw
+  | PLPresent
+  | PLMambers
+  | PLGroup
+  | PLSite
+  | PLWorld
     deriving (Show, Read, Eq, Typeable, Generic)
 
 derivePersistField "PlaylistType"
@@ -179,20 +177,30 @@ instance FromJSON  ViewPerm
 -- aerial diffusion
 
 data Permssions = Permssions
-  { isAdmin   :: Bool
-  , isLogged  :: Bool
-  , isDebugger :: Bool
-  , permVers   :: Text
-  , userGroup :: !(Map Text Bool)
+  { isAdmin    :: !Bool
+  , isLogged   :: !Bool
+  , isDebugger :: !Bool
+  , permVers   :: !Text
+  , userGroup  :: !(Map Text PermissionGroup)
+  }
+   deriving (Show, Typeable, Generic)
+
+data PermissionGroup = PermissionGroup
+  { pgVideoAdmin :: !Bool
+  , pgVideoOAuth :: !Bool
+  , pgUserAdmin  :: !Bool
+  , pgMember     :: !Bool
   }
    deriving (Show, Typeable, Generic)
 
 instance Default Permssions where
   def = Permssions False False False "" Map.empty
 
+instance FromJSON PermissionGroup
+instance ToJSON   PermissionGroup
+
 instance FromJSON Permssions
 instance ToJSON   Permssions
-
 
 data EmailLogin = EmailLogin
   { elUser     :: Text

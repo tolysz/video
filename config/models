@@ -43,9 +43,10 @@ OAuthAccess
 SiteGroupMember
   groupId       SiteGroupId
   userId        UsersId
-  fullMember    Bool
-  userAdmin     Bool
-  videoAdmin    Bool
+  fullMember    Bool default=false
+  userAdmin     Bool default=false
+  videoAdmin    Bool default=false
+  videoOAuth    Bool default=false
   UniqueSiteGroupMember groupId userId
   deriving Show Typeable Generic
 
