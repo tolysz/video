@@ -37,6 +37,7 @@ library
                      Types.MsgBus
                      Types.Lang
                      Types.Persistent
+                     Types.VideoTag
 
                 --  move to a separate module after testing or merge with http-client?
                   -- binary-js

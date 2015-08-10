@@ -16,6 +16,7 @@ import Network.Google.Api.Youtube.PlaylistItems
 
 import Data.Aeson.TH       (deriveJSON)
 import Types.Persistent
+import Types.VideoTag
 
 -- import Database.Persist.Sql.Class
 
