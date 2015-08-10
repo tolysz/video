@@ -1,6 +1,6 @@
 function(title,$http,$scope){
     title.set("Site panel");
-    $http.get("@{UserGroupsR}", {cache:true}).then(function(v){$scope.myGroups = v.data});
-    $http.get("@{UserGroupsPublicR}", {cache:true}).then(function(v){$scope.public = v.data});
+    $http.get("@{UserGroupsR}").then(function(v){$scope.myGroups = v.data});
+    $http.get("@{UserGroupsPublicR}").then(function(v){$scope.public = v.data});
 
 }
