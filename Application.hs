@@ -31,6 +31,8 @@ import Handler.User
 import Handler.DB
 import Handler.DBRaw
 
+import Types.ConnPoolRaw
+
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
 -- comments there for more details.
@@ -61,6 +63,9 @@ makeFoundation appSettings = do
     -- temporary foundation without a real connection pool, get a log function
     -- from there, and then create the real foundation.
 
+    appConnPoolRaw <- createPostgresqlRawPool
+          (pgConnStr  $ appDatabaseConf appSettings)
+
     let mkFoundation appConnPool = App {..}
         tempFoundation = mkFoundation $ error "connPool forced in tempFoundation"
         logFunc = messageLoggerSource tempFoundation appLogger
@@ -69,7 +74,6 @@ makeFoundation appSettings = do
     pool <- flip runLoggingT logFunc $ createPostgresqlPool
         (pgConnStr  $ appDatabaseConf appSettings)
         (pgPoolSize $ appDatabaseConf appSettings)
-
     -- Perform database migration using our application's logging settings.
     runLoggingT (runSqlPool (runMigration migrateAll) pool) logFunc
 

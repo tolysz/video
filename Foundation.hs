@@ -43,6 +43,7 @@ import qualified Data.Text.Lazy.Encoding as TLE (decodeUtf8)
 import qualified Data.Text.Lazy as TL (toStrict)
 import qualified Network.Wai as W
 import qualified Data.ByteString.Lazy as L
+import Types.ConnPoolRaw
 
 
 -- | The foundation datatype for your application. This can be a good place to
@@ -53,7 +54,7 @@ data App = App
     { appSettings    :: AppSettings
     , appStatic      :: Static -- ^ Settings for static file serving.
     , appConnPool    :: ConnectionPool -- ^ Database connection pool.
---     , appConnPoolRaw :: ConnectionPoolRaw -- ^ Database connection pool.
+    , appConnPoolRaw :: ConnectionPoolRaw -- ^ Database connection pool.
     , appHttpManager :: Manager
     , appLogger      :: Logger
     , userChannels   :: CMap MsgBus
@@ -187,19 +188,23 @@ instance YesodPersist App where
 
 --- Implement Connetion Pool to tackle this
 -- for now it have to
-getConn = liftIO . PGS.connectPostgreSQL =<< pgConnStr . appDatabaseConf . appSettings <$> getYesod
+
+
+-- getConn = liftIO . PGS.connectPostgreSQL =<< pgConnStr . appDatabaseConf . appSettings <$> getYesod
 
 -- runRawDB :: forall (m :: * -> *) b.
 --       (MonadHandler m, HandlerSite m ~ App) =>
 --       (PGS.Connection -> IO b) -> m b
 
 runRawDB cc = do
-   conn <- getConn
-   liftIO (cc conn)
+--    conn <- getConn
+   cp <- appConnPoolRaw <$> getYesod
+   liftIO (withRawDBConn cp cc)
 
 runRawDBT cc = do
-   conn <- getConn
-   liftIO $ PGS.withTransaction conn (cc conn)
+--    conn <- getConn
+   cp <- appConnPoolRaw <$> getYesod
+   liftIO $ withRawDBConn cp (\conn -> PGS.withTransaction conn (cc conn))
 
 instance YesodFacebook App where
  fbHttpManager = appHttpManager
