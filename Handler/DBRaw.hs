@@ -49,6 +49,7 @@ getUserMeVideo0R = do
            , snippet->'snippet'->'thumbnails' as thumbnails  -- Maybe Value
            , vu.event_perm                    as event_perms -- Text
            , vu.view_perm                     as view_perms  -- Text
+           , vu.tag                           as tags        -- [VideoTag]
         from y_t_video_user as vu
    left join y_t_video      as v on vu.video = v.id
        where vu.user_id = ? -- < uid
