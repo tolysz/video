@@ -15,6 +15,8 @@ import qualified Data.Aeson as DA
 import qualified Data.ByteString.Lazy as L
 import Network.Google.Api.Utils
 import Database.Persist.Sql
+import Database.PostgreSQL.Simple.FromField as PGS
+import Database.PostgreSQL.Simple.Types as PGS
 
 import Data.Aeson.TH       (deriveJSON)
 
@@ -53,3 +55,6 @@ instance PersistField VideoTag where
   fromPersistValue (PersistDbSpecific bs) = case DA.decode' $ L.fromStrict bs of
        Just v -> Right v
        Nothing -> Left "error parsing json value"
+
+instance PGS.FromField VideoTag where
+    fromField f dat = PGS.fromJSONField f dat
