@@ -40,7 +40,7 @@ data VideoTagRole
 deriveJSON (optsL 2)  ''VideoTagRole
 
 data VideoTag = VideoTag
- { vtRole    :: [(VideoTagRole,DA.Value)]
+ { vtRole    :: Maybe [(VideoTagRole,DA.Value)]
  }
   deriving (Show, Eq, Typeable, Generic)
 
