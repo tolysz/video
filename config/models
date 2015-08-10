@@ -131,7 +131,7 @@ YTVideoUser
     created       UTCTime default=now()
     eventPerm     EventParticipants default='EventParticipantsRegardless'
     viewPerm      ViewPerm          default='VPChanMembers'
-    tag           [VideoTag] default=ARRAY[]::json[]
+    tag           VideoTag  default={}::json
     UniqueYTVideoUser video userId
     deriving Show Typeable Generic
 

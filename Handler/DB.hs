@@ -348,7 +348,7 @@ getVideoUserR vid = do
             , u.avatar   as avatar   -- Maybe  Text
             , u.deleted  as deleted  -- Bool
             , emails     as emails   -- Maybe [Text]
-            , vu.tag     as tags     -- [VideoTag]
+            , vu.tag     as tag      -- VideoTag
        from users as u
        left outer join (select email.user_id as id
              , array_agg(email.email) as emails
