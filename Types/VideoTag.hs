@@ -40,11 +40,19 @@ data VideoTagRole
 deriveJSON (optsL 2)  ''VideoTagRole
 
 data VideoTag = VideoTag
- { vtRole    :: Maybe [(VideoTagRole,DA.Value)]
+ { vtRole    :: [(VideoTagRole,DA.Value)]
  }
   deriving (Show, Eq, Typeable, Generic)
 
-deriveJSON (optsL 2)  ''VideoTag
+-- deriveJSON (optsL 2)  ''VideoTag
+
+instance DA.FromJSON VideoTag where
+ parseJSON (DA.Object v) =
+     VideoTag <$> v DA..:? "role" DA..!= []
+
+instance DA.ToJSON VideoTag where
+ toJSON (VideoTag role ) =
+    DA.object [ "role"  .= DA.toJSON role ]
 
 instance PersistFieldSql VideoTag where
    sqlType _ = SqlOther "JSON"
