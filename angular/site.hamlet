@@ -16,7 +16,7 @@
                 <span ng-hide="site[1].fullMember" .fa .font-2x .star-o>
 
                 <md-button .md-primary .md-fab .md-mini
-                   ng-show="site[1].videoAdmin"
+                   ng-show="site[1].videoOAuth"
                    ui-sref="oauth2.channels({uuid:site[0].uuid})"
                    aria-label="video admin" >
                    <md-tooltip>
@@ -24,7 +24,7 @@
                    <span ng-show="site[1].videoAdmin" .fa .font-2x .file-video-o >
 
                 <md-button .md-primary .md-fab .md-mini
-                   ng-show="site[1].videoAdmin"
+                   ng-show="site[1].videoOAuth"
                    ui-sref="oauth2.refresh({uuid:site[0].uuid})"
                    aria-label="reload raw videos" >
                    <md-tooltip>
@@ -33,7 +33,7 @@
 
                 <md-button .md-primary .md-fab .md-mini
                    target="_blank"
-                   ng-show="site[1].videoAdmin"
+                   ng-show="site[1].videoOAuth"
                    ng-href="@{RootOAuth2R}/google/login/{{site[0].uuid}}"
                    aria-label="login oauth2">
                    <md-tooltip>
