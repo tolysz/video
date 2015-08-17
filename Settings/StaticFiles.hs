@@ -19,7 +19,7 @@ import Yesod.Static (staticFiles)
 
 staticFiles (appStaticDir compileTimeAppSettings)
 -- publicFiles (appStaticDir compileTimeAppSettings)
-
+--xx
 -- staticFilesList "static" [ "app.min.js"
 --                          , "app.css"
                         -- , "webcomponentsjs/webcomponents.min.js"
