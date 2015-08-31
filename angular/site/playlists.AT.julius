@@ -1,6 +1,6 @@
 function ($scope, $log, $http, $location, $stateParams, title){
 
-    $scope.sort = 0;
+    $scope.sort = 1;
     $scope.uuid = $stateParams.uuid;
     $scope.getList = function(){
         $log.debug($stateParams.cid);
