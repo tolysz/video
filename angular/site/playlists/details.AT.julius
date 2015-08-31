@@ -2,8 +2,8 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
 
     $scope.allContacts = [];
     $scope.who = {};
-    $scope.cc = {};
-    $scope.cc.contacts = [];
+    //$scope.cc = {};
+    $scope.contacts = [];
     $scope.filterSelected = true;
 
     function processUser(u) {
@@ -49,7 +49,7 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
         $http.get("@{VideoUser0R}/"+pl[1]).then(function(u){
             $log.debug("success");
             $log.debug(u);
-            $scope.cc.contacts = _.map( u.data, processUser );
+            $scope.contacts = _.map( u.data, processUser );
             //$window.location.reload();
         });
 
@@ -83,16 +83,16 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
     $scope.$watch('cc', function(val, old){
         $log.debug(val);
 
-        var newcc = _.filter($scope.cc.contacts, _.isObject);
+        var newcc = _.filter($scope.contacts, _.isObject);
         $timeout(function() {
-            if (!_.isEqual($scope.cc.contacts, newcc)) {
-                $scope.cc.contacts = newcc;
+            if (!_.isEqual($scope.contacts, newcc)) {
+                $scope.contacts = newcc;
             }
         },0);
     },true);
 
     $scope.saveMe = function(){
-        $scope.userUuid = _.map($scope.cc.contacts, function(u){return u['user'];});
+        $scope.userUuid = _.map($scope.contacts, function(u){return u['user'];});
 
         var who = {};
         who['user_uuids']    = $scope.userUuid;

@@ -11,7 +11,7 @@
             {{ curr_vars.videoId }}
             <md-content class="md-padding autocomplete" layout="column">
                 <md-contact-chips
-                    ng-model="cc.contacts"
+                    ng-model="contacts"
                     md-contacts="querySearch($query)"
                     md-contact-name="name"
                     md-contact-image="avatar"
