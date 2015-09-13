@@ -1,4 +1,4 @@
-function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
+function($scope, $log, $http, $stateParams, $timeout, title, GroupUser){
 
     $scope.allContacts = [];
     $scope.who = {};
