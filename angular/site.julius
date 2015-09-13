@@ -1,6 +1,8 @@
-function(title,$http,$scope){
+function($http, $scope, title, maid){
     title.set("Site panel");
-    $http.get("@{UserGroupsR}").then(function(v){$scope.myGroups = v.data});
-    $http.get("@{UserGroupsPublicR}").then(function(v){$scope.public = v.data});
 
+    if (maid != "not logged in")
+        $http.get("@{UserGroupsR}").then(function(v){$scope.myGroups = v.data});
+
+    $http.get("@{UserGroupsPublicR}").then(function(v){$scope.public = v.data});
 }

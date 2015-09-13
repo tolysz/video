@@ -1,3 +1,4 @@
+-- language="PostgreSQL" Pattern=/Query\ \[qq\|(.*)\|\])/
 module Handler.DBRaw where
 
 import           Import
@@ -45,14 +46,19 @@ getUserMeVideo0R = do
     TC <$> runRawDB $(TQ.genJsonQuery [qq|
       select v.ref                            as id          -- Text
            , v.snippet->'snippet'->>'title'   as title       -- Text
+           , p.snippet->'snippet'->>'title'   as playlist    -- Text
            , v.uuid                           as uuid        -- Text
-           , snippet->'snippet'->'thumbnails' as thumbnails  -- Maybe Value
+           , v.snippet->'snippet'->'thumbnails' as thumbnails  -- Maybe Value
            , vu.event_perm                    as event_perms -- Text
            , vu.view_perm                     as view_perms  -- Text
            , vu.tag                           as tag         -- VideoTag
         from y_t_video_user as vu
    left join y_t_video      as v on vu.video = v.id
+   left join y_t_video_playlist as vp on vu.video = vp.video
+   left join y_t_playlist as p on vp.playlist = p.id
        where vu.user_id = ? -- < uid
+   order by playlist desc;
+       ;
     |])
 
 -- video-user

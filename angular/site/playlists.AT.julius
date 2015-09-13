@@ -4,7 +4,7 @@ function ($scope, $log, $http, $location, $stateParams, title){
     $scope.uuid = $stateParams.uuid;
     $scope.getList = function(){
         $log.debug($stateParams.cid);
-        $http.get('@{UserRootR}' +"/group/" + $scope.uuid + "/playlists", {cache:true})
+        $http.get('@{UserRootR}' +"/group/" + $scope.uuid + "/playlists")
             .success( function(data){
                 $log.debug(data);
                 $scope.debug = data;

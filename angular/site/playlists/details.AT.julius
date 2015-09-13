@@ -1,8 +1,7 @@
-function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
+function($scope, $log, $http, $stateParams, $timeout, GroupUser){
 
     $scope.allContacts = [];
     $scope.who = {};
-    //$scope.cc = {};
     $scope.contacts = [];
     $scope.filterSelected = true;
 
@@ -14,11 +13,6 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
        return u;
     }
 
-//    $http.get("@{VideoUser0R}/"+).then(function(u){
-//            $log.debug("success");
-            //$window.location.reload();
-//        });
-
     $scope.members = GroupUser.query({uuid:$stateParams.uuid}, function(users){
         $scope.allContacts = _.map( users, processUser );
     });
@@ -29,7 +23,8 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
     $scope.pluuid = $stateParams.pluuid;
     $scope.getList = function(){
         $log.debug($stateParams.pluuid);
-        $http.get('@{UserRootR}' + "/group/" + $scope.uuid + "/playlists/" + $stateParams.pluuid, {cache:true})
+        //$http.get('@{UserRootR}' + "/group/" + $scope.uuid + "/playlists/" + $stateParams.pluuid,{cache:true})
+        $http.get('@{UserRootR}' + "/group/" + $scope.uuid + "/playlists/" + $stateParams.pluuid)
             .success( function(data){
                 $log.debug(data);
                 $scope.debug['data'] = data;
@@ -67,8 +62,6 @@ function($scope, $log, $http, $stateParams, $timeout, $q, GroupUser){
 
         return results;
     };
-
-
 
         function createFilterFor(query) {
             var lowercaseQuery = angular.lowercase(query);
