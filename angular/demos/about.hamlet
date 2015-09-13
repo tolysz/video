@@ -1,5 +1,14 @@
 <md-content .md-padding>
     <dl .dl-horizontal>
+      <dt>
+          Join The development team!
+      <dd>
+         All the code is BSD3 licence avaliable on the
+         <a target="_blank" href="https://github.com/tolysz/video" >
+            Github tolysz/video
+         So please join, have
+         <a target="_blank" href="https://github.com/tolysz/video/issues" >sugestions or even bugfixes
+
       <dt>AngularJS
       <dd>
          Client side
@@ -26,14 +35,6 @@
       <dd>
          <a target="_blank" href="https://developers.google.com/youtube/v3/docs/" > YouTube v3
          http://developers.google.com/apis-explorer/#p/youtube/v3/
-      <dt>
-          Join The development team!
-      <dd>
-         All the code is BSD3 licence avaliable on the
-         <a target="_blank" href="https://github.com/tolysz/video" >
-            Github tolysz/video
-         So please join, have
-         <a target="_blank" href="https://github.com/tolysz/video/issues" >sugestions or even bugfixes
       <dt>
           Some reading:
       <dd>
