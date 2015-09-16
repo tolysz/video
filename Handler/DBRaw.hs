@@ -42,7 +42,9 @@ getUserMeR = do
 -- | logged user i.e. miself
 getUserMeVideo0R :: ApiReq [Value]
 getUserMeVideo0R = do
-    uid <- P.fromSqlKey <$> requireAuthId
+    sqlGetUserVideo =<< P.fromSqlKey <$> requireAuthId
+
+sqlGetUserVideo uid =
     TC <$> runRawDB $(TQ.genJsonQuery [qq|
       select v.ref                            as id          -- Text
            , v.snippet->'snippet'->>'title'   as title       -- Text

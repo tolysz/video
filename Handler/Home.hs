@@ -1,5 +1,5 @@
 {-# LANGUAGE  ScopedTypeVariables#-}
--- language="JavaScript" Pattern=/\[js\|(.*)\|\])/
+-- language="JavaScript" pattern=/\[js\|(.*)\|\])/
 module Handler.Home where
 
 import Import
