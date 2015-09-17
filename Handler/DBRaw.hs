@@ -46,7 +46,8 @@ getUserMeVideo0R = do
 
 userUUIDtoId :: UUID -> App Int
 userUUIDtoId u = runRawDB $(TQ.genTypedQuery [qq|
-     select id from users
+     select id       -- Int
+       from users
       where uuid = ? -- < u
   |]) >>= \case
     Just x  -> return x
