@@ -51,6 +51,7 @@
 -- /api/login                            LoginCheckR  GET
 /api/admin/user                          UserR  GET POST
 /api/admin/user/#GUUID                   User1R GET DELETE
+/api/admin/user-videos/#GUUID            UserVideo1R GET
 
 /api/admin/group                         SiteGroupR  GET POST
 /api/admin/group/#GUUID                  SiteGroup1R GET DELETE

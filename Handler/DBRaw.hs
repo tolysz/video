@@ -39,7 +39,7 @@ getUserMeR = do
 
 
 -- | return all videos for a given user.
--- | logged user i.e. miself
+-- | logged user i.e. mis elf
 getUserMeVideo0R :: ApiReq [Value]
 getUserMeVideo0R = do
     sqlGetUserVideo =<< P.fromSqlKey <$> requireAuthId
@@ -53,7 +53,8 @@ userUUIDtoId u = runRawDB $(TQ.genTypedQuery [qq|
     Nothing -> notFound
 
 getUserVideo1R :: UUID -> ApiReq [Value]
-getUserVideo1R uuid =
+getUserVideo1R uuid = do
+   guardAllAdmin
    userUUIDtoId uuid >>= sqlGetUserVideo
 
 
