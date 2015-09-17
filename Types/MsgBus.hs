@@ -53,15 +53,15 @@ data MsgBus
     | Enter  !Who !UTCTime
         deriving (Show, Eq, Typeable, Generic)
 
-singletons [d|
-  data SubChannel
-    = SCOther
-    | SCShout
-    | SCSystemInfo
-    | SCMsgInfo
-    | SCSelfEcho
-     deriving (Enum, Generic)
-  |]
+-- singletons [d|
+--   data SubChannel
+--     = SCOther
+--     | SCShout
+--     | SCSystemInfo
+--     | SCMsgInfo
+--     | SCSelfEcho
+--      deriving (Enum, Generic)
+--   |]
 
 data TimeValue    = TimeValue    UTCTime Text
 data TimeValueWho = TimeValueWho UTCTime Text Who
@@ -80,10 +80,10 @@ type family WSResponse (chan :: SubChannel) :: * where
   WSResponse 'SCMsgInfo    = ()
   WSResponse 'SCSelfEcho   = ()
 
-forSubscriptionChannel :: SSubChannel c
-  -> (WSRequest c -> m (WSResponse c))
-  -> m ()
-forSubscriptionChannel = undefined
+-- forSubscriptionChannel :: SSubChannel c
+--   -> (WSRequest c -> m (WSResponse c))
+--   -> m ()
+-- forSubscriptionChannel = undefined
 
 upTime' :: UTCTime -> MsgBus -> MsgBus
 upTime' n ( Other      _ t   ) = Other      n t
