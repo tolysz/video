@@ -53,7 +53,7 @@ userUUIDtoId u = runRawDB $(TQ.genTypedQuery [qq|
     Just x  -> return x
     Nothing -> notFound
 
-getUserVideo1R :: UUID -> ApiReq [Value]
+getUserVideo1R :: GUUID -> ApiReq [Value]
 getUserVideo1R uuid = do
    guardAllAdmin
    userUUIDtoId uuid >>= sqlGetUserVideo
