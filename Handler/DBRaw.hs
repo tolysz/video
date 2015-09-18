@@ -45,7 +45,7 @@ getUserMeVideo0R :: ApiReq [Value]
 getUserMeVideo0R = do
     sqlGetUserVideo =<< P.fromSqlKey <$> requireAuthId
 
-userUUIDtoId :: GUUID -> App Int
+userUUIDtoId :: GUUID -> Handler Int
 userUUIDtoId u = runRawDB $(TQ.genTypedQuery [qq|
      select id        -- Int
        from users
