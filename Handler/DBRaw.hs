@@ -2,6 +2,7 @@
 module Handler.DBRaw where
 
 import           Import
+import Permissions
 import           Types
 import           Data.String.QM
 
