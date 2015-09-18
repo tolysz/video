@@ -66,19 +66,19 @@ data MsgBus
 data TimeValue    = TimeValue    UTCTime Text
 data TimeValueWho = TimeValueWho UTCTime Text Who
 
-type family WSRequest (chan :: SubChannel) :: * where
-  WSRequest 'SCOther      = TimeValue
-  WSRequest 'SCShout      = TimeValueWho
-  WSRequest 'SCSystemInfo = TimeValue
-  WSRequest 'SCMsgInfo    = TimeValue
-  WSRequest 'SCSelfEcho   = TimeValue
-
-type family WSResponse (chan :: SubChannel) :: * where
-  WSResponse 'SCOther      = ()
-  WSResponse 'SCShout      = TimeValue
-  WSResponse 'SCSystemInfo = ()
-  WSResponse 'SCMsgInfo    = ()
-  WSResponse 'SCSelfEcho   = ()
+-- type family WSRequest (chan :: SubChannel) :: * where
+--   WSRequest 'SCOther      = TimeValue
+--   WSRequest 'SCShout      = TimeValueWho
+--   WSRequest 'SCSystemInfo = TimeValue
+--   WSRequest 'SCMsgInfo    = TimeValue
+--   WSRequest 'SCSelfEcho   = TimeValue
+--
+-- type family WSResponse (chan :: SubChannel) :: * where
+--   WSResponse 'SCOther      = ()
+--   WSResponse 'SCShout      = TimeValue
+--   WSResponse 'SCSystemInfo = ()
+--   WSResponse 'SCMsgInfo    = ()
+--   WSResponse 'SCSelfEcho   = ()
 
 -- forSubscriptionChannel :: SSubChannel c
 --   -> (WSRequest c -> m (WSResponse c))
