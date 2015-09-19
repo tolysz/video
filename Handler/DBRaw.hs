@@ -51,7 +51,7 @@ userUUIDtoId u = runRawDB $(TQ.genTypedQuery [qq|
        from users
       where uuid = ? -- < u
   |]) >>= \case
-    Just x  -> return x
+    Just [x]  -> return x
     Nothing -> notFound
 
 getUserVideo1R :: GUUID -> ApiReq [Value]
