@@ -1,0 +1,110 @@
+function($scope, $log, $http, $stateParams, $timeout, GroupUser){
+
+    $scope.allContacts = [];
+    $scope.who = {};
+    $scope.cc = {};
+    $scope.cc.contacts = [];
+    $scope.filterSelected = true;
+
+    function processUser(u) {
+        u.email      = _.first(u['emails']) || "(nope)";
+        u.name       = u['name'] || u['friendly'] || u['email'];
+        u._lowername = u['name'].toLowerCase();
+        u.avatar     = u['avatar'] || 'https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=50';
+        return u;
+    }
+
+//    $http.get("@{VideoUser0R}/"+).then(function(u){
+//            $log.debug("success");
+    //$window.location.reload();
+//        });
+
+    $scope.members = GroupUser.query({uuid:$stateParams.uuid}, function(users){
+        $scope.allContacts = _.map( users, processUser );
+    });
+
+    $scope.debug = {};
+    $scope.debug['params'] = $stateParams;
+    //$scope.uuid = $stateParams.uuid;
+    //$scope.pluuid = $stateParams.pluuid;
+
+    $scope.getList = function(){
+        //$log.debug($stateParams.pluuid);
+        //$http.get('@{UserRootR}' + "/group/" + $scope.uuid + "/playlists/" + $stateParams.pluuid, {cache:true})
+        $http.get('@{UserVideo1R}'+'/'+$stateParams.uuid)
+            .success( function(data){
+                $log.debug(data);
+                $scope.debug['data'] = data;
+                $scope.playlist = data;
+            }
+        );
+    };
+
+    $scope.setThose = function (pl){
+        $log.debug (pl);
+        //$scope.curr_pl = pl[0];
+        $scope.curr_id = pl.id;
+        $scope.curr_vars = { videoId: pl.id};
+        $scope.curr_title = pl.title;
+        $scope.viduuid = pl.uuid;
+
+        $http.get("@{VideoUser0R}/"+pl.uuid).then(function(u){
+            $log.debug("success");
+            $log.debug(u);
+            $scope.cc.contacts = _.map( u.data, processUser );
+            //$window.location.reload();
+        });
+
+    };
+
+    $scope.flipSort = function(){
+        $log.debug($scope.sort);
+        $scope.sort = ! $scope.sort;
+    };
+    $scope.getList();
+
+    $scope.querySearch = function(query){
+        var results = query ?
+            _.filter($scope.allContacts, createFilterFor(query)) : [];
+
+        return results;
+    };
+
+
+
+    function createFilterFor(query) {
+        var lowercaseQuery = angular.lowercase(query);
+
+        return function filterFn(contact) {
+            return (contact._lowername.indexOf(lowercaseQuery) != -1);
+        };
+    }
+    // todo: Immutable.fromJS({})
+    $scope.userUuid = [];
+    $scope.c2 = [];
+    $scope.$watch('cc', function(val, old){
+        $log.debug(val);
+
+        var newcc = _.filter($scope.cc.contacts, _.isObject);
+        $timeout(function() {
+            if (!_.isEqual($scope.cc.contacts, newcc)) {
+                $scope.cc.contacts = newcc;
+            }
+        },0);
+    },true);
+
+    $scope.saveMe = function(){
+        $scope.userUuid = _.map($scope.cc.contacts, function(u){return u['user'];});
+
+        var who = {};
+        who['user_uuids']    = $scope.userUuid;
+        who['video_uuid']    = $scope.viduuid;
+        who['playlist_uuid'] = $scope.pluuid;
+        who['group_uuid']    = $scope.uuid;
+
+        $http.post("@{VideoUser0R}", who).then(function(){
+            $log.debug("success");
+            $window.location.reload();
+        });
+    }
+}
