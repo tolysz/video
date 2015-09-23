@@ -31,7 +31,7 @@ function($scope, $log, $http, $stateParams, $timeout, GroupUser){
     $scope.getList = function(){
         //$log.debug($stateParams.pluuid);
         //$http.get('@{UserRootR}' + "/group/" + $scope.uuid + "/playlists/" + $stateParams.pluuid, {cache:true})
-        $http.get('@{UserVideo1R}'+'/'+$stateParams.uuid)
+        $http.get('@{UserR}'+'/'+$stateParams.uuid +'/video')
             .success( function(data){
                 $log.debug(data);
                 $scope.debug['data'] = data;
