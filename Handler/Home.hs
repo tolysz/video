@@ -1,5 +1,5 @@
 {-# LANGUAGE  ScopedTypeVariables#-}
--- language="JavaScript" pattern=/\[js\|(.*)\|\])/
+-- Language="JavaScript" Pattern=/ \[js\|(.*)\|\])/
 module Handler.Home where
 
 import Import
@@ -81,12 +81,12 @@ handleHomeR _ =  do
 genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> LangId -> Theme-> Text -> Bool  ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
 genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
   runAngularUI $ cached $ do
-    addConstant "maid"    [js|#{rawJS $ show maid}|]
-    addConstant "appLang" [js|#{toJSON appLang}|]
-    addConstant "perms"   [js|#{toJSON perm}|]
-    addConstant "appVers"   [js|#{toJSON permVers}|]
+    addConstant "maid"       [js|#{rawJS $ show maid}|]
+    addConstant "appLang"    [js|#{toJSON appLang}|]
+    addConstant "perms"      [js|#{toJSON perm}|]
+    addConstant "appVers"    [js|#{toJSON permVers}|]
 
-    addConstant "thm"   [js|#{toJSON thm}|]
+    addConstant "thm"        [js|#{toJSON thm}|]
     addConstant "thmColours" [js|['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey']|]
 
 --     addValue    "debug"   [js|false|]
@@ -188,10 +188,10 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
     state $(utcFile  "/:uuid/user"      "admin.group.user"    )  -- require special permissions
     state $(utcVFile "/add"             "admin.group.user.add" "@")
     state $(utcVFile "/:uuuid/edit"     "admin.group.user.edit" "@")
-    state $(utcVFile "/:uuuid/video"    "admin.group.user.video" "@")
     state $(utcFile  "/user"            "admin.user"          )  -- require special permissions
     state $(utcVFile "/add"             "admin.user.add"  "@" )  -- require special permissions
     state $(utcVFile "/edit/:uuid"      "admin.user.edit" "@" )  -- require special permissions
+    state $(utcVFile "/video/:uuuid"    "admin.group.video" "@")
     state $(utcFile  "/site"            "site"                )  -- will be per user
     state $(utcVFile "/:uuid/playlists" "site.playlists" "@" )  -- will be per user
     state $(utcVFile "/:pluuid"         "site.playlists.details" "@" )  -- will be per user
