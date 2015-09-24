@@ -14,7 +14,7 @@
             <a ui-sref=oauth2.playlists({cid:chan.id})>
                    {{user.someName}}
             <a ui-sref="admin.user.video({uuid:user.uuid})">
-               <span .cover .fa .font-3x .file-video-o ng-hide=user.avatar>
+               <span .cover .fa .font-3x .file-video-o>
          <h4>{{chan.kind}}
          $if isDebugger
              <p ng-show=appDebug>
