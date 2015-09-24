@@ -24,6 +24,8 @@ $if isAdmin
            <span ng-hide="memb.logo" .fa .font-3x .group>
       <div .md-list-item-text>
           <h3>{{memb.name}} ({{memb.short}})
+          <a ui-sref="admin.user.video({uuid:memb.user})">
+             <span .cover .fa .font-3x .file-video-o>
           <pre>
              {{memb | json }}
 $if isDebugger
