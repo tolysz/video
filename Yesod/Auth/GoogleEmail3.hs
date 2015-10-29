@@ -31,10 +31,10 @@ import           ClassyPrelude
 import           Blaze.ByteString.Builder (fromByteString, toByteString)
 import           Control.Applicative      ((<$>), (<*>))
 -- import           Control.Arrow            (second)
-import           Control.Monad            (liftM, unless)
+-- import           Control.Monad            (liftM, unless)
 import qualified Data.Aeson               as A
 import qualified Data.Aeson.Encode        as A
-import           Data.Aeson.Parser        (json')
+-- import           Data.Aeson.Parser        (json')
 import           Data.Aeson.Types         (FromJSON (parseJSON), parseEither,
                                            withObject)
 import Data.Maybe (fromJust, isNothing)
@@ -46,21 +46,21 @@ import           Data.Aeson.Lens
 import Control.Lens ((^?) , (^.))
 import Control.Lens.Iso (non)
 
-import           Data.Conduit             (($$+-))
-import           Data.Conduit.Attoparsec  (sinkParser)
+-- import           Data.Conduit             (($$+-))
+-- import           Data.Conduit.Attoparsec  (sinkParser)
 import qualified Data.HashMap.Strict      as M
-import           Data.Monoid              (mappend)
-import           Data.Maybe               (fromJust, isJust)
-import           Data.Text                (Text)
+-- import           Data.Monoid              (mappend)
+-- import           Data.Maybe               (fromJust, isJust)
+-- import           Data.Text                (Text)
 import qualified Data.Text                as T
 -- import           Data.Text.Encoding       (decodeUtf8, encodeUtf8)
 import qualified Data.Text.Lazy           as TL
 import qualified Data.Text.Lazy.Builder   as TL
 import           Network.HTTP.Client      (parseUrl, requestHeaders,
-                                           responseBody, urlEncodedBody, newManager)
-import           Network.HTTP.Conduit     (http, withManagerSettings, withManager, mkManagerSettings)
+                                           responseBody, urlEncodedBody)
+import           Network.HTTP.Conduit     (httpLbs)
 import           Network.HTTP.Types       (renderQueryText)
-import Network.Connection (TLSSettings (..))
+-- import           Network.Connection (TLSSettings (..))
 import           Network.Mail.Mime        (randomString)
 import           System.Random            (newStdGen)
 import           Yesod.Auth               (Auth, AuthPlugin (AuthPlugin),
@@ -70,12 +70,14 @@ import           Yesod.Auth               (Auth, AuthPlugin (AuthPlugin),
 import qualified Yesod.Auth.Message       as Msg
 import           Yesod.Core               (HandlerSite, MonadHandler,
                                            getRouteToParent, getUrlRender,
-                                           getYesod, invalidArgs, lift,
+                                           getYesod, invalidArgs,
                                            lookupGetParam,
                                            lookupSession, notFound, redirect,
                                            setSession, whamlet, (.:),
-                                           TypedContent, HandlerT, liftIO, Yesod(..), toWidget, lucius)
+                                           TypedContent, HandlerT, Yesod(..), toWidget, lucius)
 
+
+-- import Control.Monad.Trans.Resource (runResourceT)
 
 catMaybes1 :: [(a, Maybe b)] -> [(a, b)]
 catMaybes1 = map ( second fromJust ) . filter ( isJust . snd )
@@ -114,7 +116,7 @@ getCreateCsrfToken = do
             setSession csrfKey token
             return token
 
-settingsSsl = mkManagerSettings (TLSSettingsSimple True False False) Nothing
+-- settingsSsl = mkManagerSettings (TLSSettingsSimple True False False) Nothing
 authGoogleEmail :: (YesodAuth m, YesodGoogleAuth m)
                 => AuthPlugin m
 authGoogleEmail =
@@ -174,11 +176,7 @@ authGoogleEmail =
 #if DEVELOPMENT
 #else
         mstate <- lookupGetParam "state"
---         mtoken <- getCsrfToken
---         liftIO $ do
---             print mstate
---             print mtoken
---
+
         case mstate of
             Nothing -> invalidArgs ["CSRF state from Google is missing"]
             Just state -> do
@@ -205,13 +203,18 @@ authGoogleEmail =
                     , ("grant_type", "authorization_code")
                     ]
                     req'
-                        { requestHeaders = []
+                        { requestHeaders = [("Connection", "close")]
                         }
 
-        value <- withManagerSettings settingsSsl $ \manager -> do
-           -- manager <- newManager -- liftM authHttpManager $ lift getYesod
-           res <- http req manager
-           responseBody res $$+- sinkParser json'
+--         value <- withManagerSettings settingsSsl $ \manager -> do
+        man <- liftM authHttpManager $ lift getYesod
+--         man <- newManager tlsManagerSettings
+--         req <- liftIO $ parseUrl url
+--         responseBody <$> httpLbs (setConnectionClose req) man
+        Just value <- A.decode . responseBody <$> httpLbs req man
+--         runResourceT $ do
+--             res <- http req manager
+--             responseBody res $$+- sinkParser json'
         Tokens accessToken tokenType <-
             case parseEither parseJSON value of
                 Left e -> error e
@@ -223,11 +226,16 @@ authGoogleEmail =
         let req2 = req2'
                 { requestHeaders =
                     [ ("Authorization", encodeUtf8 $ "Bearer " `mappend` accessToken)
+                    , ("Connection", "close")
                     ]
                 }
-        value2 <- withManagerSettings settingsSsl $ \manager -> do
-             res2 <- http req2 manager
-             responseBody res2 $$+- sinkParser json'
+--         value2 <- withManagerSettings settingsSsl $ \manager -> do
+--         manager <- liftM authHttpManager $ lift getYesod
+        Just value2 <- A.decode . responseBody <$> httpLbs req2 man
+--         value2 <- runResourceT $ do
+--               res2 <- http req2 manager
+--               responseBody res2 $$+- sinkParser json'
+--
         Person emails fullName <-
             case parseEither parseJSON value2 of
                 Left e -> error e

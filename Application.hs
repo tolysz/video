@@ -30,10 +30,12 @@ import Handler.OAuth2
 import Handler.User
 import Handler.DB
 import Handler.DBRaw
+import           Network.Connection (TLSSettings (..))
 
 import Types.ConnPoolRaw
+-- import Network.HTTP.Client
 import Network.HTTP.Client.TLS
-
+import Network.HTTP.Client.Conduit
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
 -- comments there for more details.
@@ -47,7 +49,12 @@ makeFoundation :: AppSettings -> IO App
 makeFoundation appSettings = do
     -- Some basic initializations: HTTP connection manager, logger, and static
     -- subsite.
-    appHttpManager <- newManagerSettings tlsManagerSettings
+--     let settingsSsl = mkManagerSettings (TLSSettingsSimple True False False) Nothing
+--     appHttpManager <-newManagerSettings tlsManagerSettings
+    appHttpManager <- newManager
+--     newManagerSettings tlsManagerSettings
+--     settingsSsl
+--     tlsManagerSettings
     appLogger <- newStdoutLoggerSet defaultBufSize >>= makeYesodLogger
     appStatic <-
         (if appMutableStatic appSettings then staticDevel else static)

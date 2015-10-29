@@ -37,9 +37,17 @@ extra-deps:
  - possible-0.1.0.5
  - rawstring-qm-0.2.2.2
  - smtps-gmail-1.3.1
+ - tls-1.3.3
+ - cryptonite-0.7
 
 # Override default flag values for local packages and extra-deps
-flags: {}
+flags:
+  cryptonite:
+#  support_pclmuldq: true
+    support_rdrand: false
+    support_aesni: false
+#  typedquery:
+#    debug-typed-queries: true
 
 # Extra package databases containing global packages
 extra-package-dbs: []

@@ -1,3 +1,6 @@
 
 
-code {white-space: pre-wrap;}
+code {white-space: pre-wrap;
+background: #59ff27;
+    kerning: none;
+}

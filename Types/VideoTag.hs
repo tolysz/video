@@ -7,16 +7,16 @@ module Types.VideoTag where
 import Prelude
 import Data.Typeable
 import GHC.Generics
-import Control.Monad
-import Data.Default
+import Control.Monad()
+-- import Data.Default
 
-import qualified Data.Text as T
+-- import qualified Data.Text as T
 import qualified Data.Aeson as DA
 import qualified Data.ByteString.Lazy as L
 import Network.Google.Api.Utils
 import Database.Persist.Sql
 import Database.PostgreSQL.Simple.FromField as PGS
-import Database.PostgreSQL.Simple.Types as PGS
+-- import Database.PostgreSQL.Simple.Types as PGS
 
 import Data.Aeson.TH       (deriveJSON)
 

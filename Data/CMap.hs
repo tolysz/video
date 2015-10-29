@@ -2,7 +2,7 @@
 module Data.CMap ( CMap (..), Mask, newCMapIO, getChan, broadcastChan, writeFiltered, adjustFilter, sendSendChan ) where
 
 import ClassyPrelude
-import qualified Data.Map.Strict as Map
+-- import qualified Data.Map.Strict as Map
 import Data.Bool
 import Data.Possible
 import qualified ListT

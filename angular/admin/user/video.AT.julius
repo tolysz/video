@@ -1,5 +1,7 @@
 function($scope, $log, $http, $stateParams, $timeout, GroupUser){
 
+    "use strict";
+
     $scope.allContacts = [];
     $scope.who = {};
     $scope.cc = {};
@@ -106,5 +108,5 @@ function($scope, $log, $http, $stateParams, $timeout, GroupUser){
             $log.debug("success");
             $window.location.reload();
         });
-    }
+    };
 }
