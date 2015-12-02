@@ -4,7 +4,6 @@ module Data.Binary.Enum where
 
 import Prelude
 import Data.Binary
--- import Control.Applicative
 import qualified Data.List as DL
 
 -- | we can store Enum values inside values we know how to store, so let

@@ -50,15 +50,6 @@ library
                      Yesod.Auth.Facebook2
                   -- wait pull -- https://github.com/yesodweb/yesod/pull/772
 --                  transformers
-                  -- separare neo4j library
-                     Database.Neo.Monad
---                     Database.Neo.Types
-                     Database.Neo.Rest
-                     Database.Neo.Utils
-                     Database.Neo.NeoNode
-                     Database.Neo.NeoResponse
-                     Database.Neo.Cypher
-
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
         ghc-options:   -Wall -fwarn-tabs -O0
@@ -173,7 +164,7 @@ library
                  , blaze-builder
                  , resourcet
                -- neo4j
-                 , mtl
+                 , rest-neo
                -- db pools
                  , resource-pool
 

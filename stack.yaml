@@ -6,15 +6,20 @@ resolver: nightly-2015-10-28
 # Local packages, usually specified by relative directory name
 packages:
  - '.'
+# - '../rest-neo'
+ - location:
+      git: git@github.com:tolysz/rest-neo
+      commit: 0ab60d0d67028ffb2c382f9bc3a417fe77cc1f40
  - location:
       git: git@github.com:tolysz/aeson
       commit: de2736778ff880d739d24f3c78dd028b94cc5cd0
  - location:
       git: git@github.com:tolysz/google-api
       commit: 91f470ab78e2ffbf7aeda31bb0167bf7612c26e3
+# - '../typedquery'
  - location:
       git: git@github.com:tolysz/typedquery
-      commit: 6eceac7e2efceb9aecc3ce711f11ec467588a225
+      commit: 5b84b04805c7e15a0756e051f1348e49d76af656
  - location:
       git: git@github.com:tolysz/postgresql-simple-typed
       commit: 851e767a3df6ce5d32f3cddcfc66780cdfccbfc2
@@ -46,8 +51,8 @@ flags:
 #  support_pclmuldq: true
     support_rdrand: false
     support_aesni: false
-#  typedquery:
-#    debug-typed-queries: true
+  typedquery:
+    debug-typed-queries: true
 
 # Extra package databases containing global packages
 extra-package-dbs: []

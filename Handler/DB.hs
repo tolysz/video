@@ -295,9 +295,9 @@ getUserGroupsR =
   runDB $
      E.select (
      E.from   $ \(sgm `E.InnerJoin` sg) -> do
-     E.on     $ sg  E.^. SiteGroupId         E.==. sgm E.^. SiteGroupMemberGroupId
-     E.where_ $ sgm E.^. SiteGroupMemberUserId E.==. E.val aid
-     return (sg, sgm)
+         E.on     $ sg  E.^. SiteGroupId         E.==. sgm E.^. SiteGroupMemberGroupId
+         E.where_ $ sgm E.^. SiteGroupMemberUserId E.==. E.val aid
+         return (sg, sgm)
      )
 
 
@@ -529,7 +529,7 @@ updateYTPlaylistItms gr gu i _ rq =
           where v.ref  = ? -- < (toJSON _ypiSnippet) ^? key "resourceId" . key "videoId" . _String ^. non "fail"
             and pl.ref = ? -- < i
                 |])
-       >>= \case
+         >>= \case
            []              -> return (DBNoop, _ypiId)
            ((vid, plid):_) ->
                runDB ( E.select $
@@ -557,9 +557,6 @@ updateYTPlaylistItms gr gu i _ rq =
                              else do
                                runDB $ update (entityKey a) [YTVideoPlaylistEtag =. _ypiEtag, YTVideoPlaylistSnippet =. Just (TC li)]
                                return $ (DBUpdate, _ypiId)
-
-
-
       )
    _ -> return $ TC [(DBApiFail, i)]
 
