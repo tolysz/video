@@ -1,10 +1,10 @@
 dist*
 .idea/
-static/tmp/
-static/combined/
-config/client_session_key.aes
-config/keter.yml
-config/keter-dev.yml
+server/static/tmp/
+server/static/combined/
+server/config/client_session_key.aes
+server/config/keter.yml
+server/config/keter-dev.yml
 *.hi
 *.o
 *.sqlite3
