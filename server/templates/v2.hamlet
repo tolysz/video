@@ -1,0 +1,6 @@
+$newline never
+\<!doctype html>
+<html>
+  <head>
+    <script language="javascript" src=@{StaticR v2_js}>
+  <body>

@@ -1,30 +1,28 @@
 flags: {}
 
-resolver: lts-3.16
-
-# compiler: ghcjs-0.2.0.20151029_ghc-7.10.2
+resolver: lts-3.17
 compiler:  ghcjs-0.2.0.20151209_ghc-7.10.2
-
 compiler-check: match-exact
 
 setup-info:
   ghcjs:
     source:
       ghcjs-0.2.0.20151209_ghc-7.10.2:
-        url: "https://agithub.com/nrolland/ghcjs/releases/download/v0.2.0.20151029/ghcjs-0.2.0.20151029.tar.gz"
+        url: "https://raw.githubusercontent.com/tolysz/video/ghcjs/ghcjs-0.2.0.20151209_ghc-7.10.2.tar.gz"
 
 packages:
 - location: '.'
 #- location:
-#    git: https://github.com/ryantrinkle/reflex-dom.git
-#    commit: f4dbdd799260bc203f7f5cdce18362cb896f6d57 # ghcjs-improved-base-2 branch
+#      git: git@github.com:tolysz/aeson
+#      commit: de2736778ff880d739d24f3c78dd028b94cc5cd0
+#  extra-dep: true
 - location:
-    git: https://github.com/ocharles/Francium.git
-#    commit: 82584a12ff184ad63bd2311f3672967709e57ab2 # ghcjs-improved-base-2 branch
-    commit: a5f2be9e0c4e5c193400783132825f387592378e
+    git: https://github.com/ryantrinkle/reflex.git
+    commit: 784f9f79396ae713a03fc4d81f8a67b75d6ade1c # need a few package bumps not present in hackage release yet
+  extra-dep: true
 - location:
-     git: https://github.com/ocharles/virtual-dom.git
-     commit: 82c3fc6e3eac9623f0d27f4cf7bb8cd4ecdf4e71
+    git: https://github.com/ryantrinkle/reflex-dom.git
+    commit: a60ae687cdc284a8eb3776fc95aa2adefc51e7ec # hamishmack-master (improved-base compatible)
   extra-dep: true
 
 extra-deps:
@@ -32,4 +30,3 @@ extra-deps:
   - ref-tf-0.4
   - these-0.6.1.0
   - ghcjs-dom-0.2.3.0
-  - reactive-banana-0.9.0.0

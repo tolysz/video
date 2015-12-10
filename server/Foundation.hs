@@ -3,7 +3,7 @@ module Foundation where
 
 import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Import.NoFoundation
-import Text.Hamlet              (hamletFile, ihamletFile)
+import Text.Hamlet              (hamletFile, ihamletFile, hamletFileReload)
 -- import Text.Julius              (Javascript,js)
 import Text.Jasmine             (minifym)
 import Yesod.Core.Types         (Logger)
@@ -327,6 +327,10 @@ angularUILayout ngApp widget = do
 -- todo: convert route into javascript function
 -- instance IsString ((Route App -> [(Text, Text)] -> Text) -> Javascript) where
 --  fromString a = [js|^{rawJS a}|]
+
+ghcjsLayout :: HandlerT App IO Html
+-- ghcjsLayout = withUrlRenderer $(hamletFile "templates/v2.hamlet")
+ghcjsLayout = withUrlRenderer $(hamletFileReload  "templates/v2.hamlet")
 
 -- get user identity from the DB, maybe this is already cached?
 getUserIdent :: Handler (Key Users)

@@ -6,6 +6,8 @@ server/config/client_session_key.aes
 server/config/keter.yml
 server/config/keter-dev.yml
 *.hi
+/client/.stack-work
+/server/.stack-work
 *.o
 *.sqlite3
 *.keter

@@ -31,6 +31,9 @@ import Handler.DB
 import Permissions
 type LangCache = Map LangId Html
 
+handleGhcJsR :: [Text] ->  Handler Html
+handleGhcJsR _ = ghcjsLayout
+
 anonCache :: MVar LangCache
 anonCache = unsafePerformIO $ newMVar Map.empty
 {-# NOINLINE anonCache #-}
