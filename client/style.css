@@ -376,3 +376,41 @@ html .clear-completed:active {
 		bottom: 10px;
 	}
 }
+
+
+.rx-fab{
+	border-radius: 50%;
+	margin:0;
+	padding: 20px;
+}
+
+.rx-material{
+	position:relative;
+	color:white;
+	margin: 20px auto;
+	height:400px;
+	width:500px;
+	background:#f45673;
+}
+
+.rx-ripple{
+	overflow:hidden;
+}
+.rx-ripple-effect{
+	position: absolute;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	background: white;
+	animation: rx-ripple-animation 2s;
+}
+@keyframes rx-ripple-animation {
+	from {
+		transform: scale(1);
+		opacity: 0.4;
+	}
+	to {
+		transform: scale(100);
+		opacity: 0;
+	}
+}

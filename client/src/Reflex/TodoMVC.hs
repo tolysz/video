@@ -9,15 +9,18 @@ import Control.Monad.Trans
 import Data.Map (Map)
 import qualified Data.Map as Map
 import Data.Foldable
+import qualified Data.ByteString as BS
 import Data.Monoid ((<>))
 import Data.List (intercalate)
 import Data.FileEmbed
 import Control.Concurrent
 import qualified Data.Text as T
+import Data.Text.Encoding
 
 import Reflex
 import Reflex.Dom
 
+import Reflex.Material.MdIcon
 --------------------------------------------------------------------------------
 -- Model
 --------------------------------------------------------------------------------
@@ -59,8 +62,25 @@ satisfiesFilter f = case f of
 -- View
 --------------------------------------------------------------------------------
 
+-- Widget Spider
+--   (Gui Spider
+--          (WithWebView SpiderHost)
+--          (Reflex.Host.Class.HostFrame Spider)
+--          )
+--   ()
+
+-- elAttr' "button" (Map.singleton "type" "button") $ text s
+embedStyle :: MonadWidget t m => BS.ByteString -> m ()
+embedStyle = el "style"  . text . T.unpack . decodeUtf8
+
 main :: IO ()
-main = mainWidgetWithCss $(embedFile "style.css") todoMVC
+main = mainWidgetWithHead
+   (do -- header
+     embedStyle $(embedFile "style.css")
+     addMaterialIcons
+     addStylesheet "static/app.min.css"
+   )
+   todoMVC
 
 todoMVC :: MonadWidget t m => m ()
 todoMVC = do
@@ -81,9 +101,18 @@ todoMVC = do
 -- | Display the main header
 mainHeader :: MonadWidget t m => m ()
 mainHeader = do
-       el "h1" $ text "todox2 reload"
-       tweetBox <- textArea def
-       dynText $ value tweetBox
+       el "h1" $ text "todo"
+--        (click) <- mdButton $ addIcon "important_devices"
+--        tweetBox <- textArea def
+--        rec t <- textInput $ def & setValue .~ fmap (const "") newMessage
+       b <- mdButton $ addIcon "important_devices"
+--            let newMessage = tag (current $ value t) $ leftmost [b, textInputGetEnter t]
+--        display $  current $ constDyn $ text "ola" $ leftmost [click]
+
+--        text "bla"
+--        newMessage
+--        $ ffilter click "bum"
+       blank
 
 -- | Display an input field; produce new Tasks when the user creates them
 taskEntry :: MonadWidget t m => m (Event t Task)
