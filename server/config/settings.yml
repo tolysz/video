@@ -30,9 +30,10 @@ neo4j:
   host: "_env:NEO_DB"
   auth: "_env:NEO_AUTH"
 
+analytics: "_env:GOOGLE_ANALYTICS"
+
 copyright: "2015© Marcin Tolysz website, content various copyrights"
 
-analytics: "_env:GOOGLE_ANALYTICS"
 
 google-api-server: "_env:GOOGLE_API_SERVER"
 google-api-browser: "_env:GOOGLE_API_BROWSER"
