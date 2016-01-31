@@ -330,7 +330,7 @@ angularUILayout ngApp widget = do
 
 ghcjsLayout :: HandlerT App IO Html
 -- ghcjsLayout = withUrlRenderer $(hamletFile "templates/v2.hamlet")
-ghcjsLayout = withUrlRenderer $(hamletFileReload  "templates/v2.hamlet")
+ghcjsLayout = withUrlRenderer $(hamletFile  "templates/v2.hamlet")
 
 -- get user identity from the DB, maybe this is already cached?
 getUserIdent :: Handler (Key Users)

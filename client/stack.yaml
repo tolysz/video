@@ -1,14 +1,17 @@
 flags: {}
 
-resolver: lts-3.17
-compiler:  ghcjs-0.2.0.20151209_ghc-7.10.2
+resolver: lts-5.1
+compiler:  ghcjs-0.2.0.9005001_ghc-7.10.3
 compiler-check: match-exact
 
 setup-info:
   ghcjs:
     source:
-      ghcjs-0.2.0.20151209_ghc-7.10.2:
-        url: "https://raw.githubusercontent.com/tolysz/video/ghcjs/ghcjs-0.2.0.20151209_ghc-7.10.2.tar.gz"
+      ghcjs-0.2.0.9005001_ghc-7.10.3:
+         url: "https://tolysz.org/ghcjs/lts-5.1-9005001.tar.gz"
+        #url: "https://raw.githubusercontent.com/tolysz/video/ghcjs/ghcjs-0.2.0.20151209_ghc-7.10.2.tar.gz"
+
+allow-newer: true
 
 packages:
 - location: '.'
@@ -18,20 +21,26 @@ packages:
 #  extra-dep: true
 - location:
     git: https://github.com/ryantrinkle/reflex.git
-    commit: 384d1c51adb07b3882ce553b955884bde253b8aa
+    commit: 5b5a1c8d540ea9058988d4c564e2823aa099b840
+# 384d1c51adb07b3882ce553b955884bde253b8aa
   # 784f9f79396ae713a03fc4d81f8a67b75d6ade1c # need a few package bumps not present in hackage release yet
   extra-dep: true
 - location:
     git: https://github.com/ryantrinkle/reflex-dom.git
-    commit: 6ce47284bb4c9472f002f98437318a1ee6650ac4
+    commit: 89117143f5f19d95fba55cfb56a3577ba15e7aea
     #commit: a60ae687cdc284a8eb3776fc95aa2adefc51e7ec # hamishmack-master (improved-base compatible)
   extra-dep: true
+#- location:
+#     git: https://github.com/Saulzar/reflex-animation.git
+#     commit: 10484c94563fa922383639989e860e527b4a2697
+
+#- location:
+#     git: https://github.com/tolysz/reflex-transformers.git
+#     commit: 355f22df48c645b4952c1724712ca6db6c20c925
 - location:
-     git: https://github.com/Saulzar/reflex-animation.git
-     commit: 10484c94563fa922383639989e860e527b4a2697
-- location:
-     git: https://github.com/Saulzar/reflex-transformers.git
-     commit: 992d40a238e05c96f55b8580e0ab578eef05ef4e
+     git: https://github.com/isomorphism/these.git
+     commit: cf68c46bd049d23938f351da5618e9a09ef1102c
+
 extra-deps:
 #  - reflex-0.3.2
   - ref-tf-0.4

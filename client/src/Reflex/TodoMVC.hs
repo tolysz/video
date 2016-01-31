@@ -101,7 +101,7 @@ todoMVC = do
 -- | Display the main header
 mainHeader :: MonadWidget t m => m ()
 mainHeader = do
-       el "h1" $ text "todo"
+       el "h1" $ text "todo312"
 --        (click) <- mdButton $ addIcon "important_devices"
 --        tweetBox <- textArea def
 --        rec t <- textInput $ def & setValue .~ fmap (const "") newMessage

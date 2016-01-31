@@ -1,8 +1,8 @@
 # For more information, see: https://github.com/commercialhaskell/stack/blob/release/doc/yaml_configuration.md
 
 # Specifies the GHC version and set of packages available (e.g., lts-3.5, nightly-2015-09-21, ghc-7.10.2)
-resolver: nightly-2015-12-11
-compiler: ghc-7.10.3
+resolver: lts-5.1
+#compiler: ghc-7.10.3
 allow-newer: true
 
 # Local packages, usually specified by relative directory name
@@ -13,11 +13,20 @@ packages:
  - location:
       git: git@github.com:tolysz/rest-neo
       commit: 0ab60d0d67028ffb2c382f9bc3a417fe77cc1f40
-# - '../../aeson'
+ - '../../aeson'
+ - '../../persistent/persistent-template'
+ - '../../persistent/persistent'
+ - '../../persistent/persistent-postgresql'
+# - location:
+#      git: git@github.com:tolysz/aeson
+#      commit: 5e646c04ae65a7ace34979a588c25263ea3e6e85 # version 10.0.0.0.
  - location:
-      git: git@github.com:tolysz/aeson
-#      commit: de2736778ff880d739d24f3c78dd028b94cc5cd0 # version 8.0.0.2
-      commit: 405d1ca6211b9b332b02581c362a48d05302a95b # version 10.0.0.0.
+      git: git@github.com:tolysz/aeson-compat
+      commit: 52e407e4e84e4c16dbd17bcd7fb2ac01c18bb46f
+ - location:
+      git: git@github.com:tolysz/lens-aeson
+      commit: d4a4b09b4b3681e2d5457f2ab969e7ec01201cfe
+
  - location:
       git: git@github.com:tolysz/google-api
       commit: 91f470ab78e2ffbf7aeda31bb0167bf7612c26e3
@@ -39,13 +48,15 @@ packages:
       commit: cfe14876c1a842256f82282172f590db90883eda
  - location:
       git: git@github.com:tolysz/Haxl
-      commit: be4f0a1d7c093dd4efa6584ac2d231a4502e0da7
+      commit: 41d9352fbac9f0d48b49324a5091ce4374ca1a5a
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
+
 
 extra-deps:
 # - haxl-0.3.0.0
  - possible-0.1.0.5
+ - fail-4.9.0.0
  - rawstring-qm-0.2.2.2
  - smtps-gmail-1.3.1
 # - tls-1.3.3
