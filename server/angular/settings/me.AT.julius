@@ -3,4 +3,5 @@ function($scope, maid, title, $log, $http, appLang, $locale){
     $http.get("@{UserMeR}" , {cache:true}).then(function(v){
        $log.debug(v);
        $scope.user = v.data[0];
-    })}
+    });
+}

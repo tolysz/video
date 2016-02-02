@@ -1,4 +1,4 @@
-<md-content .md-padding>
+<md-container layout=column>
   <md-input-container>
     <label>_{SomeMessage MsgUserEmail}
     <input ng-model=user.email type=email>
@@ -13,6 +13,7 @@
   <md-input-container>
      <label>_{SomeMessage MsgUserAvatar}
      <input ng-model=user.avatar type=url>
-<md-button .md-raised .md-warn ng-click=save()>_{SomeMessage MsgCreate}
+<div layout=row layout-align="space-between center">
+  <md-button .md-raised .md-warn ng-click=save()>_{SomeMessage MsgCreate}
 <pre ng-show=debug>
   {{ user | json }}

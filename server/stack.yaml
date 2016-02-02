@@ -19,7 +19,7 @@ packages:
  - '../../persistent/persistent-postgresql'
 # - location:
 #      git: git@github.com:tolysz/aeson
-#      commit: 5e646c04ae65a7ace34979a588c25263ea3e6e85 # version 10.0.0.0.
+#      commit: 0521fe40034a81276d481b65a5a5804e18f21eea # version 10.0.0.0.
  - location:
       git: git@github.com:tolysz/aeson-compat
       commit: 52e407e4e84e4c16dbd17bcd7fb2ac01c18bb46f

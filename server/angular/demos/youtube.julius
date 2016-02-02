@@ -1,4 +1,4 @@
 function ($scope, title, $sce) {
     title.set( $sce.trustAsHtml("And we play <span class='fa youtube' /> videos..."));
-    $scope.curr_vars = { videoId: 'qdsTUfDTEhQ'}
+    $scope.curr_vars = { videoId: '0vrdgDdPApQ'}
 }

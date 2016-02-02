@@ -1,0 +1,11 @@
+<md-content .md-padding>
+    <md-list>
+      <md-subheader .md-no-sticky>3 line item
+      <md-list-item .md-3-line >
+        <!-- ng-repeat="item in todos" -->
+        <img ng-src="item.face?$index" .md-avatar alt="item.who" >
+        <div .md-list-item-text layout="column">
+          <h3> item.who
+          <h4> item.what
+          <p> item.notes
+      <md-divider >

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 PWD=$(pwd)
-
 cd server
 
 stack install
@@ -15,6 +14,7 @@ echo  ${DIR}
 mkdir -p ${DIR}/config
 cp config/keter${1}.yml ${DIR}/config/keter.yml
 cp config/client_session_key.aes ${DIR}/config/
+rm -fr static/tmp
 cp -r static ${DIR}
 cp -f ${HOME}/.local/bin/${APP} ${DIR}/
 
@@ -24,5 +24,5 @@ scp ${FN}.keter m@s1.tolysz.org:/opt/keter/incoming
 
 cd ${PWD}
 rm -rf ${DIR}
-
+date
 #/app/bin/yesod keter -n

@@ -11,7 +11,6 @@ import Control.Monad hiding (mapM, mapM_, forM, forM_, sequence)
 import Control.Monad.Trans
 
 
-
 addStylesheet :: MonadWidget t m => String -> m ()
 addStylesheet l = emptyElWith "link" $ def & attributes
    .~ mconcat [ "href" =: l

@@ -6,7 +6,7 @@ stack setup
 echo BUILD
 PP=`stack path --local-install-root`/bin/reflex-todomvc.jsexe
 servius -d $PP -p 3301 &
-WW=$1
+WW=$!
 
 stack build --file-watch
 #echo CLOSURE-COMPILE

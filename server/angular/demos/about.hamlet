@@ -17,7 +17,7 @@
       <dt> Material Design
       <dd>
          A a specification for a unified system of visual, motion, and interaction design that adapts across different devices and different screen sizes.
-         <a target="_blank" href=https://material.angularjs.org/ > reusable components
+         <a target="_blank" href=https://material.angularjs.org/ > reusable components {{mdVersion}}
 
       <dt>Yesod
       <dd>
@@ -29,7 +29,7 @@
           Haskell
       <dd>
           We use the
-          <a target="_blank" href=https://ghc.haskell.org/trac/ghc> 7.10.2 version#
+          <a target="_blank" href=https://ghc.haskell.org/trac/ghc> 7.10.3 version#
 
       <dt> Google API
       <dd>

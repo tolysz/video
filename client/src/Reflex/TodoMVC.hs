@@ -1,4 +1,10 @@
-{-# LANGUAGE RecursiveDo, ScopedTypeVariables, FlexibleContexts, TypeFamilies, ConstraintKinds, TemplateHaskell #-}
+{-# LANGUAGE RecursiveDo
+  , ScopedTypeVariables
+  , FlexibleContexts
+  , TypeFamilies
+  , ConstraintKinds
+  , TemplateHaskell
+  #-}
 module Reflex.TodoMVC where
 
 import Prelude hiding (mapM, mapM_, all, sequence)
@@ -78,7 +84,7 @@ main = mainWidgetWithHead
    (do -- header
      embedStyle $(embedFile "style.css")
      addMaterialIcons
-     addStylesheet "static/app.min.css"
+--      addStylesheet "static/app.min.css"
    )
    todoMVC
 
@@ -101,7 +107,7 @@ todoMVC = do
 -- | Display the main header
 mainHeader :: MonadWidget t m => m ()
 mainHeader = do
-       el "h1" $ text "todo312"
+       el "h1" $ text "todo3C"
 --        (click) <- mdButton $ addIcon "important_devices"
 --        tweetBox <- textArea def
 --        rec t <- textInput $ def & setValue .~ fmap (const "") newMessage

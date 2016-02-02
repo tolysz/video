@@ -165,6 +165,8 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
 
     state $(utcFile "/demos"           "demos"               )
     state $(utcFile "/empty"           "demos.empty"         )
+    state $(utcFile "/card"            "demos.card"          )
+    state $(utcFile "/list"            "demos.list"          )
     state $(utcFile "/panel"           "demos.panel"         )
     state $(utcFile "/button"          "demos.button"        )
     state $(utcFile "/checkbox"        "demos.checkbox"      )
@@ -392,6 +394,8 @@ genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
              , { state: "demos.slider",    name: "Slider",     icon: "fa barcode font-menu-icon font-lg" }
              , { state: "demos.textfield", name: "Text Field", icon: "fa barcode font-menu-icon font-lg" }
              , { state: "demos.youtube",   name: "Youtube",    icon: "fa youtube font-menu-icon font-lg" }
+             , { state: "demos.card",      name: "Card",       icon: "fa youtube font-menu-icon font-lg" }
+             , { state: "demos.list",      name: "List",       icon: "fa youtube font-menu-icon font-lg" }
              , { state: "demos.empty",     name: "%{jsi18n (SomeMessage MsgHello)}",      icon: "fa frown-o font-menu-icon font-lg" }
              , { state: "demos.about",     name: "About",      icon: "fa info font-menu-icon font-lg" }
              ]

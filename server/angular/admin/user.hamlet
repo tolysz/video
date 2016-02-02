@@ -4,22 +4,24 @@
        _{SomeMessage MsgAddNewUser}
 <md-list>
    <md-item ng-repeat="user in users">
-     <md-item-content>
-       <div .md-tile-left>
+      <md-list-item .md-3-line layout=row  layout-align="start center" >
            <a ui-sref="admin.user.edit({uuid:user.uuid})">
-               <img ng-src={{user.avatar}} ng-show=user.avatar .cover alt="{{user.someName}}">
-               <span .cover .fa .user .font-3x ng-hide=user.avatar>
-       <div class="md-tile-content">
-         <h3>
-            <a ui-sref=oauth2.playlists({cid:chan.id})>
-                   {{user.someName}}
-            <a ui-sref="admin.user.video({uuid:user.uuid})">
-               <span .cover .fa .font-3x .file-video-o>
-         <h4>{{chan.kind}}
-         $if isDebugger
-             <p ng-show=appDebug>
-               <pre>
-                  {{ user | json }}
+              <img ng-src={{user.avatar}} ng-show=user.avatar .md-avatar  alt="{{user.someName}}">
+              <span .md-avatar .fa .user .font-3x ng-hide=user.avatar>
+           <div .md-list-item-text layout="column">
+              <h3> {{user.name}}
+                   <span ng-show=user.friendly>
+                       &nbsp&nbsp(&nbsp {{user.friendly}} &nbsp )
+              <h4> {{ user.emails | json }}
+              <p>
+                {{ user.uuid }}
+                $if isDebugger
+                  <pre ng-show=appDebug>
+                    {{ user | json }}
+           <a ui-sref="admin.user.video({uuid:user.uuid})">
+              <span .md-avatar .fa .font-3x .file-video-o>
+      <md-divider >
+
 $if isDebugger
     <code ng-show=appDebug>
        \ SiteGroupMember

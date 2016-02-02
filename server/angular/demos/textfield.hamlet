@@ -1,5 +1,4 @@
-
-<md-content layout=column layout-gt-sm=row .md-padding>
+<md-content layout=column .md-padding>
       <md-input-container>
         <label>Title
         <input ng-model="user.title">
@@ -12,7 +11,7 @@
       <md-input-container flex>
         <label>Submission Date
         <input type="date" ng-model="user.submissionDate">
-<md-content .md-padding layout=column layout-gt-sm=row layout-padding layout-margin layout-fill>
+<md-content .md-padding layout=column layout-padding layout-margin layout-fill>
   <md-input-container .pad20>
           <label>FirstName
           <input ng-model=user.firstName>
@@ -22,7 +21,7 @@
   <md-input-container .pad20>
      <label>Address
      <input ng-model=user.address>
-  <div layout=column layout-gt-sm=row layout-padding layout-margin layout-fill>
+  <div layout=column layout-padding layout-margin layout-fill>
       <md-input-container .pad20>
          <label>City
          <input ng-model=user.city>
