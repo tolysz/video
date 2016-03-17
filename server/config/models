@@ -103,6 +103,12 @@ YTPlaylist
     groupId              SiteGroupId
     UniqueYTPlaylist     ref
     UniqueYTPlaylistUUID uuid
+    sharePerm            PlaylistShare   default='PSGroup'
+    deriving Show Typeable Generic
+
+ExplicitPlaylistUser
+  user     UsersId
+  playlist YTPlaylistId
     deriving Show Typeable Generic
 
 -- Association between videos and playlists

@@ -1,14 +1,14 @@
 flags: {}
 
-resolver: lts-5.1
-compiler:  ghcjs-0.2.0.9005001_ghc-7.10.3
+resolver: lts-5.8
+compiler: ghcjs-0.2.0.9005008_ghc-7.10.3
 compiler-check: match-exact
 
 setup-info:
   ghcjs:
     source:
-      ghcjs-0.2.0.9005001_ghc-7.10.3:
-         url: "https://tolysz.org/ghcjs/lts-5.1-9005001.tar.gz"
+      ghcjs-0.2.0.9005008_ghc-7.10.3:
+         url: "https://tolysz.org/ghcjs/lts-5.8-9005008.tar.gz"
         #url: "https://raw.githubusercontent.com/tolysz/video/ghcjs/ghcjs-0.2.0.20151209_ghc-7.10.2.tar.gz"
 
 allow-newer: true

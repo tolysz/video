@@ -135,6 +135,15 @@ derivePersistField "PlaylistType"
 instance ToJSON    PlaylistType
 instance FromJSON  PlaylistType
 
+data PlaylistShare
+  = PSGroup
+  | PSExplicit
+    deriving (Show, Read, Eq, Typeable, Generic)
+derivePersistField "PlaylistShare"
+instance ToJSON    PlaylistShare
+instance FromJSON  PlaylistShare
+
+
 type ShortName = Text
 type EmailQuery = Text
 

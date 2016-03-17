@@ -17,7 +17,8 @@
       <dt> Material Design
       <dd>
          A a specification for a unified system of visual, motion, and interaction design that adapts across different devices and different screen sizes.
-         <a target="_blank" href=https://material.angularjs.org/ > reusable components {{mdVersion}}
+         <a target="_blank" href=https://material.angularjs.org/ > reusable components
+         we use {{mdVersion}}
 
       <dt>Yesod
       <dd>
@@ -54,7 +55,7 @@
           <br>
           <a target="_blank" href=https://ocharles.org.uk/blog/pages/2014-12-01-24-days-of-ghc-extensions.html > Fairly good guide to extensons
           <br>
-          <a target="_blank" href=http://www.stephendiehl.com/what/ > What I Wish I Knew When Learning Haskell
+          <a target="_blank" href=http://dev.stephendiehl.com/hask/ > What I Wish I Knew When Learning Haskell
           <br>
           <a target="_blank" href=http://www.reddit.com/r/haskell >
              <span .fa .reddit>

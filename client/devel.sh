@@ -2,7 +2,9 @@
 
 PATH=`stack path --bin-path  --stack-yaml /home/m/.stack/global/stack.yaml 2>/dev/null`
 stack setup
+stack build
 
+exit 0
 PP=`stack path --local-install-root`/bin/reflex-todomvc.jsexe
 
 rm -f ../server/static/v2.js

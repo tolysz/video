@@ -4,6 +4,7 @@ PATH=`stack path --bin-path  --stack-yaml $HOME/.stack/global/stack.yaml 2>/dev/
 echo SETUP
 stack setup
 echo BUILD
+stack build
 PP=`stack path --local-install-root`/bin/reflex-todomvc.jsexe
 servius -d $PP -p 3301 &
 WW=$1

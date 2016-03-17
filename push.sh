@@ -20,7 +20,7 @@ cp -f ${HOME}/.local/bin/${APP} ${DIR}/
 
 cd ${DIR}
 tar czfv - ${APP} config static > ${FN}.keter
-scp ${FN}.keter m@s1.tolysz.org:/opt/keter/incoming
+scp ${FN}.keter m@s5.tolysz.org:/opt/keter/incoming
 
 cd ${PWD}
 rm -rf ${DIR}
