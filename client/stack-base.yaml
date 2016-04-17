@@ -1,2 +1,7 @@
 flags: {}
+packages: []
+system-ghc: false
+extra-deps: []
+# resolver: lts-5.8
 resolver: nightly-2016-04-16
+allow-newer: true
