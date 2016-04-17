@@ -1,14 +1,19 @@
 flags: {}
 
-resolver: lts-5.8
-compiler: ghcjs-0.2.0.9005008_ghc-7.10.3
+#resolver: lts-5.8
+#compiler: ghcjs-0.2.0.9005008_ghc-7.10.3
+resolver: nightly-2016-04-16
+compiler: ghcjs-0.2.0.820160416_ghc-7.10.3
+
 compiler-check: match-exact
 
 setup-info:
   ghcjs:
     source:
-      ghcjs-0.2.0.9005008_ghc-7.10.3:
-         url: "https://tolysz.org/ghcjs/lts-5.8-9005008.tar.gz"
+      ghcjs-0.2.0.820160416_ghc-7.10.3:
+         url: "https://tolysz.org/ghcjs/nightly-2016-04-16-820160416.tar.gz"
+#      ghcjs-0.2.0.9005008_ghc-7.10.3:
+#         url: "https://tolysz.org/ghcjs/nightly-2016-03-19-820160319.tar.gz"
         #url: "https://raw.githubusercontent.com/tolysz/video/ghcjs/ghcjs-0.2.0.20151209_ghc-7.10.2.tar.gz"
 
 allow-newer: true
@@ -21,13 +26,15 @@ packages:
 #  extra-dep: true
 - location:
     git: https://github.com/ryantrinkle/reflex.git
-    commit: 5b5a1c8d540ea9058988d4c564e2823aa099b840
+    commit: 3a7fb30dde160bc31c0bba4f42f7666ea6ca054a
+    #commit: 5b5a1c8d540ea9058988d4c564e2823aa099b840
 # 384d1c51adb07b3882ce553b955884bde253b8aa
   # 784f9f79396ae713a03fc4d81f8a67b75d6ade1c # need a few package bumps not present in hackage release yet
   extra-dep: true
 - location:
-    git: https://github.com/ryantrinkle/reflex-dom.git
-    commit: 89117143f5f19d95fba55cfb56a3577ba15e7aea
+    git: https://github.com/tolysz/reflex-dom.git
+    commit: 5318d581fe3ef7b2b0f70ac352d6c56700124b98
+    #commit: 89117143f5f19d95fba55cfb56a3577ba15e7aea
     #commit: a60ae687cdc284a8eb3776fc95aa2adefc51e7ec # hamishmack-master (improved-base compatible)
   extra-dep: true
 #- location:

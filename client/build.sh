@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-PATH=`stack path --bin-path  --stack-yaml $HOME/.stack/global/stack.yaml 2>/dev/null`:$PATH
+stack --stack-yaml stack-base.yaml setup
+PATH=`stack path --bin-path  --stack-yaml stack-base.yaml 2>/dev/null`:$PATH
 echo SETUP
 stack setup
 echo BUILD
