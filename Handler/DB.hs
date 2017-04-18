@@ -32,12 +32,12 @@ import qualified Data.Text as T
 import qualified Data.Vector as V
 
 -- Module dedicated to accessing Database
-getUserChannelsR :: ApiReq [YTChannel]
-getUserChannelsR =
-  TC . catMaybes <$> do
-        uid <- getUserIdent
-        runDB $ selectList [ChannelMemberUserId ==. uid] []
-          >>= mapM (\(Entity _ q) -> get $ channelMemberRef q )
+-- getUserChannelsR :: ApiReq [YTChannel]
+-- getUserChannelsR =
+--   TC . catMaybes <$> do
+--         uid <- getUserIdent
+--         runDB $ selectList [ChannelMemberUserId ==. uid] []
+--           >>= mapM (\(Entity _ q) -> get $ channelMemberRef q )
 
 getBackupR = TC <$> ( Backup <$> listsOfAllNaked
                              <*> listsOfAllNaked
@@ -105,6 +105,7 @@ getUserR = do
              from email
              group by email.user_id
              ) as em on users.id = em.id
+        order by name
       |])
 -- listsOfAll
 
@@ -286,6 +287,7 @@ getSiteGroupUserR gid = do
      where
       g.uuid = ? -- < gid
       and not u.deleted
+     order by u.name
    |])
 
 getUserGroupsR :: ApiReq [(SiteGroup,SiteGroupMember)]
@@ -610,8 +612,8 @@ getAllOAuthAccess     = listsOfAll
 getAllEmail           :: ApiReq [     Email     ]
 getAllEmail           = listsOfAll
 
-getAllYTChannel       :: ApiReq [   YTChannel   ]
-getAllYTChannel       = listsOfAll
+-- getAllYTChannel       :: ApiReq [   YTChannel   ]
+-- getAllYTChannel       = listsOfAll
 
 getAllYTPlaylist      :: ApiReq [   YTPlaylist  ]
 getAllYTPlaylist      = listsOfAll
@@ -625,8 +627,8 @@ getAllYTVideo         = listsOfAll
 getAllYTVideoUser     :: ApiReq [  YTVideoUser  ]
 getAllYTVideoUser     = listsOfAll
 
-getAllChannelMember   :: ApiReq [ ChannelMember ]
-getAllChannelMember   = listsOfAll
+-- getAllChannelMember   :: ApiReq [ ChannelMember ]
+-- getAllChannelMember   = listsOfAll
 
 getAllSiteGroupMember :: ApiReq [SiteGroupMember]
 getAllSiteGroupMember = listsOfAll

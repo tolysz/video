@@ -29,6 +29,7 @@ import qualified Data.Text as T
 import qualified Facebook as FB
 import qualified Yesod.Auth.Message as Msg
 import qualified Yesod.Facebook as YF
+import Text.Css  (Block(..))
 
 -- | Route for login using this authentication plugin.
 facebookLogin :: AuthRoute
@@ -76,10 +77,11 @@ authFacebook perms = AuthPlugin "fb" dispatch login
         let proceedUrl = render proceedR
             query' = [(a,b) | (a, Just b) <- query]
 
-        (token, user) <- lift $  YF.runYesodFbT $ do
-             tt@(FB.UserAccessToken userId _ _ ) <- FB.getUserAccessTokenStep2 proceedUrl query'
-             u <- FB.getUser userId [] (Just tt)
-             return (tt,u)
+        (token, user) <- lift $ YF.runYesodFbT $ do
+               tt@(FB.UserAccessToken userId _ _ ) <- FB.getUserAccessTokenStep2 proceedUrl query'
+               u <- FB.getUser userId [("fields","email,name")] (Just tt)
+               return (tt,u)
+
         lift $ setUserAccessToken token
         maybe (dispatch "GET" ["kthxbye"]) (lift . setCredsRedirect) (createCreds token user)
     -- Logout the user from our site and from Facebook.
@@ -152,12 +154,11 @@ createCreds (FB.UserAccessToken (FB.Id uid) _ _) FB.User{..} = case userEmail of
                   Nothing -> Nothing
   where id_ = "https://graph.facebook.com/" <> uid
 
-
 -- | Set the Facebook's user access token on the user's session.
 -- Usually you don't need to call this function, but it may
 -- become handy together with 'FB.extendUserAccessToken'.
-setUserAccessToken :: FB.UserAccessToken
-                   -> HandlerT site IO ()
+setUserAccessToken :: MonadHandler m => FB.UserAccessToken
+                   -> m ()
 setUserAccessToken (FB.UserAccessToken (FB.Id userId) data_ exptime) = do
   setSession "_FBID" userId
   setSession "_FBAT" data_
@@ -169,7 +170,7 @@ setUserAccessToken (FB.UserAccessToken (FB.Id userId) data_ exptime) = do
 -- is not logged in via @yesod-auth-fb@).  Note that the returned
 -- access token may have expired, we recommend using
 -- 'FB.hasExpired' and 'FB.isValid'.
-getUserAccessToken :: HandlerT site IO (Maybe FB.UserAccessToken)
+getUserAccessToken :: MonadHandler m => m (Maybe FB.UserAccessToken)
 getUserAccessToken = runMaybeT $ do
   userId  <- MaybeT $ lookupSession "_FBID"
   data_   <- MaybeT $ lookupSession "_FBAT"
@@ -179,9 +180,8 @@ getUserAccessToken = runMaybeT $ do
 
 -- | Delete Facebook's user access token from the session.  /Do/
 -- /not use/ this function unless you know what you're doing.
-deleteUserAccessToken :: HandlerT site IO ()
+deleteUserAccessToken :: MonadHandler m => m ()
 deleteUserAccessToken = do
   deleteSession "_FBID"
   deleteSession "_FBAT"
   deleteSession "_FBET"
-

@@ -28,15 +28,7 @@ import qualified Data.Map.Strict as Map
 import GHC.Generics
 import Text.Blaze
 
--- import Control.Lens              (makeLenses)
 import Network.Google.Api.Utils  (optsL)-- import Data.String
-
--- import Control.Applicative ((<$>))
-
--- import Types.MsgBus
--- import Types.Lang
-
--- import Data.Maybe (fromMaybe)
 
 type GUUID = Text
 data OAuth2Google = OAuth2Google
@@ -106,9 +98,9 @@ data ViewChan = Owner    -- Puts Channel offline
               | World    -- everyone lgged can see and enter channel
     deriving (Show, Read, Eq, Typeable, Generic)
 
+derivePersistField "ViewChan"
 instance FromJSON ViewChan
 instance ToJSON   ViewChan
-derivePersistField "ViewChan"
 
 -- instance FromJSON YTVideo
 -- instance ToJSON   YTVideo
@@ -142,6 +134,15 @@ data PlaylistType
 derivePersistField "PlaylistType"
 instance ToJSON    PlaylistType
 instance FromJSON  PlaylistType
+
+data PlaylistShare
+  = PSGroup
+  | PSExplicit
+    deriving (Show, Read, Eq, Typeable, Generic)
+derivePersistField "PlaylistShare"
+instance ToJSON    PlaylistShare
+instance FromJSON  PlaylistShare
+
 
 type ShortName = Text
 type EmailQuery = Text
@@ -241,4 +242,3 @@ instance ToJSON a => ToMarkup (TC a) where
 
 instance (ToMarkup a, ToMarkup b) => ToMarkup (a,b) where
   toMarkup (a,b) = unsafeLazyByteString "(" <> toMarkup a <> unsafeLazyByteString ", " <> toMarkup b <> unsafeLazyByteString ")"
-

@@ -7,7 +7,7 @@ import Import
 import qualified Data.Conduit as C
 import Network.HTTP.Types.Status (ok200)
 
-import Control.Concurrent.Async (mapConcurrently)
+-- import Control.Concurrent.Async (mapConcurrently)
 import qualified Data.ByteString.Lazy as LBS
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.UTF8 as BS8

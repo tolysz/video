@@ -20,6 +20,7 @@ import Yesod.Auth.GoogleEmail3                  (authGoogleEmail, YesodGoogleAut
 import qualified Yesod.Auth.GoogleEmail3  as GId( forwardUrl )
 import Yesod.Facebook
 import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
+-- import Yesod.Auth.Facebook           (authFacebook, facebookLogin)
 import qualified Data.Text as T (split, pack)
 import Control.Applicative
 import Data.Bool
@@ -44,6 +45,7 @@ import qualified Data.Text.Lazy as TL (toStrict)
 import qualified Network.Wai as W
 import qualified Data.ByteString.Lazy as L
 import Types.ConnPoolRaw
+import Text.Css (Block(..))
 
 
 -- | The foundation datatype for your application. This can be a good place to

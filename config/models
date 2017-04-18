@@ -1,3 +1,4 @@
+-- All users regardless of membership
 Users
     uuid          Text default=gen_random_uuid()
     name          Text Maybe
@@ -65,43 +66,51 @@ SiteGroup
 -- ----------------
 
 VirtualVideo
-  rawVideoId YTVideoId
-  users   [UsersId]
-  votes   [Int]
-  note    Text
-  startTime   Int
-  endTime     Int
+  rawVideoId         YTVideoId
+  users              [UsersId]
+  votes              [Int]
+  note               Text
+  startTime          Int
+  endTime            Int
   UniqueVirtualVideo rawVideoId startTime
   deriving Show Typeable Generic
 
 Event
-  title     Text
-  startTime UTCTime
+  title       Text
+  startTime   UTCTime
   groupId     SiteGroupId
 
-PlaylistEven
+PlaylistEvent
   type     PlaylistType
   event    EventId
   playlist YTVideoPlaylistId
 
+-- it mirrors youtube not used locally yet
 YTChannel json
-    status        ViewChan
-    ref           Text
-    etag          Text
-    UniqueYTPChannel ref
-    deriving Show Typeable Generic
+     status           ViewChan
+     ref              Text
+     etag             Text
+     UniqueYTPChannel ref
+     deriving Show Typeable Generic
 
 YTPlaylist
-    ref           Text
-    etag          Text
-    uuid          Text default=gen_random_uuid()
-    snippet       (TC YoutubePlaylist) Maybe
-    googleUser    Text
-    groupId     SiteGroupId
-    UniqueYTPlaylist ref
+    ref                  Text
+    etag                 Text
+    uuid                 Text default=gen_random_uuid()
+    snippet              (TC YoutubePlaylist) Maybe
+    googleUser           Text
+    groupId              SiteGroupId
+    UniqueYTPlaylist     ref
     UniqueYTPlaylistUUID uuid
+    sharePerm            PlaylistShare   default='PSGroup'
     deriving Show Typeable Generic
 
+ExplicitPlaylistUser
+  user     UsersId
+  playlist YTPlaylistId
+    deriving Show Typeable Generic
+
+-- Association between videos and playlists
 YTVideoPlaylist
     ref          Text
     etag         Text
@@ -136,16 +145,15 @@ YTVideoUser
     UniqueYTVideoUser video userId
     deriving Show Typeable Generic
 
-ChannelMember
-    owner         Bool
-    ref           YTChannelId
-    userId        UsersId
-    UniqueChannelMember ref userId
-    deriving Show Typeable Generic
+-- ChannelMember
+--     owner         Bool
+--     ref           YTChannelId
+--     userId        UsersId
+--     UniqueChannelMember ref userId
+--     deriving Show Typeable Generic
 
-GroupFriend
-  groupId       SiteGroupId
-  userMaster    UsersId
-  userSlave     UsersId
-  oauth         Bool
-
+-- GroupFriend
+--   groupId       SiteGroupId
+--   userMaster    UsersId
+--   userSlave     UsersId
+--   oauth         Bool

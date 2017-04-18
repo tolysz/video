@@ -67,4 +67,4 @@ instance PersistField VideoTag where
        Nothing -> Left "error parsing json value"
 
 instance PGS.FromField VideoTag where
-    fromField f dat = PGS.fromJSONField f dat
+    fromField = PGS.fromJSONField

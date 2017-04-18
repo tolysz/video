@@ -76,7 +76,7 @@ import           Yesod.Core               (HandlerSite, MonadHandler,
                                            setSession, whamlet, (.:),
                                            TypedContent, HandlerT, Yesod(..), toWidget, lucius)
 
-
+import Text.Css (Block(..))
 -- import Control.Monad.Trans.Resource (runResourceT)
 
 catMaybes1 :: [(a, Maybe b)] -> [(a, b)]

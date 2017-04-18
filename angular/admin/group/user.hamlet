@@ -15,19 +15,36 @@ $if isAdmin
           <span .fa .user-plus .font-stack-2x .text-white>
        _{SomeMessage MsgAddUserToGroup}
 
-<md-list>
-  <md-item ng-repeat="memb in members">
-    <md-list-item .md-3-line>
-      <a ui-sref="admin.group.user.edit({uuid:memb.group, uuuid:memb.user})">
-        <div .md-avatar>
-           <img ng-show="memb.logo" ng-src="{{memb.logo}}" .logo alt="memb.who}}">
-           <span ng-hide="memb.logo" .fa .font-3x .group>
-      <div .md-list-item-text>
-          <h3>{{memb.name}} ({{memb.short}})
-          <a ui-sref="admin.user.video({uuid:memb.user})">
-             <span .cover .fa .font-3x .file-video-o>
-          <pre>
-             {{memb | json }}
+<md-list layout=column>
+  <section>
+    <md-subheader class="md-primary">members
+    <md-item ng-repeat="memb in members">
+       <md-list-item .md-3-line>
+          <a ui-sref="admin.group.user.edit({uuid:memb.group, uuuid:memb.user})">
+            <div .md-avatar>
+               <img ng-show="memb.avatar" ng-src="{{memb.avatar}}" .md-avatar alt="memb.name}}">
+               <span ng-hide="memb.avatar" .fa .font-3x .group>
+          <div .md-list-item-text layout="column">
+              <h3>{{memb.name}} ({{memb.friendly}})
+              <h4>
+                 {{ memb.emails | json }}
+              <p layout=row>
+                 <a ui-sref="admin.user.video({uuid:memb.user})">
+                    <span .cover .fa .font-2x .file-video-o>
+                 <span ng-show=memb.fullMember .fa .font-2x .star>
+                 <span ng-hide=memb.fullMember .fa .font-2x .star-o>
+                 <span ng-show=memb.videoAdmin .fa .font-2x .file-video-o >
+                 <span ng-show=memb.videoOAuth .fa .youtube-square .font-2x .fix-top5 >
+                 <span ng-show=memb.userAdmin .font-stack>
+                   <span .fa .pencil-square-o  .font-stack-2x .text-danger-blur>
+                   <span .fa .users .fix-users .font-stack-1x >
+
+                 $if isDebugger
+                    <pre ng-show=appDebug>
+                       <pre>
+                         {{memb | json}}
+       <md-divider>
+
 $if isDebugger
     <pre ng-show=appDebug>
       {{ members | json}}

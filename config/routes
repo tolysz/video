@@ -40,7 +40,7 @@
 
 /api/user                                UserRootR
 /api/user/theme                          UserThemeR GET POST DELETE
-/api/user/channels                       UserChannelsR GET
+-- /api/user/channels                       UserChannelsR GET
 /api/user/groups                         UserGroupsR   GET
 /api/user/groups-public                  UserGroupsPublicR   GET
 /api/user/group/#GUUID/playlists         UserPlaylistsGroupR GET
