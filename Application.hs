@@ -30,12 +30,8 @@ import Handler.OAuth2
 import Handler.User
 import Handler.DB
 import Handler.DBRaw
-import           Network.Connection (TLSSettings (..))
-
 import Types.ConnPoolRaw
--- import Network.HTTP.Client
-import Network.HTTP.Client.TLS
-import Network.HTTP.Client.Conduit
+
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
 -- comments there for more details.
@@ -129,7 +125,7 @@ warpSettings foundation =
 -- | For yesod devel, return the Warp settings and WAI Application.
 getApplicationDev :: IO (Settings, Application)
 getApplicationDev = do
-    settings <- loadAppSettings [configSettingsYml] [] useEnv
+    settings <- loadYamlSettings [configSettingsYml] [] useEnv
     foundation <- makeFoundation settings
     app <- makeApplication foundation
     wsettings <- getDevSettings $ warpSettings foundation
@@ -143,7 +139,7 @@ develMain = develMainHelper getApplicationDev
 appMain :: IO ()
 appMain = do
     -- Get the settings from all relevant sources
-    settings <- loadAppSettingsArgs
+    settings <- loadYamlSettingsArgs
         -- fall back to compile-time values, set to [] to require values at runtime
         [configSettingsYmlValue]
 

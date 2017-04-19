@@ -16,4 +16,4 @@ import Data.CMap                 as Import
 import Types.MsgBus              as Import
 import Types.Lang                as Import
 import Types.VideoTag            as Import
-import Text.Css                  as Import (Block(..))
+import Text.Internal.Css         as Import (Block(..))

@@ -1,45 +1,44 @@
-function($scope, maid, wsLink, $log, title, appLang){
-    title.set( "#{jsi18n (SomeMessage MsgMenuChat)}" + " " + maid);
+function chat($scope, maid, wsLink, $log, title, appLang) {
+    title.set("#{jsi18n (SomeMessage MsgMenuChat)}" + " " + maid);
     $scope.wsLink = wsLink;
     $scope.inp = {};
     //$scope.shout = "";
 
 
-    $scope.send = function(s){
-      //if(_.isString($scope.shout)) {
-          $log.debug(s);
-          if(!_.isEmpty(s)) {
-              wsLink.shout(s);
-              $scope.inp.shout = "";
-          }
-      //}
+    $scope.send = function (s) {
+        //if(_.isString($scope.shout)) {
+        $log.debug(s);
+        if (!_.isEmpty(s)) {
+            wsLink.shout(s);
+            $scope.inp.shout = "";
+        }
+        //}
     };
 
-    if(annyang) {
+    if (annyang) {
         var commands = {
             // '#{jsi18n (SomeMessage MsgChatShout)} *val': $scope.send
-            '*val': $scope.send
+            "*val": $scope.send
         };
 
         annyang.addCommands(commands);
         annyang.debug(true);
         annyang.setLanguage(appLang);
 
-        $scope.sayIt=function(){
+        $scope.sayIt = function(){
             annyang.abort();
-            annyang.start({ autoRestart: false, continuous: false });
+            annyang.start({autoRestart: false, continuous: false});
         };
         //annyang.start();
 
         $scope.hasAnnyang = true;
 
-        $scope.$on('$destroy', function(){
-         annyang.removeCommands();
-         annyang.abort();
-         });
-    } else
-    {
+        $scope.$on("$destroy", function () {
+            annyang.removeCommands();
+            annyang.abort();
+        });
+    } else {
         $scope.hasAnnyang = false;
-        $scope.sayIt=function(){};
+        $scope.sayIt = function (){};
     }
 }

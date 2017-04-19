@@ -1,3 +1,4 @@
-function(title){
-    title.set("Demos")
- }
+function demos(title) {
+    "use strict";
+    title.set("Demos");
+}

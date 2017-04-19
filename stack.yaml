@@ -3,10 +3,9 @@
 # Specifies the GHC version and set of packages available (e.g., lts-3.5, nightly-2015-09-21, ghc-7.10.2)
 resolver: lts-7.21
 allow-newer: true
-# Local packages, usually specified by relative directory name
+
 packages:
  - '.'
-# - '../rest-neo'
  - location:
       git: git@github.com:tolysz/rest-neo
       commit: 7a6fbd5ba80c23443b576ba7061b1ce9e9ad35fa
@@ -19,7 +18,6 @@ packages:
       git: git@github.com:tolysz/google-api
       commit: 91f470ab78e2ffbf7aeda31bb0167bf7612c26e3
    extra-dep: true
-# - '../typedquery'
  - location:
       git: git@github.com:tolysz/typedquery
       commit: 5b84b04805c7e15a0756e051f1348e49d76af656
@@ -40,13 +38,10 @@ packages:
       git: git@github.com:tolysz/yesod-angular-ui
       commit: cfe14876c1a842256f82282172f590db90883eda
    extra-dep: true
- - location:
-    git: https://github.com/tolysz/shakespeare.git
-    commit: 2473a72e2ab32a9f1456529cb0a84c91294ebce2
-   extra-dep: true
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
-extra-deps: 
+extra-deps:
+- shakespeare-2.0.13
 - yesod-auth-fb-1.8.0
 - websockets-0.11.1.0
 - fb-1.1.1
@@ -57,27 +52,13 @@ extra-deps:
 
 # Override default flag values for local packages and extra-deps
 flags:
-  cryptonite:
+#  cryptonite:
 #  support_pclmuldq: true
-    support_rdrand: false
-    support_aesni: false
+#    support_rdrand: false
+#    support_aesni: false
   typedquery:
     debug-typed-queries: true
 
 # Extra package databases containing global packages
 extra-package-dbs: []
 
-# Control whether we use the GHC we find on the path
-# system-ghc: true
-
-# Require a specific version of stack, using version ranges
-# require-stack-version: -any # Default
-# require-stack-version: >= 0.1.4.0
-
-# Override the architecture used by stack, especially useful on Windows
-# arch: i386
-# arch: x86_64
-
-# Extra directories used by stack for building
-# extra-include-dirs: [/path/to/dir]
-# extra-lib-dirs: [/path/to/dir]

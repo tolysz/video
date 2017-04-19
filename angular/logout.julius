@@ -1,9 +1,9 @@
-function($log,$window, $http){
-
+function a($log, $window, $http) {
+    "use strict";
     $log.debug("Logging out");
 
-    $http.post("@{AuthR LogoutR}",{}).then(function(){
+    $http.post("@{AuthR LogoutR}", {}).then(function () {
         $log.debug("success");
         $window.location.href = "@{HomeR []}";
-    })
+    });
 }

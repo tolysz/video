@@ -45,7 +45,7 @@ import qualified Data.Text.Lazy as TL (toStrict)
 import qualified Network.Wai as W
 import qualified Data.ByteString.Lazy as L
 import Types.ConnPoolRaw
-import Text.Css (Block(..))
+-- import Text.Css (Block(..))
 
 
 -- | The foundation datatype for your application. This can be a good place to

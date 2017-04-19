@@ -29,7 +29,7 @@ import qualified Data.Text as T
 import qualified Facebook as FB
 import qualified Yesod.Auth.Message as Msg
 import qualified Yesod.Facebook as YF
-import Text.Css  (Block(..))
+import Text.Internal.Css  (Block(..))
 
 -- | Route for login using this authentication plugin.
 facebookLogin :: AuthRoute

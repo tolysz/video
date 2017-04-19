@@ -23,7 +23,7 @@ import Data.Aeson.TH       (deriveJSON)
 data VideoTagRole
   = VTPresident
   | VTGramarian
-  | VTSpeach
+  | VTSpeach
   | VTTimekeeper
   | VTTopicMaster
   | VTTableTopicEval

@@ -63,7 +63,7 @@ import           Yesod.Core               (HandlerSite, MonadHandler,
                                            setSession, whamlet, (.:),
                                            TypedContent, HandlerT, Yesod(..), toWidget, lucius)
 
-import Text.Css (Block(..))
+import Text.Internal.Css (Block(..))
 
 catMaybes1 :: [(a, Maybe b)] -> [(a, b)]
 catMaybes1 = map ( second fromJust ) . filter ( isJust . snd )
