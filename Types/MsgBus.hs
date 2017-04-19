@@ -4,7 +4,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
 {-# LANGUAGE ScopedTypeVariables
-           , TemplateHaskell
            , TypeFamilies
            , GADTs
            , KindSignatures
@@ -90,7 +89,7 @@ upTime' n ( Other      _ t   ) = Other      n t
 upTime' n ( Shout    w _ t l ) = Shout    w n t l
 upTime' n ( SystemInfo _ t   ) = SystemInfo n t
 upTime' n ( MsgInfo    _ t l ) = MsgInfo    n t l
-upTime' n ( MsgVersion   _ t ) = MsgVersion    n t
+upTime' n ( MsgVersion   _ t ) = MsgVersion n t
 upTime' n ( SelfEcho   _ t l ) = SelfEcho   n t l
 upTime' n ( Transl     _ t l ) = Transl     n t l
 upTime' n ( Close    w _     ) = Close    w n

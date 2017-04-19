@@ -30,37 +30,24 @@ module Yesod.Auth.GoogleEmail3
 import           ClassyPrelude
 import           Blaze.ByteString.Builder (fromByteString, toByteString)
 import           Control.Applicative      ((<$>), (<*>))
--- import           Control.Arrow            (second)
--- import           Control.Monad            (liftM, unless)
 import qualified Data.Aeson               as A
 import qualified Data.Aeson.Encode        as A
--- import           Data.Aeson.Parser        (json')
 import           Data.Aeson.Types         (FromJSON (parseJSON), parseEither,
                                            withObject)
 import Data.Maybe (fromJust, isNothing)
---- import Control.Arrow ((***), second)
 
 import           Data.Aeson.Lens
--- import Data.Aeson.Lens
--- import           Control.Lens.Operators   ((^?))
 import Control.Lens ((^?) , (^.))
 import Control.Lens.Iso (non)
 
--- import           Data.Conduit             (($$+-))
--- import           Data.Conduit.Attoparsec  (sinkParser)
 import qualified Data.HashMap.Strict      as M
--- import           Data.Monoid              (mappend)
--- import           Data.Maybe               (fromJust, isJust)
--- import           Data.Text                (Text)
 import qualified Data.Text                as T
--- import           Data.Text.Encoding       (decodeUtf8, encodeUtf8)
 import qualified Data.Text.Lazy           as TL
 import qualified Data.Text.Lazy.Builder   as TL
 import           Network.HTTP.Client      (parseUrl, requestHeaders,
                                            responseBody, urlEncodedBody)
 import           Network.HTTP.Conduit     (httpLbs)
 import           Network.HTTP.Types       (renderQueryText)
--- import           Network.Connection (TLSSettings (..))
 import           Network.Mail.Mime        (randomString)
 import           System.Random            (newStdGen)
 import           Yesod.Auth               (Auth, AuthPlugin (AuthPlugin),
@@ -77,7 +64,6 @@ import           Yesod.Core               (HandlerSite, MonadHandler,
                                            TypedContent, HandlerT, Yesod(..), toWidget, lucius)
 
 import Text.Css (Block(..))
--- import Control.Monad.Trans.Resource (runResourceT)
 
 catMaybes1 :: [(a, Maybe b)] -> [(a, b)]
 catMaybes1 = map ( second fromJust ) . filter ( isJust . snd )
@@ -206,15 +192,8 @@ authGoogleEmail =
                         { requestHeaders = [("Connection", "close")]
                         }
 
---         value <- withManagerSettings settingsSsl $ \manager -> do
-        man <- liftM authHttpManager $ lift getYesod
---         man <- newManager tlsManagerSettings
---         req <- liftIO $ parseUrl url
---         responseBody <$> httpLbs (setConnectionClose req) man
+        man <- authHttpManager <$> lift getYesod
         Just value <- A.decode . responseBody <$> httpLbs req man
---         runResourceT $ do
---             res <- http req manager
---             responseBody res $$+- sinkParser json'
         Tokens accessToken tokenType <-
             case parseEither parseJSON value of
                 Left e -> error e
@@ -229,13 +208,8 @@ authGoogleEmail =
                     , ("Connection", "close")
                     ]
                 }
---         value2 <- withManagerSettings settingsSsl $ \manager -> do
---         manager <- liftM authHttpManager $ lift getYesod
         Just value2 <- A.decode . responseBody <$> httpLbs req2 man
---         value2 <- runResourceT $ do
---               res2 <- http req2 manager
---               responseBody res2 $$+- sinkParser json'
---
+
         Person emails fullName <-
             case parseEither parseJSON value2 of
                 Left e -> error e
@@ -245,7 +219,12 @@ authGoogleEmail =
                 [e] -> return e
                 [] -> error "No account email"
                 x -> error $ "Too many account emails: " ++ show x
-        lift $ setCredsRedirect $ Creds pid email $ (catMaybes1 [("full_name",fullName), ("avatar", value2 ^? key "image" . key "url"  . _String )]) <> allPersonInfo value2
+        lift $ setCredsRedirect
+          $ Creds pid email
+            $ (catMaybes1 [ ("full_name",fullName)
+                          , ("locale", value2 ^? key "language" . _String )
+                          , ("avatar", value2 ^? key "image" . key "url"  . _String )]
+               ) <> allPersonInfo value2
 
     dispatch _ _ = notFound
 
@@ -262,14 +241,11 @@ type FullName = Maybe Text
 type Avatar   = Maybe Text
 
 data Person = Person [Email] FullName
--- Avatar
 
 instance FromJSON Person where
     parseJSON = withObject "Person" $ \o -> Person
         <$> o .: "emails"
         <*> o A..:? "displayName"
---        <*> ((o .:? "url") >>= (A..:? "image"))
---        <*> (fmap (\a -> a ^? key "url") <$> o A..:? "image" )
 
 data Email = Email
     { emailValue :: Text

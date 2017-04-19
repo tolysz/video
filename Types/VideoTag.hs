@@ -39,7 +39,7 @@ data VideoTagRole
 
 deriveJSON (optsL 2)  ''VideoTagRole
 
-data VideoTag = VideoTag
+newtype VideoTag = VideoTag
  { vtRole    :: [(VideoTagRole,DA.Value)]
  }
   deriving (Show, Eq, Typeable, Generic)
@@ -58,7 +58,7 @@ instance PersistFieldSql VideoTag where
    sqlType _ = SqlOther "JSON"
 
 instance PersistField VideoTag where
-  toPersistValue a = PersistDbSpecific . L.toStrict . DA.encode $ a
+  toPersistValue = PersistDbSpecific . L.toStrict . DA.encode
   fromPersistValue (PersistByteString bs) = case DA.decode' $ L.fromStrict bs of
          Just v -> Right v
          Nothing -> Left "error parsing json value"

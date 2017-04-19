@@ -16,7 +16,7 @@ import Types
 
 import           Yesod.Auth.BrowserId        (authBrowserId)
 import qualified Yesod.Auth.BrowserId as BId (forwardUrl)
-import Yesod.Auth.GoogleEmail3                  (authGoogleEmail, YesodGoogleAuth(..))
+import Yesod.Auth.GoogleEmail3               (authGoogleEmail, YesodGoogleAuth(..))
 import qualified Yesod.Auth.GoogleEmail3  as GId( forwardUrl )
 import Yesod.Facebook
 import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
@@ -227,7 +227,7 @@ instance YesodAuth App where
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer _ = False
 
-    getAuthId creds = do
+    getAuthId creds =
 --         $(logError) $ T.pack . show $ credsExtra creds
         runDB $ do
 --         x <- getBy $ UniqueUser $ credsIdent creds
@@ -244,7 +244,7 @@ instance YesodAuth App where
                    update uid [UsersName =. nn]
                 when (isNothing usersAvatar && isJust na) $
                    update uid [UsersAvatar =. na]
-                when (usersDeleted) $
+                when usersDeleted $
                    update uid [UsersDeleted =. False]
 
                 return $ Just uid

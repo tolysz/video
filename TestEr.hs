@@ -11,7 +11,8 @@ import           Data.Aeson.Parser        (json')
 
 main = do
 --   manager <- newManager
-  print  =<< simpleHttp "https://accounts.google.com/o/oauth2/token" -- FIXME don't hardcode, use: https://accounts.google.com/.well-known/openid-configuration
+  print  =<< simpleHttp "https://accounts.google.com/o/oauth2/token"
+    -- FIXME don't hardcode, use: https://accounts.google.com/.well-known/openid-configuration
   --         value <- withManagerSettings settingsSsl $ \manager -> do
 --   manager <- liftM authHttpManager $ lift getYesod
 --   print  =<< htt{--}pLbs req

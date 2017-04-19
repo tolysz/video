@@ -39,24 +39,24 @@ handleHomeR :: [Text] ->  Handler Html
 handleHomeR _ =  do
            req <- waiRequest
            let ip = T.pack . show . Wai.remoteHost $ req
-               xip = maybe ip ( ( <> (T.drop 9 ip)) . E.decodeUtf8) $ lookup "X-Real-IP" (Wai.requestHeaders req)
+               xip = maybe ip ( ( <> T.drop 9 ip) . E.decodeUtf8) $ lookup "X-Real-IP" (Wai.requestHeaders req)
            (maid, loggedIn) <- maybeAuthId >>= \case
                Nothing ->  return  ( "not logged in" , False)
-               Just n ->   return . (,True ) . maybe xip usersUuid =<< (runDB . get $ n)
+               Just n ->   (,True ) . maybe xip usersUuid <$> (runDB . get $ n)
            langI18Ang <- getUserLang
            webSockets ( chatApp (bool xip maid loggedIn))
 
            perms <- userPerms
            hasCache  <- isJust . join . fmap (Map.lookup langI18Ang) <$> tryReadMVar anonCache
 
-           if ((not hasCache && not loggedIn) || loggedIn)
+           if (not hasCache && not loggedIn) || loggedIn
                then do
                    {-- ap :: AuthPerms  <- queryDB sadasd -}
                    {- conf <- liftIO getIt -}
                    mrender <- getMessageRender
                    let
                      jsi18n :: SomeMessage App -> RawJavascript
-                     jsi18n m = rawJS $ mrender $ m
+                     jsi18n m = rawJS $ mrender m
                    TC thm <- getUserThemeR
                    res <- genAngularBind
                        perms
@@ -64,7 +64,7 @@ handleHomeR _ =  do
                        langI18Ang -- ^ user languages
                        thm -- ^ user theme
                        maid -- loggedIn
-                       (compiledAsDevel || (isDebugger perms)){- -> ap-> conf -> -} (\y x ->
+                       (compiledAsDevel || isDebugger perms){- -> ap-> conf -> -} (\y x ->
                          angularUILayout y $ do
                            setTitle "Video Selector" -- "Welcome To Yesod!"
                            x
@@ -79,7 +79,7 @@ handleHomeR _ =  do
                   maybe (handleHomeR []) return $ Map.lookup langI18Ang m1
 
 genAngularBind :: Permssions -> (SomeMessage App -> RawJavascript) -> LangId -> Theme-> Text -> Bool  ->  ( Text -> Widget  ->  Handler Html ) -> Handler Html
-genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development = do
+genAngularBind (perm@Permssions{..}) jsi18n appLang thm maid development =
   runAngularUI $ cached $ do
     addConstant "maid"       [js|#{rawJS $ show maid}|]
     addConstant "appLang"    [js|#{toJSON appLang}|]
@@ -454,37 +454,36 @@ chatApp name = do
     sendBinaryData $ MsgInfo now1 ("Welcome, " <> name) lid
 
     (rChan, keepWS) <- atomically $ do
-        adjustFilter (\_ -> [\ k u t -> if k == u
+        adjustFilter (const [\ k u t -> if k == u
                                then
                                  HaveNull
                                else
-                                 case t of
-                                   _ -> MissingData
+                                 MissingData
                             , acceptOwnLanguageTranslations lid
 
                             ]) name chans
         broadcastChan (Enter name now1) name chans
         (,) <$> getChan name chans <*> newEmptyTMVar
     let
-      cleanup _ = void $ liftIO $ do
+      cleanup _ = void $ liftIO $
          void $ atomically . tryPutTMVar keepWS $ False
 
       writeWS = do
        nowTime <- liftIO getCurrentTime
        atomically (readTChan rChan) >>= sendBinaryDataE >>= either cleanup return
        atomically (isEmptyTMVar keepWS) >>= bool
-            ((atomically $ broadcastChan (Close name nowTime) name chans) >> sendClose ("closing" :: Text))
+            (atomically (broadcastChan (Close name nowTime) name chans) >> sendClose ("closing" :: Text))
             writeWS
 
       readWS = do
        nowTime <- liftIO getCurrentTime
        let now = upTime' nowTime
        msg <-  either (\a -> cleanup a >> return (Close name nowTime)) (return . now )=<< receiveDataE
-       let ech = (toEcho msg)
+       let ech = toEcho msg
        case ech of
          Just (SelfEcho t m l) -> do
             b <- runInnerHandler $ translate lid m
-            atomically $ mapM (\(lang, jso) -> do
+            atomically $ mapM (\(lang, jso) ->
                 case DA.decode jso of
                   Nothing -> return ()
                   Just (v :: Value)  -> do -- {\n \"data\": {\n \"translations\": [\n {\n \"translatedText\": \"Testowanie aplikacji\"\n }\n ]\n }\n}\n

@@ -42,7 +42,7 @@ getUserMeR = do
 -- | return all videos for a given user.
 -- | logged user i.e. mis elf
 getUserMeVideo0R :: ApiReq [Value]
-getUserMeVideo0R = do
+getUserMeVideo0R =
     sqlGetUserVideo =<< P.fromSqlKey <$> requireAuthId
 
 userUUIDtoId :: GUUID -> Handler Int

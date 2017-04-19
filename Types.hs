@@ -56,8 +56,8 @@ fromCamel n = worker True . drop n
          ++ worker (isUpper c) cs
 
 
-data TC a = TC a deriving Functor
-data PC a = PC a deriving Functor
+newtype TC a = TC a deriving Functor
+newtype PC a = PC a deriving Functor
 
 instance Show a => Show (TC a) where
   show (TC a) = show a

@@ -11,7 +11,7 @@ newtype ConnectionPoolRaw = ConnPoolRaw (DP.Pool PGS.Connection)
 type ConnectionString = ByteString
 
 createPostgresqlRawPool :: ConnectionString -> IO ConnectionPoolRaw
-createPostgresqlRawPool coninf = do
+createPostgresqlRawPool coninf =
   ConnPoolRaw <$> DP.createPool
     (PGS.connectPostgreSQL  coninf) -- ^ create
     PGS.close            -- ^ destroy
@@ -21,5 +21,4 @@ createPostgresqlRawPool coninf = do
 
 
 withRawDBConn :: ConnectionPoolRaw -> (PGS.Connection -> IO a) -> IO a
-withRawDBConn (ConnPoolRaw cp) cc =
- DP.withResource cp cc
+withRawDBConn (ConnPoolRaw cp) cc = DP.withResource cp cc

@@ -79,7 +79,7 @@ authFacebook perms = AuthPlugin "fb" dispatch login
 
         (token, user) <- lift $ YF.runYesodFbT $ do
                tt@(FB.UserAccessToken userId _ _ ) <- FB.getUserAccessTokenStep2 proceedUrl query'
-               u <- FB.getUser userId [("fields","email,name")] (Just tt)
+               u <- FB.getUser userId [("fields","email,name,locale")] (Just tt)
                return (tt,u)
 
         lift $ setUserAccessToken token
@@ -150,7 +150,7 @@ semicolon = ";"
 -- @'FB.UserAccessToken'@.
 createCreds :: FB.UserAccessToken -> FB.User -> Maybe (Creds m)
 createCreds (FB.UserAccessToken (FB.Id uid) _ _) FB.User{..} = case userEmail of
-                  Just e -> Just $ Creds "fb" e $ catMaybes1 [("graph", Just id_ ), ("full_name", userName), ("avatar",  Just $ id_ <>"/picture") ]
+                  Just e -> Just $ Creds "fb" e $ catMaybes1 [("graph", Just id_ ), ("gender", T.pack . show <$> userGender), ("locale", userLocale), ("full_name", userName), ("avatar",  Just $ id_ <>"/picture") ]
                   Nothing -> Nothing
   where id_ = "https://graph.facebook.com/" <> uid
 

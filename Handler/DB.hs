@@ -131,7 +131,7 @@ postUserR = do
         restOpenM $ \(v :: Value) -> do
          liftIO $ print v
          ~uem <- getUserbyEmail (v ^? key "email" . _String )
-         ~uuu <- (Just <$> newUUID)
+         ~uuu <- Just <$> newUUID
          let userUuid' = (v ^? key "uuid" . _String ) <|> uem <|> uuu
 
          runMaybeT $ do
@@ -146,7 +146,7 @@ postUserR = do
                  -- keep the old admin privs
                 Just (Entity uid old) -> replace uid us >> return (Just $ TC us)
                 Nothing -> do
-                  let Just usersEmail  =  (v ^? key "email" . _String )
+                  let Just usersEmail  =  v ^? key "email" . _String
                   uu <- insert us
                   insert $ Email usersEmail uu
                   return (Just $ TC us)
@@ -192,15 +192,16 @@ deleteUser1R em = jsonDB1 $ do
 deleteSiteGroupUser0R :: ApiReq SiteGroupMember
 deleteSiteGroupUser0R = do
    guardAllAdmin
-   restOpenM $ \(v :: Value) -> do
+   restOpenM $ \(v :: Value) ->
     runMaybeT $ do
        textGroup <- liftMaybe (v ^? key "group"      . _String )
 --        guard (textGroup == gid)
        usersUuid  <- liftMaybe  (v ^? key "user"       . _String )
-       siteGroupMemberFullMember <- liftJust  (v ^? key "fullMember" . _Bool ^. non False)
-       siteGroupMemberUserAdmin  <- liftJust  (v ^? key "userAdmin"  . _Bool ^. non False)
-       siteGroupMemberVideoAdmin <- liftJust  (v ^? key "videoAdmin" . _Bool ^. non False) -- False if not a site admin
-       siteGroupMemberVideoOAuth <- liftJust  (v ^? key "videoOAuth" . _Bool ^. non False) -- False if not a site admin
+       let getFlag f = liftJust  (v ^? key f . _Bool ^. non False)
+       siteGroupMemberFullMember <- getFlag "fullMember"
+       siteGroupMemberUserAdmin  <- getFlag "userAdmin"  
+       siteGroupMemberVideoAdmin <- getFlag "videoAdmin"  -- False if not a site admin
+       siteGroupMemberVideoOAuth <- getFlag "videoOAuth"  -- False if not a site admin
        Just (siteGroupMemberGroupId, siteGroupMemberUserId) <- MaybeT $ runDB $ return . Just <$> (
               (,) <$> getDBKey (UniqueSiteGroup textGroup)
                   <*> getDBKey (UniqueUsers usersUuid)
@@ -264,7 +265,7 @@ postSiteGroupUser0R = do
          return (Just $ TC us)
 
 getSiteGroupUserR :: Text -> ApiReq [Value]
-getSiteGroupUserR gid = do
+getSiteGroupUserR gid = 
    guardAllAdmin >> TC <$> runRawDB $(TQ.genJsonQuery [qq|
      select g.uuid           as group        -- Text
           , u.uuid           as user         -- Text
@@ -307,7 +308,7 @@ postVideoUser0R :: Handler Text
 postVideoUser0R = do
 --     $(logWarn) =<< requestBodyText
     restOpenM $ \(v :: Value) -> runMaybeT $ do
-        users  <- liftMaybe (catMaybes . map (parseMaybe parseJSON) . V.toList <$> v ^? key "user_uuids" . _Array )
+        users  <- liftMaybe (mapMaybe (parseMaybe parseJSON) . V.toList <$> v ^? key "user_uuids" . _Array )
         video  <- liftMaybe (v ^? key "video_uuid" . _String )
         $(logWarn) ( T.pack $ show  (users ::  [Text], video))
         runRawDB ( \c -> do
@@ -345,7 +346,7 @@ postVideoUser0R = do
     -}
 
 getVideoUserR :: Text -> ApiReq [Value]
-getVideoUserR vid = do
+getVideoUserR vid =
   guardAllAdmin >> TC <$> runRawDB $(TQ.genJsonQuery [qq|
        select u.uuid     as uuid     -- Text
             , u.name     as name     -- Maybe  Text
@@ -416,7 +417,7 @@ postUserThemeR :: ApiReq Theme
 postUserThemeR = do
         guardAllAdmin
         uid <- requireAuthId
-        restOpenM $ \(v :: Theme) -> runMaybeT $ do
+        restOpenM $ \(v :: Theme) -> runMaybeT $
             MaybeT $ runDB $ do
               getBy (UniqueUserTheme uid)>>= \case
                 Just (Entity k _) -> repsert k (UserTheme uid (Just $ TC v))
@@ -522,8 +523,8 @@ from y_t_video as v
 updateYTPlaylistItms :: Key SiteGroup -> Text -> Text -> Text -> ApiReq [YoutubePlaylistItem] -> ApiReq [(DBAction,Text)]
 updateYTPlaylistItms gr gu i _ rq =
   rq >>= \case
-   (TC lis) -> do
-     TC <$> forM lis ( \li@YoutubePlaylistItem{..} -> do
+   (TC lis) ->
+     TC <$> forM lis ( \li@YoutubePlaylistItem{..} ->
        runRawDB $(TQ.genTypedQuery [qq|
           select v.id, pl.id
            from y_t_video as v
@@ -555,10 +556,10 @@ updateYTPlaylistItms gr gu i _ rq =
 
                    (a:_) -> if (==) _ypiEtag . yTVideoPlaylistEtag . entityVal $ a
                              then
-                               return $ (DBNoop, _ypiId)
+                               return (DBNoop, _ypiId)
                              else do
                                runDB $ update (entityKey a) [YTVideoPlaylistEtag =. _ypiEtag, YTVideoPlaylistSnippet =. Just (TC li)]
-                               return $ (DBUpdate, _ypiId)
+                               return (DBUpdate, _ypiId)
       )
    _ -> return $ TC [(DBApiFail, i)]
 

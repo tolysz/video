@@ -55,9 +55,9 @@ getUpdateVideosR gid = do
 
   let ggg = possible (error "no user") (error "no user") id $ guid ^. googleUserId
   -- todo: unsafe
-  TC u1 <- unTC <$> (forM vds (\(e,i) -> updateYTVideo         gr ggg i e (fmap listToMaybe <$> getYTVideoR    gid [i])))
-  TC u2 <- unTC <$> (forM pls (\(e,i) -> updateYTPlaylist      gr ggg i e (fmap listToMaybe <$> getYTPlaylistR gid [i])))
-  TC u3 <- unTC <$> (forM pls (\(e,i) -> updateYTPlaylistItms  gr ggg i e (handleYTPlaylistItemR gid (T.unpack i))))
+  TC u1 <- unTC <$> forM vds (\(e,i) -> updateYTVideo         gr ggg i e (fmap listToMaybe <$> getYTVideoR    gid [i]))
+  TC u2 <- unTC <$> forM pls (\(e,i) -> updateYTPlaylist      gr ggg i e (fmap listToMaybe <$> getYTPlaylistR gid [i]))
+  TC u3 <- unTC <$> forM pls (\(e,i) -> updateYTPlaylistItms  gr ggg i e (handleYTPlaylistItemR gid (T.unpack i)))
 ----
 
 ---
@@ -120,7 +120,7 @@ handleYTChannelsR  gid = TC <$> next HaveNull []
     next :: Possible String -> [YoutubeChannel] -> Handler [YoutubeChannel]
     next MissingData a = return a
     next n a = do
-           TC one <- (fromString (base <> (possible "" "" ("&nextToken=" <>) n)) :: Text -> ApiReq YoutubeChannels) gid
+           TC one <- (fromString (base <> possible "" "" ("&nextToken=" <>) n) :: Text -> ApiReq YoutubeChannels) gid
            next (fetchNext one) (a ++ (one ^. lrItems))
 
 -- all playlists for a given channel

@@ -98,7 +98,7 @@ handleRootOAuth2R = return ()
 googleKey :: Text -> Handler OAuth2
 googleKey uuid = do
      render <- getUrlRender
-     Just (OAuth2Google {..}) <- appGoogleWebAppOAuth . appSettings <$> getYesod
+     Just OAuth2Google {..} <- appGoogleWebAppOAuth . appSettings <$> getYesod
      return OAuth2 { oauthClientId     = gaClientId
                    , oauthClientSecret = gaClientSecret
                    , oauthRedirectUri  = render GoogleCallbackR
@@ -117,13 +117,13 @@ getToken uid gid = do
   runDB ( do
      Entity gid' _ <- getBy404 (UniqueSiteGroup gid)
      getBy (UniqueOAuthAccess uid gid')) >>= \case
-      Just (Entity _ (OAuthAccess{..}))      -- we have the entry inside DB
+      Just (Entity _ OAuthAccess{..})      -- we have the entry inside DB
         | Just ex  <- oAuthAccessExpires     -- it has expires field
         , diffUTCTime ex now > 10            -- it still has at least 10s on the clock
         , Just atok <- oAuthAccessAccessToken  -- and we have the access token
           -> return def{atAccessToken=atok}    -- thus we use it
 
-      Just (Entity _ (OAuthAccess{..}))      -- we have the entry inside DB
+      Just (Entity _ OAuthAccess{..})      -- we have the entry inside DB
         | Just _ <- oAuthAccessRefreshToken  -- we have the refresh tocken there
           -> refreshTokenOU gid def{atRefreshToken=oAuthAccessRefreshToken} >> getToken uid gid        -- this need to show errors whan fails
 
