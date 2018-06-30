@@ -16,10 +16,15 @@ import Types
 
 import           Yesod.Auth.BrowserId        (authBrowserId)
 import qualified Yesod.Auth.BrowserId as BId (forwardUrl)
-import Yesod.Auth.GoogleEmail3               (authGoogleEmail, YesodGoogleAuth(..))
-import qualified Yesod.Auth.GoogleEmail3  as GId( forwardUrl )
+-- import Yesod.Auth.GoogleEmail3               (authGoogleEmail, YesodGoogleAuth(..))
+-- import qualified Yesod.Auth.GoogleEmail3  as GId( forwardUrl )
 import Yesod.Facebook
-import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
+
+
+
+-- import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
+
+
 -- import Yesod.Auth.Facebook           (authFacebook, facebookLogin)
 import qualified Data.Text as T (split, pack)
 import Control.Applicative
@@ -33,7 +38,7 @@ import qualified Database.PostgreSQL.Simple.Internal as PGS
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 
-import qualified Database.Esqueleto as E
+-- import qualified Database.Esqueleto as E
 
 import qualified Data.UUID.V4 as UUID
 import qualified Data.UUID    as UUID
@@ -140,12 +145,12 @@ instance Yesod App where
     -- and names them based on a hash of their content. This allows
     -- expiration dates to be set far in the future without worry of
     -- users receiving stale content.
-    urlRenderOverride a (StaticR s) = case staticRoot of
-              Just r -> Just $ uncurry (joinPath a r) $ renderRoute s
-              Nothing -> Nothing
-             where
-               staticRoot = appStaticRoot $ appSettings a
-    urlRenderOverride _ _ = Nothing
+--     urlRenderOverride a (StaticR s) = case staticRoot of
+--               Just r -> Just $ uncurry (joinPath a r) $ renderRoute s
+--               Nothing -> Nothing
+--              where
+--                staticRoot = appStaticRoot $ appSettings a
+--     urlRenderOverride _ _ = Nothing
 
     addStaticContent ext mime content = do
         master <- getYesod
@@ -164,10 +169,10 @@ instance Yesod App where
 
     -- What messages should be logged. The following includes all messages when
     -- in development, and warnings and errors in production.
-    shouldLog app _source level =
-        appShouldLogAll (appSettings app)
-            || level == LevelWarn
-            || level == LevelError
+--     shouldLog app _source level =
+--         appShouldLogAll (appSettings app)
+--             || level == LevelWarn
+--             || level == LevelError
 
     makeLogger = return . appLogger
 
@@ -208,14 +213,14 @@ runRawDBT cc = do
    cp <- appConnPoolRaw <$> getYesod
    liftIO $ withRawDBConn cp (\conn -> PGS.withTransaction conn (cc conn))
 
-instance YesodFacebook App where
- fbHttpManager = appHttpManager
- fbCredentials = appFbCredentials . appSettings
-
-instance YesodGoogleAuth App where
-  googleClientID     a = gaClientId     <$> (appGoogleWebAppOAuth . appSettings) a
-  googleClientSecret a = gaClientSecret <$> (appGoogleWebAppOAuth . appSettings) a
-
+-- instance YesodFacebook App where
+--  fbHttpManager = appHttpManager
+--  fbCredentials = appFbCredentials . appSettings
+--
+-- instance YesodGoogleAuth App where
+--   googleClientID     a = gaClientId     <$> (appGoogleWebAppOAuth . appSettings) a
+--   googleClientSecret a = gaClientSecret <$> (appGoogleWebAppOAuth . appSettings) a
+--
 newUUID = decodeUtf8 . UUID.toASCIIBytes <$> liftIO UUID.nextRandom
 
 instance YesodAuth App where
@@ -231,11 +236,13 @@ instance YesodAuth App where
 --         $(logError) $ T.pack . show $ credsExtra creds
         runDB $ do
 --         x <- getBy $ UniqueUser $ credsIdent creds
-        x <- E.select $
-             E.from $ \(p `E.LeftOuterJoin` e) -> do
-             E.on $ (p E.^. UsersId) E.==. e E.^. EmailUserId
-             E.where_ $ (e E.^. EmailEmail ) E.==. E.val (credsIdent creds)
-             return p
+
+--         x <- E.select $
+--              E.from $ \(p `E.LeftOuterJoin` e) -> do
+--              E.on $ (p E.^. UsersId) E.==. e E.^. EmailUserId
+--              E.where_ $ (e E.^. EmailEmail ) E.==. E.val (credsIdent creds)
+--              return p
+        let x = []
         let nn = DL.lookup "full_name" $ credsExtra creds
             na = DL.lookup "avatar"    $ credsExtra creds
         case x of
@@ -267,7 +274,7 @@ instance YesodAuth App where
     -- You can add other plugins like BrowserID, email or OAuth here
     authPlugins _ = [ authBrowserId def
                     , authGoogleEmail
-                    , authFacebook ["email"]
+--                     , authFacebook ["email"]
                     ]
 
     authHttpManager = getHttpManager
@@ -338,23 +345,23 @@ getGroupKey :: GUUID -> AppM (Key SiteGroup)
 getGroupKey u = runDB $ entityKey <$> getBy404 (UniqueSiteGroup u)
 
 getUserAdmin :: Handler Bool
-getUserAdmin =
-  maybeAuthId >>= \case
-      Nothing -> return False
-      Just aid ->
-          runDB $
-             E.select (
-             E.from $ \(p `E.InnerJoin` e) -> do
-             E.on $ (p E.^. UsersId) E.==. e E.^. SiteAdminUserId
-             E.where_ $ (p E.^. UsersId ) E.==. E.val aid
-             return e)
-             >>= return . \case
-               [Entity _ v] -> siteAdminIsAdmin v
-               _ -> False
+getUserAdmin = return False
 
+--   maybeAuthId >>= \case
+--       Nothing -> return False
+--       Just aid ->
+--           runDB $
+--              E.select (
+--              E.from $ \(p `E.InnerJoin` e) -> do
+--              E.on $ (p E.^. UsersId) E.==. e E.^. SiteAdminUserId
+--              E.where_ $ (p E.^. UsersId ) E.==. E.val aid
+--              return e)
+--              >>= return . \case
+--                [Entity _ v] -> siteAdminIsAdmin v
+--                _ -> False
+--
 getUserLang :: Handler LangId
 getUserLang = cached (readLang <$> languages)
-
 
 type ApiReq a    = Handler (TC a)
 type ApiPost b a = b -> Handler (PC a)

@@ -1,3 +1,4 @@
+{-# LANGUAGE RankNTypes        #-}
 -- | @yesod-auth@ authentication plugin using Facebook's
 -- server-side authentication flow.
 module Yesod.Auth.Facebook2
@@ -50,20 +51,26 @@ catMaybes1 :: [(a, Maybe b)] -> [(a, b)]
 catMaybes1 = map ( second fromJust ) . filter ( isJust . snd )
 
 -- | Yesod authentication plugin using Facebook.
-authFacebook :: (YesodAuth site, YF.YesodFacebook site)
-             => [FB.Permission] -- ^ Permissions to be requested.
-             -> AuthPlugin site
+-- authFacebook :: (YesodAuth site, YF.YesodFacebook site)
+
+authFacebook :: (YesodAuth m, YF.YesodFacebook m)
+           => [FB.Permission] -- ^ Permissions to be requested.
+           -> AuthPlugin m
 authFacebook perms = AuthPlugin "fb" dispatch login
   where
     -- Get the URL in facebook.com where users are redirected to.
-    getRedirectUrl :: YF.YesodFacebook site => (Route Auth -> Text) -> HandlerT site IO Text
+--     getRedirectUrl :: YF.YesodFacebook site => (Route Auth -> Text) -> HandlerT site IO Text
     getRedirectUrl render =
         YF.runYesodFbT $ FB.getUserAccessTokenStep1 (render proceedR) perms
     proceedR = PluginR "fb" ["proceed"]
 
-    dispatch :: (YesodAuth site, YF.YesodFacebook site) =>
-                Text -> [Text] -> HandlerT Auth (HandlerT site IO) TypedContent
+--     dispatch :: (YesodAuth site, YF.YesodFacebook site) =>
+--                 Text -> [Text] -> HandlerT Auth (HandlerT site IO) TypedContent
     -- Redirect the user to Facebook.
+    dispatch :: (YesodAuth site)
+                 => Text
+                 -> [Text]
+                 -> AuthHandler site TypedContent
     dispatch "GET" ["login"] = do
         ur <- getUrlRender
         lift $ do
@@ -117,9 +124,9 @@ authFacebook perms = AuthPlugin "fb" dispatch login
     dispatch _ _ = notFound
 
     -- Small widget for multiple login websites.
-    login :: (YesodAuth site, YF.YesodFacebook site) =>
-             (Route Auth -> Route site)
-          -> WidgetT site IO ()
+--     login :: (YesodAuth site, YF.YesodFacebook site) =>
+--              (Route Auth -> Route site)
+--           -> WidgetT site IO ()
     login tm = do
         ur <- getUrlRender
         redirectUrl <- handlerToWidget $ getRedirectUrl (ur . tm)
@@ -157,8 +164,10 @@ createCreds (FB.UserAccessToken (FB.Id uid) _ _) FB.User{..} = case userEmail of
 -- | Set the Facebook's user access token on the user's session.
 -- Usually you don't need to call this function, but it may
 -- become handy together with 'FB.extendUserAccessToken'.
-setUserAccessToken :: MonadHandler m => FB.UserAccessToken
-                   -> m ()
+-- setUserAccessToken :: MonadHandler m => FB.UserAccessToken
+setUserAccessToken :: MonadHandler site => FB.UserAccessToken
+                   -> site ()
+
 setUserAccessToken (FB.UserAccessToken (FB.Id userId) data_ exptime) = do
   setSession "_FBID" userId
   setSession "_FBAT" data_
@@ -170,7 +179,7 @@ setUserAccessToken (FB.UserAccessToken (FB.Id userId) data_ exptime) = do
 -- is not logged in via @yesod-auth-fb@).  Note that the returned
 -- access token may have expired, we recommend using
 -- 'FB.hasExpired' and 'FB.isValid'.
-getUserAccessToken :: MonadHandler m => m (Maybe FB.UserAccessToken)
+-- getUserAccessToken :: MonadHandler m => m (Maybe FB.UserAccessToken)
 getUserAccessToken = runMaybeT $ do
   userId  <- MaybeT $ lookupSession "_FBID"
   data_   <- MaybeT $ lookupSession "_FBAT"

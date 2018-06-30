@@ -1,54 +1,52 @@
 # For more information, see: https://github.com/commercialhaskell/stack/blob/release/doc/yaml_configuration.md
 
 # Specifies the GHC version and set of packages available (e.g., lts-3.5, nightly-2015-09-21, ghc-7.10.2)
-resolver: lts-7.21
+#resolver: lts-11.15
+resolver: nightly-2018-06-28
 allow-newer: true
 
 packages:
  - '.'
  - location:
       git: git@github.com:tolysz/rest-neo
-      commit: 7a6fbd5ba80c23443b576ba7061b1ce9e9ad35fa
+      commit: 98bc0a0af6c442060ef9881a2e705ada4bbe4445
    extra-dep: true
  - location:
       git: git@github.com:tolysz/aeson
-      commit: 0521fe40034a81276d481b65a5a5804e18f21eea
+      commit: b28eaf5a811013b34eba289f8cf4a3b8b26e74db
    extra-dep: true
  - location:
       git: git@github.com:tolysz/google-api
       commit: 91f470ab78e2ffbf7aeda31bb0167bf7612c26e3
    extra-dep: true
- - location:
-      git: git@github.com:tolysz/typedquery
-      commit: 5b84b04805c7e15a0756e051f1348e49d76af656
-   extra-dep: true
+# - location:
+#      git: git@github.com:tolysz/typedquery
+#      commit: 9e26561d77631737b03b4afe448699b630b071af
+#   extra-dep: true
  - location:
       git: git@github.com:tolysz/postgresql-simple-typed
       commit: aa975969ca559a0863f83f1fcc313b34e59287df
    extra-dep: true
- - location:
-      git: git@github.com:tolysz/http-client-extra
-      commit: b556857719c69bf4e12c81f388d9c9ff4ebad4d4
-   extra-dep: true
+# - location:
+#      git: git@github.com:tolysz/http-client-extra
+#      commit: 0e9ab80975724867cc0391b9eca5e665391908ef
+#   extra-dep: true
  - location:
       git: git@github.com:tolysz/http-client-extra-oauth2
-      commit: 2d45776a78119de84590f8a29750ebdb5f969e21
+      commit: 28fa4b72117f133cd3759cd2a6d290e013f98585
    extra-dep: true
- - location:
-      git: git@github.com:tolysz/yesod-angular-ui
-      commit: cfe14876c1a842256f82282172f590db90883eda
-   extra-dep: true
-
+# - location:
+#      git: git@github.com:tolysz/yesod-angular-ui
+#      commit: cfe14876c1a842256f82282172f590db90883eda
+#   extra-dep: true
+ - '../yesod-angular-ui'
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps:
-- shakespeare-2.0.13
-- yesod-auth-fb-1.8.0
-- websockets-0.11.1.0
-- fb-1.1.1
-- yesod-fb-0.4.0
+- http-client-extra-0.1.3.0
 - possible-0.1.0.5
 - smtps-gmail-1.3.2
-- cryptonite-0.22
+- typedquery-0.1.1.1
+- esqueleto-2.5.3
 
 # Override default flag values for local packages and extra-deps
 flags:
