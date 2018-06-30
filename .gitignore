@@ -1,5 +1,6 @@
 dist*
 .idea/
+server/.stack-work
 static/tmp/
 static/combined/
 config/client_session_key.aes
