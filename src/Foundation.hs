@@ -16,13 +16,13 @@ import Types
 
 import           Yesod.Auth.BrowserId        (authBrowserId)
 import qualified Yesod.Auth.BrowserId as BId (forwardUrl)
--- import Yesod.Auth.GoogleEmail3               (authGoogleEmail, YesodGoogleAuth(..))
--- import qualified Yesod.Auth.GoogleEmail3  as GId( forwardUrl )
+import Yesod.Auth.GoogleEmail3               (authGoogleEmail, YesodGoogleAuth(..))
+import qualified Yesod.Auth.GoogleEmail3  as GId( forwardUrl )
 import Yesod.Facebook
 
 
 
--- import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
+import Yesod.Auth.Facebook2           (authFacebook, facebookLogin)
 
 
 -- import Yesod.Auth.Facebook           (authFacebook, facebookLogin)
@@ -274,7 +274,7 @@ instance YesodAuth App where
     -- You can add other plugins like BrowserID, email or OAuth here
     authPlugins _ = [ authBrowserId def
                     , authGoogleEmail
---                     , authFacebook ["email"]
+                    , authFacebook ["email"]
                     ]
 
     authHttpManager = getHttpManager
