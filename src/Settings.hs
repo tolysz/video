@@ -74,7 +74,8 @@ data AppSettings = AppSettings
     -- ^ Google Api Server Key
     , appGoogleBrowserKey       :: Maybe Text
     -- ^ Google Api Browser Key
-    , appGoogleWebAppOAuth      :: Maybe OAuth2Google
+    , googleClientId            :: Text
+    , googleClientSecretId      :: Text
     -- ^ OAuth2 config
     , appSiteVerification       :: Maybe Text
     -- ^ google site verification for push messages
@@ -82,7 +83,7 @@ data AppSettings = AppSettings
     -- ^ Facebook creds
     , appDevelopment            :: Bool
 
-    , appNeo4jConf              :: Neo4jConf
+--     , appNeo4jConf              :: Neo4jConf
     -- ^ creds for neo
 
     }
@@ -102,10 +103,10 @@ instance FromJSON AppSettings where
         appStaticDir              <- o .:  "static-dir"
         appDatabaseConf           <- o .:  "database"
         appRoot                   <- o .:  "approot"
-        appStaticRoot             <- o .:  "app-static-root"
+        appStaticRoot             <- o .:? "app-static-root"
         appHost                   <- fromString <$> o .: "host"
-        appPort                   <- o .:  "port"
-        appIpFromHeader           <- o .:  "ip-from-header"
+        appPort                   <- o .:? "port"             .!= 3000
+        appIpFromHeader           <- o .:? "ip-from-header"   .!= False
 
         appDetailedRequestLogging <- o .:? "detailed-logging" .!= defaultDev
         appShouldLogAll           <- o .:? "should-log-all"   .!= defaultDev
@@ -117,7 +118,8 @@ instance FromJSON AppSettings where
         appAnalytics              <- o .:? "analytics"
         appGoogleServerKey        <- o .:? "google-api-server"
         appGoogleBrowserKey       <- o .:? "google-api-browser"
-        appGoogleWebAppOAuth      <- o .:? "google-oauth"
+        googleClientId            <- o .:  "google-oauth-client"
+        googleClientSecretId      <- o .:  "google-oauth-client-secret"
         appSiteVerification       <- o .:? "google-site-verification"
 
         appDevelopment            <- pure defaultDev
@@ -126,7 +128,7 @@ instance FromJSON AppSettings where
         fbApp                     <- o .:? "facebook-app-name"   .!= ""
         fbSecret                  <- o .:? "facebook-app-secret" .!= ""
 
-        appNeo4jConf              <- o .: "neo4j"
+--         appNeo4jConf              <- o .: "neo4j"
 
         let appFbCredentials = FB.Credentials fbApp fbId fbSecret
         return AppSettings {..}
@@ -183,13 +185,18 @@ configSettingsYmlBS = $(embedFile configSettingsYml)
 
 -- | @config/settings.yml@, parsed to a @Value@.
 configSettingsYmlValue :: Value
-configSettingsYmlValue = either Exception.throw id $ decodeEither' configSettingsYmlBS
+configSettingsYmlValue = either Exception.throw id
+                       $ decodeEither' configSettingsYmlBS
 
 -- | A version of @AppSettings@ parsed at compile time from @config/settings.yml@.
 compileTimeAppSettings :: AppSettings
 compileTimeAppSettings =
-    case fromJSON $ applyEnvValue False mempty configSettingsYmlValue of
-        Error e -> error e
+    let
+       app = applyEnvValue False mempty configSettingsYmlValue
+    in
+    case fromJSON $ app of
+--     case fromJSON $ configSettingsYmlValue of
+        Error e -> error ( e ++ show configSettingsYmlValue ++ "\n\n"++ show app)
         Success settings -> settings
 
 -- The following two functions can be used to combine multiple CSS or JS files

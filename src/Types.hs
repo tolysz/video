@@ -17,6 +17,8 @@ import Data.Text (Text)
 import Data.Typeable
 import Data.Default
 import Data.Monoid
+import Data.Maybe
+import Control.Arrow
 import Data.Possible
 import Control.Applicative ((<$>))
 
@@ -242,3 +244,6 @@ instance ToJSON a => ToMarkup (TC a) where
 
 instance (ToMarkup a, ToMarkup b) => ToMarkup (a,b) where
   toMarkup (a,b) = unsafeLazyByteString "(" <> toMarkup a <> unsafeLazyByteString ", " <> toMarkup b <> unsafeLazyByteString ")"
+
+catMaybes1 :: [(a, Maybe b)] -> [(a, b)]
+catMaybes1 = map ( second fromJust ) . filter ( isJust . snd )

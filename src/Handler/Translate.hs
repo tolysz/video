@@ -18,14 +18,14 @@ import Data.Bool
 import qualified Data.Text as T
 import Data.String.QM
 
-taggedRequest :: Maybe Text -> LangId -> String -> LangId  -> IO (LangId, Request)
-taggedRequest (Just (T.unpack -> key)) (toGoogleTrans -> slid) (BS8.toString . urlEncode True . BS8.fromString -> cont) li@(toGoogleTrans -> lid) =
-    (li, ) <$> parseUrl [qm|https://www.googleapis.com/language/translate/v2?key=$key&q=$cont&source=$slid&target=$lid|]
-taggedRequest Nothing (toGoogleTrans -> slid) (BS8.toString . urlEncode False . BS8.fromString -> cont)  li@(toGoogleTrans -> lid) =
-    (li, ) <$> parseUrl [qm|https://www.googleapis.com/language/translate/v2?q=$cont&source=$slid&target=$lid|]
-
-taggedResult :: (LangId, Request) -> Handler (LangId, Response LBS.ByteString)
-taggedResult (lid, req) = (lid, ) <$> httpLbs req
+-- taggedRequest :: Maybe Text -> LangId -> String -> LangId  -> IO (LangId, Request)
+-- taggedRequest (Just (T.unpack -> key)) (toGoogleTrans -> slid) (BS8.toString . urlEncode True . BS8.fromString -> cont) li@(toGoogleTrans -> lid) =
+--     (li, ) <$> parseUrl [qm|https://www.googleapis.com/language/translate/v2?key=$key&q=$cont&source=$slid&target=$lid|]
+-- taggedRequest Nothing (toGoogleTrans -> slid) (BS8.toString . urlEncode False . BS8.fromString -> cont)  li@(toGoogleTrans -> lid) =
+--     (li, ) <$> parseUrl [qm|https://www.googleapis.com/language/translate/v2?q=$cont&source=$slid&target=$lid|]
+--
+-- taggedResult :: (LangId, Request) -> Handler (LangId, Response LBS.ByteString)
+-- taggedResult (lid, req) = (lid, ) <$> httpLbs req
 
 toGoogleTrans :: LangId -> String
 toGoogleTrans LangEnGB = "en"
@@ -38,16 +38,17 @@ toGoogleTrans LangDe   = "de"
 toGoogleTrans _        = "en"
 
 translate :: LangId -> Text -> Handler [(LangId, LBS.ByteString)]
-translate fromLang cont = do
-    key <- appGoogleServerKey . appSettings <$> getYesod
-    requests <- liftIO $ mapM (taggedRequest key fromLang (T.unpack cont)) (DL.filter (\a -> toGoogleTrans fromLang /= toGoogleTrans a )  [LangEnGB ..])
-    runInnerHandler <- handlerToIO
-    catMaybes <$> do
-        results <- liftIO  (mapConcurrently (\ a -> runInnerHandler (taggedResult a)) requests)
-        forM results $ \(lang, rs) ->
-             return $ case responseStatus rs of
-                ok200 -> Just (lang, responseBody rs)
-                _     -> Nothing
+translate _ _ = return []
+-- translate fromLang cont = do
+--     key <- appGoogleServerKey . appSettings <$> getYesod
+--     requests <- liftIO $ mapM (taggedRequest key fromLang (T.unpack cont)) (DL.filter (\a -> toGoogleTrans fromLang /= toGoogleTrans a )  [LangEnGB ..])
+--     runInnerHandler <- handlerToIO
+--     catMaybes <$> do
+--         results <- liftIO  (mapConcurrently (\ a -> runInnerHandler (taggedResult a)) requests)
+--         forM results $ \(lang, rs) ->
+--              return $ case responseStatus rs of
+--                 ok200 -> Just (lang, responseBody rs)
+--                 _     -> Nothing
 
 --translate fromLang toLang cont
 --   'https://www.googleapis.com/language/translate/v2?key=&q=hello%20world&source=en&target=de' -O -

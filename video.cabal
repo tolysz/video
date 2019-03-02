@@ -48,8 +48,8 @@ library
                   -- binary-enum
                      Data.Binary.Enum
                   -- patch yesod google auth
---                     Yesod.Auth.GoogleEmail3
---                     Yesod.Auth.Facebook2
+                     Yesod.Auth.GoogleEmail3
+                     Yesod.Auth.Facebook2
                   -- wait pull -- https://github.com/yesodweb/yesod/pull/772
 --                  transformers
     if flag(dev) || flag(library-only)
@@ -90,7 +90,7 @@ library
                  , text                          >= 0.11
                  , persistent                    >= 2.0      
                  , persistent-postgresql         >= 2.1.1     
---                 , esqueleto
+                 , esqueleto
                  , postgresql-simple
                  , postgresql-simple-typed
                  , persistent-template           >= 2.0
@@ -170,6 +170,7 @@ library
                  , rest-neo
                -- db pools
                  , resource-pool
+                 , yesod-auth-oauth2
 
 
 executable         video

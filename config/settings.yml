@@ -11,8 +11,8 @@ ip-from-header: "_env:IP_FROM_HEADER:false"
 # Optional values with the following production defaults.
 # In development, they default to the inverse.
 #
-development: false
-detailed-logging: false
+development: true
+detailed-logging: true
 should-log-all: false
 reload-templates: false
 mutable-static: false
@@ -26,26 +26,26 @@ database:
   database: "_env:PGDATABASE:video"
   poolsize: "_env:PGPOOLSIZE:10"
 
-neo4j:
-  host: "_env:NEO_DB"
-  auth: "_env:NEO_AUTH"
 
-copyright: "2015-7© Marcin Tolysz website, content various copyrights"
+copyright: "2015-19© Marcin Tolysz website, content various copyrights"
 
 analytics: "_env:GOOGLE_ANALYTICS"
 
-google-api-server: "_env:GOOGLE_API_SERVER"
-google-api-browser: "_env:GOOGLE_API_BROWSER"
-google-site-verification: "_env:GOOGLE_SITE_VERIFICATION"
+google-api-server: "_env:GOOGLE_API_SERVER:x"
+google-api-browser: "_env:GOOGLE_API_BROWSER:"
+google-site-verification: "_env:GOOGLE_SITE_VERIFICATION:"
 
-google-oauth:
+google-oauth-client:             "_env:CLIENT_ID:changeme"
+google-oauth-client-secret:      "_env:CLIENT_SECRET:changeme"
+
+#google-oauth:
 #  auth_uri: "https://accounts.google.com/o/oauth2/auth"
 # token_uri: "https://accounts.google.com/o/oauth2/token"
 #  revoke_uri: "https://accounts.google.com/o/oauth2/revoke"
-   client_id:             "_env:CLIENT_ID:"
-   client_secret:         "_env:CLIENT_SECRET:"
-   client_email:          "_env:CLIENT_EMAIL:"
-   client_x509_cert_url:  "_env:CLIENT_X509_CERT_URL:"
+#   client_id:             "_env:CLIENT_ID:changeme"
+#   client_secret:         "_env:CLIENT_SECRET:changeme"
+#   client_email:          "_env:CLIENT_EMAIL:changeme"
+#   client_x509_cert_url:  "_env:CLIENT_X509_CERT_URL:changeme"
 #  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
 #  javascript_origins: ["https://video.kio.sx"]
 

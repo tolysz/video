@@ -24,7 +24,7 @@ import Network.HTTP.OAuth2
 import Network.HTTP.OAuth2.Types
 import Network.HTTP.ClientExtra.Types
 import Network.Google.Api.Kinds
-import qualified Database.Esqueleto as E
+-- import qualified Database.Esqueleto as E
 import Control.Monad
 
 fetchNext :: ListResponse a sym -> Possible String
@@ -98,9 +98,10 @@ handleRootOAuth2R = return ()
 googleKey :: Text -> Handler OAuth2
 googleKey uuid = do
      render <- getUrlRender
-     Just OAuth2Google {..} <- appGoogleWebAppOAuth . appSettings <$> getYesod
-     return OAuth2 { oauthClientId     = gaClientId
-                   , oauthClientSecret = gaClientSecret
+--      OAuth2Google {..} <- maybe (fail "Just OAuth2Google") return =<< appGoogleWebAppOAuth . appSettings <$> getYesod
+     settings <- appSettings <$> getYesod
+     return OAuth2 { oauthClientId     = googleClientId settings
+                   , oauthClientSecret = googleClientSecretId settings
                    , oauthRedirectUri  = render GoogleCallbackR
                    , oauthAuthUri      = "https://accounts.google.com/o/oauth2/auth"
                    , oauthTokenUri     = "https://accounts.google.com/o/oauth2/token"

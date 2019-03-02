@@ -443,6 +443,8 @@ acceptOwnLanguageTranslations lid k u ( Transl     _ t l) = if l == lid then Hav
 acceptOwnLanguageTranslations lid _ _ _ = MissingData
 
 chatApp :: Text  ->  WebSocketsT Handler ()
+chatApp _ = return ()
+{-
 chatApp name = do
     lid <- lift getUserLang
     chans <- userChannels <$> getYesod
@@ -504,3 +506,4 @@ chatApp name = do
            readWS
     concurrently_ readWS writeWS
 
+-}

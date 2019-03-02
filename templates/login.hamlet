@@ -1,13 +1,11 @@
 <div .loginbox>
     <h3>_{SomeMessage MsgLoginUsing}
-$#    <a href="@{AuthR facebookLogin}" .facebookLogin>
-$#        Facebook
-$#    <h3>&mdash; _{SomeMessage MsgLoginOr} &mdash;
-$#    <a href="@{AuthR GId.forwardUrl}" .googleLogin>
-$#        Google+
+    <a href="@{AuthR facebookLogin}" .facebookLogin>
+        Facebook
     <h3>&mdash; _{SomeMessage MsgLoginOr} &mdash;
-    <div .personaLogin>
-      ^{wb}
+    <a href=@{AuthR (oauth2Url "google")} .googleLogin>
+        Google+
+    <h3>&mdash; _{SomeMessage MsgLoginOr} &mdash;
     <br>
 
 $#<script>

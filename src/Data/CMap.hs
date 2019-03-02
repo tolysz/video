@@ -7,7 +7,7 @@ import Data.Bool
 import Data.Possible
 import qualified ListT
 import qualified Focus
-import qualified STMContainers.Map as STMMap
+import qualified StmContainers.Map as STMMap
 
 type Mask a = Text        -- ^ sender
            -> Text        -- ^ mapuser
@@ -34,7 +34,7 @@ getChan k (CMap x) =
 
 -- | send the same info to all and then filtrer
 broadcastChan :: a -> Text ->  CMap a  -> STM ()
-broadcastChan msg k (CMap x) = mapM_ (uncurry (writeFiltered msg k)) =<< ListT.toList (STMMap.stream x)
+broadcastChan msg k (CMap x) = mapM_ (uncurry (writeFiltered msg k)) =<< ListT.toList (STMMap.listT x)
 
 -- | filter messages as we write them to the channels, so maybe we do not need to write anything !!!
 writeFiltered msg _ _ ( []  , c) = writeTChan c msg

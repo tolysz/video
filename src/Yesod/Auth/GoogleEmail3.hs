@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes       #-}
 {-# LANGUAGE CPP               #-}
+{-# LANGUAGE RankNTypes        #-}
 -- | Use an email address as an identifier via Google's login system.
 --
 -- Note that this is a replacement for "Yesod.Auth.GoogleEmail", which depends
@@ -51,12 +52,12 @@ import           Network.HTTP.Types       (renderQueryText)
 import           Network.Mail.Mime        (randomString)
 import           System.Random            (newStdGen)
 import           Yesod.Auth               (Auth, AuthPlugin (AuthPlugin),
-                                           AuthRoute, Creds (Creds),
-                                           Route (PluginR), YesodAuth,
-                                           authHttpManager, setCredsRedirect)
+                                           AuthRoute, Creds (Creds), redirectToReferer,
+                                           Route (PluginR), YesodAuth, AuthHandler,
+                                           authHttpManager, setCredsRedirect, setCreds)
 import qualified Yesod.Auth.Message       as Msg
-import           Yesod.Core               (HandlerSite, MonadHandler,
-                                           getRouteToParent, getUrlRender,
+import           Yesod.Core               (HandlerSite, MonadHandler, WidgetFor,
+                                           getRouteToParent, getUrlRender, setUltDestReferer,
                                            getYesod, invalidArgs,
                                            lookupGetParam,
                                            lookupSession, notFound, redirect,
@@ -72,10 +73,10 @@ class  Yesod site => YesodGoogleAuth site where
   googleClientID     :: site -> Maybe Text
   googleClientSecret :: site -> Maybe Text
 
-getGoogleClientID :: (MonadHandler m, HandlerSite m ~ site, YesodGoogleAuth site) => m Text
+-- getGoogleClientID :: (MonadHandler m, HandlerSite m ~ site, YesodGoogleAuth site) => m Text
 getGoogleClientID = maybe notFound return =<< googleClientID <$> getYesod
 
-getGoogleClientSecret :: (MonadHandler m, HandlerSite m ~ site, YesodGoogleAuth site) => m Text
+-- getGoogleClientSecret :: (MonadHandler m, HandlerSite m ~ site, YesodGoogleAuth site) => m Text
 getGoogleClientSecret = maybe notFound return   =<< googleClientSecret <$> getYesod
 
 
@@ -88,10 +89,10 @@ forwardUrl = PluginR pid ["forward"]
 csrfKey :: Text
 csrfKey = "_GOOGLE_CSRF_TOKEN"
 
-getCsrfToken :: MonadHandler m => m (Maybe Text)
+-- getCsrfToken :: MonadHandler m => m (Maybe Text)
 getCsrfToken = lookupSession csrfKey
 
-getCreateCsrfToken :: MonadHandler m => m Text
+-- getCreateCsrfToken :: MonadHandler m => m Text
 getCreateCsrfToken = do
     mtoken <- getCsrfToken
     case mtoken of
@@ -110,9 +111,10 @@ authGoogleEmail =
   where
     complete = PluginR pid ["complete"]
 
-    getDest :: MonadHandler m
-            => Text -> (Route Auth -> Route (HandlerSite m))
-            -> m Text
+--     getDest :: MonadHandler m
+--             => Text -> (Route Auth -> Route (HandlerSite m))
+--             -> m Text
+--     getDest :: Text -> (Route Auth -> Route (HandlerSite m0)) -> m0 Text
     getDest clientID tm = do
         csrf <- getCreateCsrfToken
         render <- getUrlRender
@@ -129,6 +131,9 @@ authGoogleEmail =
                $ fromByteString "https://accounts.google.com/o/oauth2/auth"
                     `mappend` renderQueryText True qs
 
+    login :: (YesodAuth site, YesodGoogleAuth site) =>
+             (Route Auth -> Route site)
+          -> WidgetFor site ()
     login tm = do
         [whamlet|$newline never
 <p>
@@ -151,12 +156,19 @@ authGoogleEmail =
     dispatch :: (YesodAuth site, YesodGoogleAuth site)
              => Text
              -> [Text]
-             -> HandlerT Auth (HandlerT site IO) TypedContent
+             -> AuthHandler site TypedContent
     dispatch "GET" ["forward"] = do
         tm <- getRouteToParent
         void getCreateCsrfToken
-        clientID <- lift getGoogleClientID
-        lift (getDest clientID tm) >>= redirect
+        y <- getYesod
+        when (redirectToReferer y) setUltDestReferer
+        clientID <- getGoogleClientID
+        redirect =<< getDest clientID tm
+
+--         clientID <- lift getGoogleClientID
+--         lift (getDest clientID tm) >>= redirect
+
+
 
     dispatch "GET" ["complete"] = do
 #if DEVELOPMENT
@@ -175,25 +187,27 @@ authGoogleEmail =
                 Nothing -> invalidArgs ["Missing code paramter"]
                 Just c -> return c
 
+        tm <- getRouteToParent
         render <- getUrlRender
 
         req' <- liftIO $ parseUrl "https://accounts.google.com/o/oauth2/token" -- FIXME don't hardcode, use: https://accounts.google.com/.well-known/openid-configuration
-        clientID     <- lift getGoogleClientID
-        clientSecret <- lift getGoogleClientSecret
+        clientID     <- getGoogleClientID
+        clientSecret <- getGoogleClientSecret
         let req =
                 urlEncodedBody
                     [ ("code", encodeUtf8 code)
                     , ("client_id", encodeUtf8 clientID)
                     , ("client_secret", encodeUtf8 clientSecret)
-                    , ("redirect_uri", encodeUtf8 $ render complete)
+                     , ("redirect_uri", encodeUtf8 $ render $ tm complete)
                     , ("grant_type", "authorization_code")
                     ]
                     req'
                         { requestHeaders = [("Connection", "close")]
                         }
 
-        man <- authHttpManager <$> lift getYesod
-        Just value <- A.decode . responseBody <$> httpLbs req man
+        man <- authHttpManager
+--         man <- authHttpManager <$> getYesod
+        value <- maybe (fail "decode") return =<< A.decode . responseBody <$> httpLbs req man
         Tokens accessToken tokenType <-
             case parseEither parseJSON value of
                 Left e -> error e
@@ -208,23 +222,34 @@ authGoogleEmail =
                     , ("Connection", "close")
                     ]
                 }
-        Just value2 <- A.decode . responseBody <$> httpLbs req2 man
+        mval <- A.decode . responseBody <$> httpLbs req2 man
+        value2 <- maybe (fail "not a just") return mval
 
         Person emails fullName <-
             case parseEither parseJSON value2 of
                 Left e -> error e
                 Right x -> return x
+        print $ emails
+--         redirect "/"
         email <-
             case map emailValue $ filter (\e -> emailType e == "account") emails of
                 [e] -> return e
                 [] -> error "No account email"
                 x -> error $ "Too many account emails: " ++ show x
-        lift $ setCredsRedirect
-          $ Creds pid email
-            $ (catMaybes1 [ ("full_name",fullName)
-                          , ("locale", value2 ^? key "language" . _String )
-                          , ("avatar", value2 ^? key "image" . key "url"  . _String )]
-               ) <> allPersonInfo value2
+        print $ email
+
+        let cred = Creds pid email
+                               $ (catMaybes1 [ ("full_name",fullName)
+                                             , ("locale", value2 ^? key "language" . _String )
+                                             , ("avatar", value2 ^? key "image" . key "url"  . _String )]
+                                  ) <> allPersonInfo value2
+        print cred
+        setCreds False cred
+--         setCredsRedirect cred
+        redirect "/"
+--         setCreds False cred
+
+--         redirectToReferer
 
     dispatch _ _ = notFound
 

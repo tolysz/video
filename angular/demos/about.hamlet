@@ -29,7 +29,7 @@
           Haskell
       <dd>
           We use the
-          <a target="_blank" href=https://ghc.haskell.org/trac/ghc> 7.10.2 version#
+          <a target="_blank" href=https://ghc.haskell.org/trac/ghc> 8.6.3 version#
 
       <dt> Google API
       <dd>
@@ -63,3 +63,4 @@
           <a target="_blank" href=http://www.haskellcast.com/ >
              <span .fa .soundcloud>
              The Haskell Cast
+

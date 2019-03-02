@@ -1,4 +1,14 @@
 {-# LANGUAGE FlexibleInstances, RecordWildCards #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE ExplicitForAll #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE InstanceSigs #-}
+
 module Foundation where
 
 import Database.Persist.Sql (ConnectionPool, runSqlPool)
@@ -16,9 +26,15 @@ import Types
 
 import           Yesod.Auth.BrowserId        (authBrowserId)
 import qualified Yesod.Auth.BrowserId as BId (forwardUrl)
-import Yesod.Auth.GoogleEmail3               (authGoogleEmail, YesodGoogleAuth(..))
-import qualified Yesod.Auth.GoogleEmail3  as GId( forwardUrl )
+-- import Yesod.Auth.GoogleEmail3               (authGoogleEmail, YesodGoogleAuth(..))
+-- import Yesod.Auth.GoogleEmail3               (authGoogleEmail, YesodGoogleAuth(..))
+import Yesod.Auth.OAuth2
+import Yesod.Auth.OAuth2.Google as GOO
+-- import qualified Yesod.Auth.GoogleEmail3  as GId( forwardUrl )
 import Yesod.Facebook
+
+import qualified Data.HashMap.Strict as HM
+
 
 
 
@@ -38,7 +54,7 @@ import qualified Database.PostgreSQL.Simple.Internal as PGS
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 
--- import qualified Database.Esqueleto as E
+import qualified Database.Esqueleto as E
 
 import qualified Data.UUID.V4 as UUID
 import qualified Data.UUID    as UUID
@@ -69,9 +85,6 @@ data App = App
 --     , appOAuth2      :: OAuth2App
     }
 
-
-instance HasHttpManager App where
-    getHttpManager = appHttpManager
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
@@ -213,14 +226,14 @@ runRawDBT cc = do
    cp <- appConnPoolRaw <$> getYesod
    liftIO $ withRawDBConn cp (\conn -> PGS.withTransaction conn (cc conn))
 
--- instance YesodFacebook App where
+instance YesodFacebook App where
 --  fbHttpManager = appHttpManager
---  fbCredentials = appFbCredentials . appSettings
---
+ fbCredentials = appFbCredentials . appSettings
+
 -- instance YesodGoogleAuth App where
 --   googleClientID     a = gaClientId     <$> (appGoogleWebAppOAuth . appSettings) a
 --   googleClientSecret a = gaClientSecret <$> (appGoogleWebAppOAuth . appSettings) a
---
+
 newUUID = decodeUtf8 . UUID.toASCIIBytes <$> liftIO UUID.nextRandom
 
 instance YesodAuth App where
@@ -232,17 +245,21 @@ instance YesodAuth App where
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer _ = False
 
-    getAuthId creds =
---         $(logError) $ T.pack . show $ credsExtra creds
-        runDB $ do
---         x <- getBy $ UniqueUser $ credsIdent creds
+    getAuthId creds0 = do
+      $(logError) $ T.pack . show $ credsExtra creds0
+      let creds = case credsPlugin creds0 of
+                      "google" -> credsGoogle
+                      "fb" -> creds0
 
---         x <- E.select $
---              E.from $ \(p `E.LeftOuterJoin` e) -> do
---              E.on $ (p E.^. UsersId) E.==. e E.^. EmailUserId
---              E.where_ $ (e E.^. EmailEmail ) E.==. E.val (credsIdent creds)
---              return p
-        let x = []
+      liftHandler $ runDB $ do
+--         x <- getBy $ UniqueUser $ credsIdent creds
+--
+        x <- E.select $
+             E.from $ \(p `E.LeftOuterJoin` e) -> do
+             E.on $ (p E.^. UsersId) E.==. e E.^. EmailUserId
+             E.where_ $ (e E.^. EmailEmail ) E.==. E.val (credsIdent creds)
+             return p
+--         let x = []
         let nn = DL.lookup "full_name" $ credsExtra creds
             na = DL.lookup "avatar"    $ credsExtra creds
         case x of
@@ -270,18 +287,33 @@ instance YesodAuth App where
                     , emailUserId  = uu
                     }
                   return uu
+      where
+            credsGoogle = fromMaybe creds0 $ do
+              guard $ credsPlugin creds0 == "google"
+              Object o <- either (const Nothing) Just $ getUserResponseJSON creds0
+              String email <- HM.lookup "email" o
+              let avatar = string $ HM.lookup "picture" o
+              let fullName = string $ HM.lookup "name" o
+              let locale = string $ HM.lookup "locale" o
+              Just creds0 { credsIdent = email
+                      , credsExtra = catMaybes1 [ ("full_name", fullName)
+                                                , ("locale", locale)
+                                                , ("avatar", avatar)]
+                      }
+            string (Just (String x)) = Just x
+            string _ = Nothing
 
     -- You can add other plugins like BrowserID, email or OAuth here
-    authPlugins _ = [ authBrowserId def
-                    , authGoogleEmail
+    authPlugins app = [ authBrowserId def
+--                     , authGoogleEmail
+                    , oauth2GoogleScoped ["email", "profile"] (googleClientId . appSettings $ app) (googleClientSecretId . appSettings $ app)
                     , authFacebook ["email"]
                     ]
-
-    authHttpManager = getHttpManager
+--     authHttpManager = getHttpManager
 
     loginHandler = do
         tp <- getRouteToParent
-        lift $ authLayout $ do
+        authLayout $ do
             master <- getYesod
             let [b,g,f] = authPlugins master
             let render = flip apLogin tp
@@ -303,6 +335,10 @@ instance YesodAuthPersist App
 -- https://github.com/yesodweb/yesod/wiki/Sending-email
 -- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
+
+instance HasHttpManager App where
+    getHttpManager :: App -> Manager
+    getHttpManager = appHttpManager
 
 
 -- todo: find a way on how to add i18n to angular
@@ -345,21 +381,21 @@ getGroupKey :: GUUID -> AppM (Key SiteGroup)
 getGroupKey u = runDB $ entityKey <$> getBy404 (UniqueSiteGroup u)
 
 getUserAdmin :: Handler Bool
-getUserAdmin = return False
+getUserAdmin = -- return False
+-- maybeAuthId _ = return False
+  maybeAuthId >>= \case
+      Nothing -> return False
+      Just aid ->
+          runDB $
+             E.select (
+             E.from $ \(p `E.InnerJoin` e) -> do
+             E.on $ (p E.^. UsersId) E.==. e E.^. SiteAdminUserId
+             E.where_ $ (p E.^. UsersId ) E.==. E.val aid
+             return e)
+             >>= return . \case
+               [Entity _ v] -> siteAdminIsAdmin v
+               _ -> False
 
---   maybeAuthId >>= \case
---       Nothing -> return False
---       Just aid ->
---           runDB $
---              E.select (
---              E.from $ \(p `E.InnerJoin` e) -> do
---              E.on $ (p E.^. UsersId) E.==. e E.^. SiteAdminUserId
---              E.where_ $ (p E.^. UsersId ) E.==. E.val aid
---              return e)
---              >>= return . \case
---                [Entity _ v] -> siteAdminIsAdmin v
---                _ -> False
---
 getUserLang :: Handler LangId
 getUserLang = cached (readLang <$> languages)
 

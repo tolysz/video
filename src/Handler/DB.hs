@@ -520,16 +520,20 @@ from y_t_video as v
 
 
 -}
+-- todo: fix
 updateYTPlaylistItms :: Key SiteGroup -> Text -> Text -> Text -> ApiReq [YoutubePlaylistItem] -> ApiReq [(DBAction,Text)]
 updateYTPlaylistItms gr gu i _ rq =
   rq >>= \case
    (TC lis) ->
      TC <$> forM lis ( \li@YoutubePlaylistItem{..} ->
+     let
+       snip = (toJSON _ypiSnippet) ^? key "resourceId" . key "videoId" . _String ^. non "fail"
+     in
        runRawDB $(TQ.genTypedQuery [qq|
           select v.id, pl.id
            from y_t_video as v
               , y_t_playlist as pl
-          where v.ref  = ? -- < (toJSON _ypiSnippet) ^? key "resourceId" . key "videoId" . _String ^. non "fail"
+          where v.ref  = ? -- < snip
             and pl.ref = ? -- < i
                 |])
          >>= \case
@@ -613,8 +617,8 @@ getAllOAuthAccess     = listsOfAll
 getAllEmail           :: ApiReq [     Email     ]
 getAllEmail           = listsOfAll
 
--- getAllYTChannel       :: ApiReq [   YTChannel   ]
--- getAllYTChannel       = listsOfAll
+getAllYTChannel       :: ApiReq [   YTChannel   ]
+getAllYTChannel       = listsOfAll
 
 getAllYTPlaylist      :: ApiReq [   YTPlaylist  ]
 getAllYTPlaylist      = listsOfAll
